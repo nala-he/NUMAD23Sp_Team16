@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,8 +18,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class WebServiceActivity extends AppCompatActivity {
+    private static final String TAG = "WebServiceActivity";
 
     private EditText countryEditText ;
     private TextView capitalTextView ;
@@ -114,6 +121,36 @@ public class WebServiceActivity extends AppCompatActivity {
 
 //                        JSONObject currencyObject = jObject.getJSONObject("currencies");
 //                        currencyTextView.setText(currencyObject.getString("name"));
+
+
+
+                        // Retrieve the translations from web service call only if translations button checked
+                        // TODO: Add if statement to check if translations button checked
+                        JSONObject translationsObject = jObject.getJSONObject("translations");
+
+                        // Create array to hold translated names
+                        List<String> translatedNames = new ArrayList<>();
+
+                        // Iterate through each language to get translation
+                        Iterator<String> iter = translationsObject.keys();
+                        while(iter.hasNext()) {
+                            String key = iter.next();
+                            try {
+                                JSONObject value = translationsObject.getJSONObject(key);
+                                String name = value.getString("official");
+                                // Store translated official name in our array
+                                translatedNames.add(name);
+                            } catch (JSONException e) {
+                                Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        // Remove duplicate translations from array
+                        Set<String> removedDuplicates = new HashSet<>(translatedNames);
+                        translatedNames.clear();
+                        translatedNames.addAll(removedDuplicates);
+
+
 
                     } catch (Exception e) {
                         runOnUiThread(new Runnable() {
