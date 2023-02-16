@@ -71,10 +71,7 @@ public class WebServiceActivity extends AppCompatActivity {
 //                        Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(getApplication(),
-                                        e.toString(),
-                                        Toast.LENGTH_LONG)
-                                        .show();
+                                Toast.makeText(getApplication(), e.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -97,11 +94,11 @@ public class WebServiceActivity extends AppCompatActivity {
                     } catch (JSONException e) {
 //                        throw new RuntimeException(e);
 //                        Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
-//                        runOnUiThread(new Runnable() {
-//                            public void run() {
-//                                Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 }
 
@@ -119,13 +116,14 @@ public class WebServiceActivity extends AppCompatActivity {
 //                        currencyTextView.setText(currencyObject.getString("name"));
 
                     } catch (Exception e) {
+                        // commented out this part to avoid repetitive exception toast messages showing up
+                        // when the user input an invalid country name
 //                        runOnUiThread(new Runnable() {
 //                            public void run() {
 //                                Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
 //                            }
 //                        });
                     }
-
                 }
             });
             try {
