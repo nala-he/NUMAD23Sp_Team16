@@ -37,50 +37,49 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="LabelFor" />
 
-    <RadioButton
-        android:id="@+id/capital_radio_button"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/capital_switch_button"
         android:layout_width="153dp"
         android:layout_height="48dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
         android:text="@string/show_capital_city"
-        app:layout_constraintEnd_toStartOf="@+id/flag_radio_button"
+        app:layout_constraintEnd_toStartOf="@+id/flag_switch_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/country_edittext" />
 
-    <RadioButton
-        android:id="@+id/flag_radio_button"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/flag_switch_button"
         android:layout_width="190dp"
         android:layout_height="48dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:text="@string/show_flag"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/capital_radio_button"
+        app:layout_constraintStart_toEndOf="@id/capital_switch_button"
         app:layout_constraintTop_toBottomOf="@+id/country_edittext" />
 
-    <RadioButton
-        android:id="@+id/currency_radio_button"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/currency_switch_button"
         android:layout_width="153dp"
         android:layout_height="48dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="1dp"
         android:text="@string/show_currency"
-        app:layout_constraintEnd_toStartOf="@+id/translation_radio_button"
+        app:layout_constraintEnd_toStartOf="@+id/translation_switch_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/capital_radio_button" />
+        app:layout_constraintTop_toBottomOf="@+id/capital_switch_button" />
 
-    <RadioButton
-        android:id="@+id/translation_radio_button"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/translation_switch_button"
         android:layout_width="190dp"
         android:layout_height="48dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="1dp"
         android:text="@string/show_list_of_translations"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/currency_radio_button"
-        app:layout_constraintTop_toBottomOf="@+id/flag_radio_button"
-        tools:ignore="TextSizeCheck" />
+        app:layout_constraintStart_toEndOf="@+id/currency_switch_button"
+        app:layout_constraintTop_toBottomOf="@+id/flag_switch_button" />
 
     <Button
         android:id="@+id/call_service_button"
@@ -94,15 +93,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currency_radio_button" />
+        app:layout_constraintTop_toBottomOf="@+id/currency_switch_button" />
 
     <TextView
         android:id="@+id/capital_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="10dp"
         android:text="@string/capital"
         app:layout_constraintBottom_toTopOf="@+id/currency_textview"
@@ -112,9 +111,9 @@
         android:id="@+id/currency_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="10dp"
         android:text="@string/currency"
         app:layout_constraintTop_toBottomOf="@+id/capital_textview" />

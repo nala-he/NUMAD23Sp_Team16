@@ -1,12 +1,15 @@
 package com.ebookfrenzy.numad23sp_team16;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,11 @@ public class WebServiceActivity extends AppCompatActivity {
     private Handler textHandler = new Handler();
     private JSONObject jObject;
 
+    private SwitchCompat capitalButton;
+    private SwitchCompat currencyButton;
+    private SwitchCompat flagButton;
+    private SwitchCompat translationButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,11 +42,17 @@ public class WebServiceActivity extends AppCompatActivity {
         countryEditText = (EditText)findViewById(R.id.country_edittext);
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
 //        currencyTextView = (TextView)findViewById(R.id.currency_textview);
-
+        capitalButton = findViewById(R.id.capital_switch_button);
+        currencyButton = findViewById(R.id.currency_switch_button);
+        flagButton = findViewById(R.id.flag_switch_button);
+        translationButton = findViewById(R.id.translation_switch_button);
     }
 
+    @SuppressLint("SetTextI18n")
     public void callWebserviceButtonHandler(View view) {
         runnableThread runnableThread = new runnableThread();
+        capitalTextView.setText("Capital: ");
+
         new Thread(runnableThread).start();
 
     }
@@ -49,7 +63,6 @@ public class WebServiceActivity extends AppCompatActivity {
         public void run() {
             textHandler.post(new Runnable() {
 
-                // REST Country web service: https://restcountries.com/v3.1/name/
                 String input;
                 {
                     try {
@@ -60,7 +73,6 @@ public class WebServiceActivity extends AppCompatActivity {
                                 Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_LONG).show();
                             }
                         });
-//                        Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                     }
                 }
                 URL url;
@@ -102,15 +114,20 @@ public class WebServiceActivity extends AppCompatActivity {
                     }
                 }
 
+                @SuppressLint("SetTextI18n")
                 @Override
                 public void run() {
 
                     try {
                         // call the region of the given country from restcountry api
 //                        result_view.setText(jObject.getString("region"));
-                        // call the capital info from restcountry api
-                        JSONArray capitalArray = jObject.getJSONArray("capital");
-                        capitalTextView.setText(capitalArray.getString(0));
+
+                        if (capitalButton.isChecked()) {
+                            // call the capital info from restcountry api
+                            JSONArray capitalArray = jObject.getJSONArray("capital");
+                            capitalTextView.setText("Capital: " + capitalArray.getString(0).replace(",\n", ","));
+                        }
+
 
 //                        JSONObject currencyObject = jObject.getJSONObject("currencies");
 //                        currencyTextView.setText(currencyObject.getString("name"));
