@@ -123,6 +123,10 @@ public class WebServiceActivity extends AppCompatActivity {
 //                        currencyTextView.setText(currencyObject.getString("name"));
 
 
+                        // Retrieve official name of country
+                        JSONObject countryName = jObject.getJSONObject("name");
+                        String officialName = countryName.getString("official");
+
 
                         // Retrieve the translations from web service call only if translations button checked
                         // TODO: Add if statement to check if translations button checked
