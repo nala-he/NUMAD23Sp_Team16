@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import java.net.URL;
 public class WebServiceActivity extends AppCompatActivity {
 
     private EditText countryEditText;
+    private ProgressBar progressBar;
     private TextView countryTextView;
     private TextView capitalTextView;
     private TextView currencyTextView;
@@ -64,6 +66,10 @@ public class WebServiceActivity extends AppCompatActivity {
         currencyButton = findViewById(R.id.currency_switch_button);
         flagButton = findViewById(R.id.flag_switch_button);
         translationButton = findViewById(R.id.translation_switch_button);
+        // added progress bar as active indication of the running app when fetching data from API
+        progressBar = findViewById(R.id.progressBar);
+        // hide progress bar
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @SuppressLint("SetTextI18n")
@@ -77,6 +83,8 @@ public class WebServiceActivity extends AppCompatActivity {
         // to be updated after implementing recycler view
         translationTextView.setText("Translations: ");
 
+        // start progress bar
+        progressBar.setVisibility(View.VISIBLE);
         new Thread(runnableThread).start();
     }
 
@@ -132,6 +140,8 @@ public class WebServiceActivity extends AppCompatActivity {
 //                        Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                         runOnUiThread(new Runnable() {
                             public void run() {
+                                // hide the progress bar
+                                progressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(getApplication(),"Please type in a full country name",Toast.LENGTH_LONG).show();
                             }
                         });
@@ -190,6 +200,10 @@ public class WebServiceActivity extends AppCompatActivity {
                             translationTextView.setText("Translations:\n"
                                     + translationString);
                         }
+
+                        // hide the progress bar after fetching all requested info
+                        progressBar.setVisibility(View.INVISIBLE);
+
                     } catch (Exception e) {
                         // commented out this part to avoid repetitive exception toast messages showing up
                         // when the user input an invalid country name
