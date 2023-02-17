@@ -58,6 +58,7 @@ public class WebServiceActivity extends AppCompatActivity {
     private List<Name> translatedNames = new ArrayList<>();
 
     private RecyclerView namesRecyclerView;
+    private NameAdapter nameAdapter = new NameAdapter(translatedNames, WebServiceActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,10 +196,12 @@ public class WebServiceActivity extends AppCompatActivity {
                             // activity, need to be done in a thread above)
                             flagImageView.setImageBitmap(flag);
                         }
-                        if (translationButton.isChecked()) {
-                            // Ensure translated names array is empty whenever we make a web service call
-                            translatedNames.clear();
 
+                        // Ensure translated names array is empty whenever we make a web service call
+                        translatedNames.clear();
+                        nameAdapter.notifyDataSetChanged();
+
+                        if (translationButton.isChecked()) {
                             // Retrieve the translations from web service call only if translations button checked
                             JSONObject translationsObject = jObject.getJSONObject("translations");
 
@@ -232,7 +235,7 @@ public class WebServiceActivity extends AppCompatActivity {
                             // Get recycler view from layout, set layout and adapter
                             namesRecyclerView = findViewById(R.id.nameRecyclerView);
                             namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
-                            namesRecyclerView.setAdapter(new NameAdapter(translatedNames, WebServiceActivity.this));
+                            namesRecyclerView.setAdapter(nameAdapter);
 
                             // yutong's temp translation implementation
 //                            String translationString = jObject.getJSONObject("translations")
