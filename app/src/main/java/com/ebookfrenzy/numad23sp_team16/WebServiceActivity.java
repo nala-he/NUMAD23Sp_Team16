@@ -196,15 +196,51 @@ public class WebServiceActivity extends AppCompatActivity {
                             flagImageView.setImageBitmap(flag);
                         }
                         if (translationButton.isChecked()) {
-                            String translationString = jObject.getJSONObject("translations")
-                                    .toString().replace("{", "")
-                                    .replace("-", "")
-                                    .replace("\"", "")
-                                    .replace(":", ": ")
-                                    .replace("},", "\n")
-                                    .replace("}", "");
-                            translationTextView.setText("Translations:\n"
-                                    + translationString);
+                            // Retrieve the translations from web service call only if translations button checked
+                            JSONObject translationsObject = jObject.getJSONObject("translations");
+
+                            // Iterate through each language to get translation
+                            Iterator<String> iter = translationsObject.keys();
+
+                            // Create set to store translated strings to avoid duplicates
+                            Set<String> noDuplicates = new HashSet<>();
+
+                            while(iter.hasNext()) {
+                                String key = iter.next();
+                                try {
+                                    JSONObject value = translationsObject.getJSONObject(key);
+                                    String name = value.getString("official");
+
+                                    // Store translated string in our set
+                                    noDuplicates.add(name);
+
+                                } catch (JSONException e) {
+                                    Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            // Convert non-duplicated translated names to array as Name objects
+                            for (String s : noDuplicates) {
+                                // Create new Name object
+                                Name translation = new Name(s);
+                                translatedNames.add(translation);
+                            }
+
+                            // Get recycler view from layout, set layout and adapter
+                            namesRecyclerView = findViewById(R.id.nameRecyclerView);
+                            namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
+                            namesRecyclerView.setAdapter(new NameAdapter(translatedNames, WebServiceActivity.this));
+
+                            // yutong's temp translation implementation
+//                            String translationString = jObject.getJSONObject("translations")
+//                                    .toString().replace("{", "")
+//                                    .replace("-", "")
+//                                    .replace("\"", "")
+//                                    .replace(":", ": ")
+//                                    .replace("},", "\n")
+//                                    .replace("}", "");
+//                            translationTextView.setText("Translations:\n"
+//                                    + translationString);
                         }
 
 
@@ -214,42 +250,6 @@ public class WebServiceActivity extends AppCompatActivity {
                         //String officialName = countryName.getString("official");
                         //officialNameText.setText(officialName);
 
-
-                        // Retrieve the translations from web service call only if translations button checked
-                        // TODO: Add if statement to check if translations button checked
-                        JSONObject translationsObject = jObject.getJSONObject("translations");
-
-                        // Iterate through each language to get translation
-                        Iterator<String> iter = translationsObject.keys();
-
-                        // Create set to store translated strings to avoid duplicates
-                        Set<String> noDuplicates = new HashSet<>();
-
-                        while(iter.hasNext()) {
-                            String key = iter.next();
-                            try {
-                                JSONObject value = translationsObject.getJSONObject(key);
-                                String name = value.getString("official");
-
-                                // Store translated string in our set
-                                noDuplicates.add(name);
-
-                            } catch (JSONException e) {
-                                Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        // Convert non-duplicated translated names to array as Name objects
-                        for (String s : noDuplicates) {
-                            // Create new Name object
-                            Name translation = new Name(s);
-                            translatedNames.add(translation);
-                        }
-
-                        // Get recycler view from layout, set layout and adapter
-                        namesRecyclerView = findViewById(R.id.nameRecyclerView);
-                        namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
-                        namesRecyclerView.setAdapter(new NameAdapter(translatedNames, WebServiceActivity.this));
 
 
                     } catch (Exception e) {
