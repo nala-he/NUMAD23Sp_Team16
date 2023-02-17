@@ -125,7 +125,8 @@ public class WebServiceActivity extends AppCompatActivity {
                 String input;
                 {
                     try {
-                        input = NetworkUtil.validInput(countryEditText.getText().toString());
+                        //add trim() so that extra space after country name won't be recognized as invalid name
+                        input = NetworkUtil.validInput(countryEditText.getText().toString().trim());
                     } catch (NetworkUtil.MyException e) {
                         runOnUiThread(new Runnable() {
                             public void run() {
