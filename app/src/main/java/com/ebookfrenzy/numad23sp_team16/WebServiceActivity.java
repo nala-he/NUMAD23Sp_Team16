@@ -1,5 +1,6 @@
 package com.ebookfrenzy.numad23sp_team16;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
@@ -54,11 +55,13 @@ public class WebServiceActivity extends AppCompatActivity {
 
     //private TextView officialNameText;
 
-    // Create array to hold translated names
     private List<Name> translatedNames = new ArrayList<>();
-
     private RecyclerView namesRecyclerView;
     private NameAdapter nameAdapter = new NameAdapter(translatedNames, WebServiceActivity.this);
+
+    String officialName;
+    String capitalName;
+    String currencyString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +73,8 @@ public class WebServiceActivity extends AppCompatActivity {
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
         currencyTextView = (TextView)findViewById(R.id.currency_textview);
         flagImageView = (ImageView)findViewById(R.id.flag_imageview);
+        namesRecyclerView = findViewById(R.id.nameRecyclerView);
         // officialNameText = findViewById(R.id.officialNameText);
-
-
 
         // temporary translation view, need to be updated to recyclerView
         translationTextView = (TextView)findViewById(R.id.temp_translation_textview);
@@ -171,19 +173,19 @@ public class WebServiceActivity extends AppCompatActivity {
                         // call the region of the given country from restcountry api
 //                        result_view.setText(jObject.getString("region"));
                         // display the country name
-                        countryTextView.setText("Official Name: " + jObject.getJSONObject("name")
-                                .getString("official"));
+                        officialName = jObject.getJSONObject("name").getString("official");
+                        countryTextView.setText("Official Name: " + officialName);
 
                         if (capitalButton.isChecked()) {
                             // call the capital info from rest country api
                             JSONArray capitalArray = jObject.getJSONArray("capital");
-                            capitalTextView.setText("Capital: " + capitalArray.getString(0)
-                                    .replace(",\n", ","));
+                            capitalName = capitalArray.getString(0).replace(",\n", ",");
+                            capitalTextView.setText("Capital: " + capitalName);
                         }
                         if (currencyButton.isChecked()) {
                             // call the currency info from rest country api
                             JSONObject currencyObject = jObject.getJSONObject("currencies");
-                            String currencyString = currencyObject.toString()
+                            currencyString = currencyObject.toString()
                                     .replace("{", "")
                                     .replace("}", "")
                                     .replace("\"", "")
@@ -233,7 +235,6 @@ public class WebServiceActivity extends AppCompatActivity {
                             }
 
                             // Get recycler view from layout, set layout and adapter
-                            namesRecyclerView = findViewById(R.id.nameRecyclerView);
                             namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
                             namesRecyclerView.setAdapter(nameAdapter);
 
@@ -277,6 +278,94 @@ public class WebServiceActivity extends AppCompatActivity {
                         Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        }
+    }
+
+
+    // Device rotated: continue to display country info
+    // Handling Orientation Changes on Android
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        int size = translatedNames == null ? 0 : translatedNames.size();
+
+        // Store switch buttons (checked vs. not checked)
+        outState.putBoolean("CAPITAL_BUTTON", capitalButton.isChecked());
+        outState.putBoolean("CURRENCY_BUTTON", currencyButton.isChecked());
+        outState.putBoolean("FLAG_BUTTON", flagButton.isChecked());
+        outState.putBoolean("TRANSLATION_BUTTON", translationButton.isChecked());
+
+        // Store official name, capital, and currency
+        outState.putString("OFFICIAL_NAME", officialName);
+        outState.putString("CAPITAL", capitalName);
+        outState.putString("CURRENCY", currencyString);
+
+        // Store translations
+        // Store size of list as key-value pair
+        outState.putInt("NUMBER_ITEMS", size);
+
+        // Store current list of translated names as key-value pairs
+        // Generate unique key for each item and store as key-value pair
+        for (int i = 0; i < size; i++) {
+            // put name info into instance
+            outState.putString("name" + i, translatedNames.get(i).getName());
+        }
+
+        // Call superclass to save the view hierarchy state
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore buttons
+        Boolean capitalChecked = savedInstanceState.getBoolean("CAPITAL_BUTTON");
+        Boolean currencyChecked = savedInstanceState.getBoolean("CURRENCY_BUTTON");
+        Boolean flagChecked = savedInstanceState.getBoolean("FLAG_BUTTON");
+        Boolean translationChecked = savedInstanceState.getBoolean("TRANSLATION_BUTTON");
+
+        // Restore official name
+        officialName = savedInstanceState.getString("OFFICIAL_NAME");
+        if (officialName != null) {
+            countryTextView.setText("Official Name: " + officialName);
+        }
+
+
+        // Restore capital
+        if (capitalChecked) {
+            capitalName = savedInstanceState.getString("CAPITAL");
+
+            if (capitalName != null) {
+                capitalTextView.setText("Capital: " + capitalName);
+            }
+        }
+
+        // Restore currency
+        if (currencyChecked) {
+            currencyString = savedInstanceState.getString("CURRENCY");
+
+            if (currencyString != null) {
+                currencyTextView.setText("Currency: " + currencyString);
+            }
+        }
+
+        // Restore translations
+        if (translationChecked) {
+            // Get size of list from key-value pair
+            int size = savedInstanceState.getInt("NUMBER_ITEMS");
+
+            if (size != 0) {
+                // Retrieve keys we stored in the instance
+                for (int i = 0; i < size; i++) {
+                    String name = savedInstanceState.getString("name" + i);
+
+                    // Create and add new link card based on stored instance
+                    Name translatedName = new Name(name);
+                    translatedNames.add(translatedName);
+                }
+                namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
+                namesRecyclerView.setAdapter(nameAdapter);
             }
         }
     }
