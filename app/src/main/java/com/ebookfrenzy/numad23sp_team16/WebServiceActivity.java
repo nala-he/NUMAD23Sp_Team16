@@ -47,6 +47,10 @@ public class WebServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_service);
 
+        // use constraintSet for dynamic layout instead
+//        WebServiceConstraintLayout webServiceConstraintLayout = new WebServiceConstraintLayout(this);
+//        setContentView(webServiceConstraintLayout);
+
         countryEditText = (EditText)findViewById(R.id.country_edittext);
         countryTextView = (TextView)findViewById(R.id.country_textview);
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
