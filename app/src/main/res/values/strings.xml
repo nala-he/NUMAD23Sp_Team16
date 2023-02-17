@@ -14,4 +14,5 @@
     <string name="flag_sample">flag_sample</string>
     <string name="flag">Flag:</string>
     <string name="official_name">Official Name:</string>
+    <string name="translations">Translations:</string>
 </resources>

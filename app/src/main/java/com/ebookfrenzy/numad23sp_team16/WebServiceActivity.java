@@ -31,6 +31,10 @@ public class WebServiceActivity extends AppCompatActivity {
     private TextView capitalTextView;
     private TextView currencyTextView;
     private ImageView flagImageView;
+
+    // temporary translation view, need to be updated to recyclerView
+    private TextView translationTextView;
+
     private Handler textHandler = new Handler();
 
     private SwitchCompat capitalButton;
@@ -48,6 +52,10 @@ public class WebServiceActivity extends AppCompatActivity {
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
         currencyTextView = (TextView)findViewById(R.id.currency_textview);
         flagImageView = (ImageView)findViewById(R.id.flag_imageview);
+
+        // temporary translation view, need to be updated to recyclerView
+        translationTextView = (TextView)findViewById(R.id.temp_translation_textview);
+
         capitalButton = findViewById(R.id.capital_switch_button);
         currencyButton = findViewById(R.id.currency_switch_button);
         flagButton = findViewById(R.id.flag_switch_button);
@@ -61,6 +69,10 @@ public class WebServiceActivity extends AppCompatActivity {
         capitalTextView.setText("Capital: ");
         currencyTextView.setText("Currency: ");
         flagImageView.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.flag));
+
+        // to be updated after implementing recycler view
+        translationTextView.setText("Translations: ");
+
         new Thread(runnableThread).start();
     }
 
@@ -162,6 +174,17 @@ public class WebServiceActivity extends AppCompatActivity {
                             // set the flag info from rest country api (cannot call it here in main
                             // activity, need to be done in a thread above)
                             flagImageView.setImageBitmap(flag);
+                        }
+                        if (translationButton.isChecked()) {
+                            String translationString = jObject.getJSONObject("translations")
+                                    .toString().replace("{", "")
+                                    .replace("-", "")
+                                    .replace("\"", "")
+                                    .replace(":", ": ")
+                                    .replace("},", "\n")
+                                    .replace("}", "");
+                            translationTextView.setText("Translations:\n"
+                                    + translationString);
                         }
                     } catch (Exception e) {
                         // commented out this part to avoid repetitive exception toast messages showing up
