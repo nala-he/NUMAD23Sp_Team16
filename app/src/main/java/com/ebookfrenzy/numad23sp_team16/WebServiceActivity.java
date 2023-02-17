@@ -33,6 +33,9 @@ public class WebServiceActivity extends AppCompatActivity {
     private Handler textHandler = new Handler();
     private JSONObject jObject;
 
+    // Create array to hold translated names
+    List<String> translatedNames = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,9 +135,6 @@ public class WebServiceActivity extends AppCompatActivity {
                         // TODO: Add if statement to check if translations button checked
                         JSONObject translationsObject = jObject.getJSONObject("translations");
 
-                        // Create array to hold translated names
-                        List<String> translatedNames = new ArrayList<>();
-
                         // Iterate through each language to get translation
                         Iterator<String> iter = translationsObject.keys();
                         while(iter.hasNext()) {
@@ -149,7 +149,7 @@ public class WebServiceActivity extends AppCompatActivity {
                             }
                         }
 
-                        // Remove duplicate translations from array
+                        // Remove duplicate translations from array of names
                         Set<String> removedDuplicates = new HashSet<>(translatedNames);
                         translatedNames.clear();
                         translatedNames.addAll(removedDuplicates);
