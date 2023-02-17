@@ -1,6 +1,8 @@
 package com.ebookfrenzy.numad23sp_team16;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,12 +31,15 @@ public class WebServiceActivity extends AppCompatActivity {
 
     private EditText countryEditText ;
     private TextView capitalTextView ;
+    private TextView officialNameText;
 //    private TextView currencyTextView;
     private Handler textHandler = new Handler();
     private JSONObject jObject;
 
     // Create array to hold translated names
-    List<String> translatedNames = new ArrayList<>();
+    private List<Name> translatedNames = new ArrayList<>();
+
+    private RecyclerView namesRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,9 @@ public class WebServiceActivity extends AppCompatActivity {
         countryEditText = (EditText)findViewById(R.id.country_edittext);
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
 //        currencyTextView = (TextView)findViewById(R.id.currency_textview);
+        officialNameText = findViewById(R.id.officialNameText);
+
+
 
     }
 
@@ -125,10 +133,11 @@ public class WebServiceActivity extends AppCompatActivity {
 //                        JSONObject currencyObject = jObject.getJSONObject("currencies");
 //                        currencyTextView.setText(currencyObject.getString("name"));
 
-
+                        // TODO: DISPLAY OFFICIAL NAME
                         // Retrieve official name of country
                         JSONObject countryName = jObject.getJSONObject("name");
                         String officialName = countryName.getString("official");
+                        officialNameText.setText(officialName);
 
 
                         // Retrieve the translations from web service call only if translations button checked
@@ -137,23 +146,35 @@ public class WebServiceActivity extends AppCompatActivity {
 
                         // Iterate through each language to get translation
                         Iterator<String> iter = translationsObject.keys();
+
+                        // Create set to store translated strings to avoid duplicates
+                        Set<String> noDuplicates = new HashSet<>();
+
                         while(iter.hasNext()) {
                             String key = iter.next();
                             try {
                                 JSONObject value = translationsObject.getJSONObject(key);
                                 String name = value.getString("official");
-                                // Store translated official name in our array
-                                translatedNames.add(name);
+
+                                // Store translated string in our set
+                                noDuplicates.add(name);
+
                             } catch (JSONException e) {
                                 Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                             }
                         }
 
-                        // Remove duplicate translations from array of names
-                        Set<String> removedDuplicates = new HashSet<>(translatedNames);
-                        translatedNames.clear();
-                        translatedNames.addAll(removedDuplicates);
+                        // Convert non-duplicated translated names to array as Name objects
+                        for (String s : noDuplicates) {
+                            // Create new Name object
+                            Name translation = new Name(s);
+                            translatedNames.add(translation);
+                        }
 
+                        // Get recycler view from layout, set layout and adapter
+                        namesRecyclerView = findViewById(R.id.nameRecyclerView);
+                        namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
+                        namesRecyclerView.setAdapter(new NameAdapter(translatedNames, WebServiceActivity.this));
 
 
                     } catch (Exception e) {
