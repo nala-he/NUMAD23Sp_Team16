@@ -26,8 +26,9 @@ import java.net.URL;
 
 public class WebServiceActivity extends AppCompatActivity {
 
-    private EditText countryEditText ;
-    private TextView capitalTextView ;
+    private EditText countryEditText;
+    private TextView countryTextView;
+    private TextView capitalTextView;
     private TextView currencyTextView;
     private ImageView flagImageView;
     private Handler textHandler = new Handler();
@@ -43,6 +44,7 @@ public class WebServiceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_web_service);
 
         countryEditText = (EditText)findViewById(R.id.country_edittext);
+        countryTextView = (TextView)findViewById(R.id.country_textview);
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
         currencyTextView = (TextView)findViewById(R.id.currency_textview);
         flagImageView = (ImageView)findViewById(R.id.flag_imageview);
@@ -55,6 +57,7 @@ public class WebServiceActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     public void callWebserviceButtonHandler(View view) {
         runnableThread runnableThread = new runnableThread();
+        countryTextView.setText("Official Name: ");
         capitalTextView.setText("Capital: ");
         currencyTextView.setText("Currency: ");
         flagImageView.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.flag));
@@ -134,6 +137,9 @@ public class WebServiceActivity extends AppCompatActivity {
                     try {
                         // call the region of the given country from restcountry api
 //                        result_view.setText(jObject.getString("region"));
+                        // display the country name
+                        countryTextView.setText("Official Name: " + jObject.getJSONObject("name")
+                                .getString("official"));
 
                         if (capitalButton.isChecked()) {
                             // call the capital info from rest country api
