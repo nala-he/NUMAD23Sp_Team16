@@ -3,4 +3,16 @@
     <string name="team16">Team16</string>
     <string name="a6_at_your_service_button">A6 At Your Service</string>
     <string name="country_name">Country Name:</string>
+    <string name="ping_web_service_button">Ping Web Service</string>
+    <string name="show_list_of_translations">Show list of translations</string>
+    <string name="show_currency">Show currency</string>
+    <string name="show_flag">Show flag</string>
+    <string name="show_capital_city">Show capital city</string>
+    <string name="united_states">United States</string>
+    <string name="capital">Capital:</string>
+    <string name="currency">Currency:</string>
+    <string name="flag_sample">flag_sample</string>
+    <string name="flag">Flag:</string>
+    <string name="official_name">Official Name:</string>
+    <string name="translations">Translations:</string>
 </resources>
