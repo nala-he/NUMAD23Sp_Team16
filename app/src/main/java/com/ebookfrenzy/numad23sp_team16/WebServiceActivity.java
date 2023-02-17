@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -59,9 +60,21 @@ public class WebServiceActivity extends AppCompatActivity {
     private RecyclerView namesRecyclerView;
     private NameAdapter nameAdapter = new NameAdapter(translatedNames, WebServiceActivity.this);
 
-    String officialName;
-    String capitalName;
-    String currencyString;
+    private String officialName;
+    private String capitalName;
+    private String currencyString;
+    Boolean capitalChecked;
+    Boolean currencyChecked;
+    Boolean flagChecked;
+    Boolean translationChecked;
+    static final String CAPITAL_BUTTON = "CAPITAL_BUTTON";
+    static final String CURRENCY_BUTTON = "CURRENCY_BUTTON";
+    static final String FLAG_BUTTON = "FLAG_BUTTON";
+    static final String TRANSLATION_BUTTON = "TRANSLATION_BUTTON";
+    static final String OFFICIAL_NAME = "OFFICIAL_NAME";
+    static final String CAPITAL = "CAPITAL";
+    static final String CURRENCY = "CURRENCY";
+    static final String NUMBER_ITEMS = "NUMBER_ITEMS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,13 +189,19 @@ public class WebServiceActivity extends AppCompatActivity {
                         officialName = jObject.getJSONObject("name").getString("official");
                         countryTextView.setText("Official Name: " + officialName);
 
-                        if (capitalButton.isChecked()) {
+                        // Store switch states for each ping
+                        capitalChecked = capitalButton.isChecked();
+                        currencyChecked = currencyButton.isChecked();
+                        flagChecked = flagButton.isChecked();
+                        translationChecked = translationButton.isChecked();
+
+                        if (capitalChecked) {
                             // call the capital info from rest country api
                             JSONArray capitalArray = jObject.getJSONArray("capital");
                             capitalName = capitalArray.getString(0).replace(",\n", ",");
                             capitalTextView.setText("Capital: " + capitalName);
                         }
-                        if (currencyButton.isChecked()) {
+                        if (currencyChecked) {
                             // call the currency info from rest country api
                             JSONObject currencyObject = jObject.getJSONObject("currencies");
                             currencyString = currencyObject.toString()
@@ -193,7 +212,7 @@ public class WebServiceActivity extends AppCompatActivity {
                                     .replace(",", ", ");
                             currencyTextView.setText("Currency: " + currencyString);
                         }
-                        if (flagButton.isChecked()) {
+                        if (flagChecked) {
                             // set the flag info from rest country api (cannot call it here in main
                             // activity, need to be done in a thread above)
                             flagImageView.setImageBitmap(flag);
@@ -203,7 +222,7 @@ public class WebServiceActivity extends AppCompatActivity {
                         translatedNames.clear();
                         nameAdapter.notifyDataSetChanged();
 
-                        if (translationButton.isChecked()) {
+                        if (translationChecked) {
                             // Retrieve the translations from web service call only if translations button checked
                             JSONObject translationsObject = jObject.getJSONObject("translations");
 
@@ -290,19 +309,19 @@ public class WebServiceActivity extends AppCompatActivity {
         int size = translatedNames == null ? 0 : translatedNames.size();
 
         // Store switch buttons (checked vs. not checked)
-        outState.putBoolean("CAPITAL_BUTTON", capitalButton.isChecked());
-        outState.putBoolean("CURRENCY_BUTTON", currencyButton.isChecked());
-        outState.putBoolean("FLAG_BUTTON", flagButton.isChecked());
-        outState.putBoolean("TRANSLATION_BUTTON", translationButton.isChecked());
+        outState.putBoolean(CAPITAL_BUTTON, capitalChecked);
+        outState.putBoolean(CURRENCY_BUTTON, currencyChecked);
+        outState.putBoolean(FLAG_BUTTON, flagChecked);
+        outState.putBoolean(TRANSLATION_BUTTON, translationChecked);
 
         // Store official name, capital, and currency
-        outState.putString("OFFICIAL_NAME", officialName);
-        outState.putString("CAPITAL", capitalName);
-        outState.putString("CURRENCY", currencyString);
+        outState.putString(OFFICIAL_NAME, officialName);
+        outState.putString(CAPITAL, capitalName);
+        outState.putString(CURRENCY, currencyString);
 
         // Store translations
         // Store size of list as key-value pair
-        outState.putInt("NUMBER_ITEMS", size);
+        outState.putInt(NUMBER_ITEMS, size);
 
         // Store current list of translated names as key-value pairs
         // Generate unique key for each item and store as key-value pair
@@ -319,14 +338,16 @@ public class WebServiceActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        //callWebserviceButtonHandler(new View(WebServiceActivity.this));
+
         // Restore buttons
-        Boolean capitalChecked = savedInstanceState.getBoolean("CAPITAL_BUTTON");
-        Boolean currencyChecked = savedInstanceState.getBoolean("CURRENCY_BUTTON");
-        Boolean flagChecked = savedInstanceState.getBoolean("FLAG_BUTTON");
-        Boolean translationChecked = savedInstanceState.getBoolean("TRANSLATION_BUTTON");
+        capitalChecked = savedInstanceState.getBoolean(CAPITAL_BUTTON);
+        currencyChecked = savedInstanceState.getBoolean(CURRENCY_BUTTON);
+        flagChecked = savedInstanceState.getBoolean(FLAG_BUTTON);
+        translationChecked = savedInstanceState.getBoolean(TRANSLATION_BUTTON);
 
         // Restore official name
-        officialName = savedInstanceState.getString("OFFICIAL_NAME");
+        officialName = savedInstanceState.getString(OFFICIAL_NAME);
         if (officialName != null) {
             countryTextView.setText("Official Name: " + officialName);
         }
@@ -334,7 +355,7 @@ public class WebServiceActivity extends AppCompatActivity {
 
         // Restore capital
         if (capitalChecked) {
-            capitalName = savedInstanceState.getString("CAPITAL");
+            capitalName = savedInstanceState.getString(CAPITAL);
 
             if (capitalName != null) {
                 capitalTextView.setText("Capital: " + capitalName);
@@ -343,7 +364,7 @@ public class WebServiceActivity extends AppCompatActivity {
 
         // Restore currency
         if (currencyChecked) {
-            currencyString = savedInstanceState.getString("CURRENCY");
+            currencyString = savedInstanceState.getString(CURRENCY);
 
             if (currencyString != null) {
                 currencyTextView.setText("Currency: " + currencyString);
@@ -353,7 +374,7 @@ public class WebServiceActivity extends AppCompatActivity {
         // Restore translations
         if (translationChecked) {
             // Get size of list from key-value pair
-            int size = savedInstanceState.getInt("NUMBER_ITEMS");
+            int size = savedInstanceState.getInt(NUMBER_ITEMS);
 
             if (size != 0) {
                 // Retrieve keys we stored in the instance
