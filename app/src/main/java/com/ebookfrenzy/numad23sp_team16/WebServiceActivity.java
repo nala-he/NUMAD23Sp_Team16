@@ -48,6 +48,7 @@ public class WebServiceActivity extends AppCompatActivity {
     private TextView translationTextView;
 
     private Handler textHandler = new Handler();
+    private Handler imageHandler = new Handler();
 
     private SwitchCompat capitalButton;
     private SwitchCompat currencyButton;
@@ -60,9 +61,11 @@ public class WebServiceActivity extends AppCompatActivity {
     private RecyclerView namesRecyclerView;
     private NameAdapter nameAdapter = new NameAdapter(translatedNames, WebServiceActivity.this);
 
+    private Bitmap flag;
     private String officialName;
     private String capitalName;
     private String currencyString;
+    private String pngUrl;
     Boolean capitalChecked;
     Boolean currencyChecked;
     Boolean flagChecked;
@@ -74,6 +77,7 @@ public class WebServiceActivity extends AppCompatActivity {
     static final String OFFICIAL_NAME = "OFFICIAL_NAME";
     static final String CAPITAL = "CAPITAL";
     static final String CURRENCY = "CURRENCY";
+    static final String FLAG_URL = "FLAG_URL";
     static final String NUMBER_ITEMS = "NUMBER_ITEMS";
 
     @Override
@@ -146,7 +150,6 @@ public class WebServiceActivity extends AppCompatActivity {
 
                 // Get String response from the url address
                 String resp;
-                Bitmap flag;
                 JSONObject jObject;
                 {
                     try {
@@ -156,7 +159,7 @@ public class WebServiceActivity extends AppCompatActivity {
 
                         // Obtain the flag image from the url address
                         JSONObject flagObject = jObject.getJSONObject("flags");
-                        String pngUrl = flagObject.getString("png");
+                        pngUrl = flagObject.getString("png");
                         URL url = new URL(pngUrl);
                         flag = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
@@ -301,6 +304,25 @@ public class WebServiceActivity extends AppCompatActivity {
         }
     }
 
+    // Create new worker thread for decoding image url to bitmap
+    class urlToBitmapThread implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                URL url = new URL(pngUrl);
+                flag = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
+                imageHandler.post(() -> {
+                    flagImageView.setImageBitmap(flag);
+                });
+            } catch (IOException e) {
+                Toast.makeText(WebServiceActivity.this, "Unable to load flag image",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 
     // Device rotated: continue to display country info
     // Handling Orientation Changes on Android
@@ -308,16 +330,17 @@ public class WebServiceActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         int size = translatedNames == null ? 0 : translatedNames.size();
 
-        // Store switch buttons (checked vs. not checked)
+        // Store switch button states (checked vs. not checked) AFTER ping has been made
         outState.putBoolean(CAPITAL_BUTTON, capitalChecked);
         outState.putBoolean(CURRENCY_BUTTON, currencyChecked);
         outState.putBoolean(FLAG_BUTTON, flagChecked);
         outState.putBoolean(TRANSLATION_BUTTON, translationChecked);
 
-        // Store official name, capital, and currency
+        // Store official name, capital, currency, and flag png url
         outState.putString(OFFICIAL_NAME, officialName);
         outState.putString(CAPITAL, capitalName);
         outState.putString(CURRENCY, currencyString);
+        outState.putString(FLAG_URL, pngUrl);
 
         // Store translations
         // Store size of list as key-value pair
@@ -338,8 +361,6 @@ public class WebServiceActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        //callWebserviceButtonHandler(new View(WebServiceActivity.this));
-
         // Restore buttons
         capitalChecked = savedInstanceState.getBoolean(CAPITAL_BUTTON);
         currencyChecked = savedInstanceState.getBoolean(CURRENCY_BUTTON);
@@ -351,7 +372,6 @@ public class WebServiceActivity extends AppCompatActivity {
         if (officialName != null) {
             countryTextView.setText("Official Name: " + officialName);
         }
-
 
         // Restore capital
         if (capitalChecked) {
@@ -368,6 +388,16 @@ public class WebServiceActivity extends AppCompatActivity {
 
             if (currencyString != null) {
                 currencyTextView.setText("Currency: " + currencyString);
+            }
+        }
+
+        // Restore flag
+        if (flagChecked) {
+            pngUrl = savedInstanceState.getString(FLAG_URL);
+
+            if (pngUrl != null) {
+                urlToBitmapThread runnableThread = new urlToBitmapThread();
+                new Thread(runnableThread).start();
             }
         }
 
