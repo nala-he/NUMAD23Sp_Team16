@@ -196,6 +196,9 @@ public class WebServiceActivity extends AppCompatActivity {
                             flagImageView.setImageBitmap(flag);
                         }
                         if (translationButton.isChecked()) {
+                            // Ensure translated names array is empty whenever we make a web service call
+                            translatedNames.clear();
+
                             // Retrieve the translations from web service call only if translations button checked
                             JSONObject translationsObject = jObject.getJSONObject("translations");
 
