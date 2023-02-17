@@ -1,8 +1,11 @@
 package com.ebookfrenzy.numad23sp_team16;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -10,7 +13,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,8 +30,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class WebServiceActivity extends AppCompatActivity {
+    private static final String TAG = "WebServiceActivity";
 
     private EditText countryEditText;
     private ProgressBar progressBar;
@@ -38,11 +50,37 @@ public class WebServiceActivity extends AppCompatActivity {
     private TextView translationTextView;
 
     private Handler textHandler = new Handler();
+    private Handler imageHandler = new Handler();
 
     private SwitchCompat capitalButton;
     private SwitchCompat currencyButton;
     private SwitchCompat flagButton;
     private SwitchCompat translationButton;
+
+    //private TextView officialNameText;
+
+    private List<Name> translatedNames = new ArrayList<>();
+    private RecyclerView namesRecyclerView;
+    private NameAdapter nameAdapter = new NameAdapter(translatedNames, WebServiceActivity.this);
+
+    private Bitmap flag;
+    private String officialName;
+    private String capitalName;
+    private String currencyString;
+    private String pngUrl;
+    Boolean capitalChecked = false;
+    Boolean currencyChecked = false;
+    Boolean flagChecked = false;
+    Boolean translationChecked = false;
+    static final String CAPITAL_BUTTON = "CAPITAL_BUTTON";
+    static final String CURRENCY_BUTTON = "CURRENCY_BUTTON";
+    static final String FLAG_BUTTON = "FLAG_BUTTON";
+    static final String TRANSLATION_BUTTON = "TRANSLATION_BUTTON";
+    static final String OFFICIAL_NAME = "OFFICIAL_NAME";
+    static final String CAPITAL = "CAPITAL";
+    static final String CURRENCY = "CURRENCY";
+    static final String FLAG_URL = "FLAG_URL";
+    static final String NUMBER_ITEMS = "NUMBER_ITEMS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +96,8 @@ public class WebServiceActivity extends AppCompatActivity {
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
         currencyTextView = (TextView)findViewById(R.id.currency_textview);
         flagImageView = (ImageView)findViewById(R.id.flag_imageview);
+        namesRecyclerView = findViewById(R.id.nameRecyclerView);
+        // officialNameText = findViewById(R.id.officialNameText);
 
         // temporary translation view, need to be updated to recyclerView
         translationTextView = (TextView)findViewById(R.id.temp_translation_textview);
@@ -122,7 +162,6 @@ public class WebServiceActivity extends AppCompatActivity {
 
                 // Get String response from the url address
                 String resp;
-                Bitmap flag;
                 JSONObject jObject;
                 {
                     try {
@@ -132,7 +171,7 @@ public class WebServiceActivity extends AppCompatActivity {
 
                         // Obtain the flag image from the url address
                         JSONObject flagObject = jObject.getJSONObject("flags");
-                        String pngUrl = flagObject.getString("png");
+                        pngUrl = flagObject.getString("png");
                         URL url = new URL(pngUrl);
                         flag = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
@@ -164,19 +203,25 @@ public class WebServiceActivity extends AppCompatActivity {
                         // call the region of the given country from restcountry api
 //                        result_view.setText(jObject.getString("region"));
                         // display the country name
-                        countryTextView.setText("Official Name: " + jObject.getJSONObject("name")
-                                .getString("official"));
+                        officialName = jObject.getJSONObject("name").getString("official");
+                        countryTextView.setText("Official Name: " + officialName);
 
-                        if (capitalButton.isChecked()) {
+                        // Store switch states for each ping
+                        capitalChecked = capitalButton.isChecked();
+                        currencyChecked = currencyButton.isChecked();
+                        flagChecked = flagButton.isChecked();
+                        translationChecked = translationButton.isChecked();
+
+                        if (capitalChecked) {
                             // call the capital info from rest country api
                             JSONArray capitalArray = jObject.getJSONArray("capital");
-                            capitalTextView.setText("Capital: " + capitalArray.getString(0)
-                                    .replace(",\n", ","));
+                            capitalName = capitalArray.getString(0).replace(",\n", ",");
+                            capitalTextView.setText("Capital: " + capitalName);
                         }
-                        if (currencyButton.isChecked()) {
+                        if (currencyChecked) {
                             // call the currency info from rest country api
                             JSONObject currencyObject = jObject.getJSONObject("currencies");
-                            String currencyString = currencyObject.toString()
+                            currencyString = currencyObject.toString()
                                     .replace("{", "")
                                     .replace("}", "")
                                     .replace("\"", "")
@@ -184,21 +229,61 @@ public class WebServiceActivity extends AppCompatActivity {
                                     .replace(",", ", ");
                             currencyTextView.setText("Currency: " + currencyString);
                         }
-                        if (flagButton.isChecked()) {
+                        if (flagChecked) {
                             // set the flag info from rest country api (cannot call it here in main
                             // activity, need to be done in a thread above)
                             flagImageView.setImageBitmap(flag);
                         }
-                        if (translationButton.isChecked()) {
-                            String translationString = jObject.getJSONObject("translations")
-                                    .toString().replace("{", "")
-                                    .replace("-", "")
-                                    .replace("\"", "")
-                                    .replace(":", ": ")
-                                    .replace("},", "\n")
-                                    .replace("}", "");
-                            translationTextView.setText("Translations:\n"
-                                    + translationString);
+
+                        // Ensure translated names array is empty whenever we make a web service call
+                        translatedNames.clear();
+                        nameAdapter.notifyDataSetChanged();
+
+                        if (translationChecked) {
+                            // Retrieve the translations from web service call only if translations button checked
+                            JSONObject translationsObject = jObject.getJSONObject("translations");
+
+                            // Iterate through each language to get translation
+                            Iterator<String> iter = translationsObject.keys();
+
+                            // Create set to store translated strings to avoid duplicates
+                            Set<String> noDuplicates = new HashSet<>();
+
+                            while(iter.hasNext()) {
+                                String key = iter.next();
+                                try {
+                                    JSONObject value = translationsObject.getJSONObject(key);
+                                    String name = value.getString("official");
+
+                                    // Store translated string in our set
+                                    noDuplicates.add(name);
+
+                                } catch (JSONException e) {
+                                    Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            // Convert non-duplicated translated names to array as Name objects
+                            for (String s : noDuplicates) {
+                                // Create new Name object
+                                Name translation = new Name(s);
+                                translatedNames.add(translation);
+                            }
+
+                            // Get recycler view from layout, set layout and adapter
+                            namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
+                            namesRecyclerView.setAdapter(nameAdapter);
+
+                            // yutong's temp translation implementation
+//                            String translationString = jObject.getJSONObject("translations")
+//                                    .toString().replace("{", "")
+//                                    .replace("-", "")
+//                                    .replace("\"", "")
+//                                    .replace(":", ": ")
+//                                    .replace("},", "\n")
+//                                    .replace("}", "");
+//                            translationTextView.setText("Translations:\n"
+//                                    + translationString);
                         }
 
                         // hide the progress bar after fetching all requested info
@@ -223,6 +308,123 @@ public class WebServiceActivity extends AppCompatActivity {
                         Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        }
+    }
+
+    // Create new worker thread for decoding image url to bitmap
+    class urlToBitmapThread implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                URL url = new URL(pngUrl);
+                flag = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
+                imageHandler.post(() -> {
+                    flagImageView.setImageBitmap(flag);
+                });
+            } catch (IOException e) {
+                Toast.makeText(WebServiceActivity.this, "Unable to load flag image",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
+    // Device rotated: continue to display country info
+    // Handling Orientation Changes on Android
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        int size = translatedNames == null ? 0 : translatedNames.size();
+
+        // Store switch button states (checked vs. not checked) AFTER ping has been made
+        outState.putBoolean(CAPITAL_BUTTON, capitalChecked);
+        outState.putBoolean(CURRENCY_BUTTON, currencyChecked);
+        outState.putBoolean(FLAG_BUTTON, flagChecked);
+        outState.putBoolean(TRANSLATION_BUTTON, translationChecked);
+
+        // Store official name, capital, currency, and flag png url
+        outState.putString(OFFICIAL_NAME, officialName);
+        outState.putString(CAPITAL, capitalName);
+        outState.putString(CURRENCY, currencyString);
+        outState.putString(FLAG_URL, pngUrl);
+
+        // Store translations
+        // Store size of list as key-value pair
+        outState.putInt(NUMBER_ITEMS, size);
+
+        // Store current list of translated names as key-value pairs
+        // Generate unique key for each item and store as key-value pair
+        for (int i = 0; i < size; i++) {
+            // put name info into instance
+            outState.putString("name" + i, translatedNames.get(i).getName());
+        }
+
+        // Call superclass to save the view hierarchy state
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore buttons
+        capitalChecked = savedInstanceState.getBoolean(CAPITAL_BUTTON);
+        currencyChecked = savedInstanceState.getBoolean(CURRENCY_BUTTON);
+        flagChecked = savedInstanceState.getBoolean(FLAG_BUTTON);
+        translationChecked = savedInstanceState.getBoolean(TRANSLATION_BUTTON);
+
+        // Restore official name
+        officialName = savedInstanceState.getString(OFFICIAL_NAME);
+        if (officialName != null) {
+            countryTextView.setText("Official Name: " + officialName);
+        }
+
+        // Restore capital
+        if (capitalChecked) {
+            capitalName = savedInstanceState.getString(CAPITAL);
+
+            if (capitalName != null) {
+                capitalTextView.setText("Capital: " + capitalName);
+            }
+        }
+
+        // Restore currency
+        if (currencyChecked) {
+            currencyString = savedInstanceState.getString(CURRENCY);
+
+            if (currencyString != null) {
+                currencyTextView.setText("Currency: " + currencyString);
+            }
+        }
+
+        // Restore flag
+        if (flagChecked) {
+            pngUrl = savedInstanceState.getString(FLAG_URL);
+
+            if (pngUrl != null) {
+                urlToBitmapThread runnableThread = new urlToBitmapThread();
+                new Thread(runnableThread).start();
+            }
+        }
+
+        // Restore translations
+        if (translationChecked) {
+            // Get size of list from key-value pair
+            int size = savedInstanceState.getInt(NUMBER_ITEMS);
+
+            if (size != 0) {
+                // Retrieve keys we stored in the instance
+                for (int i = 0; i < size; i++) {
+                    String name = savedInstanceState.getString("name" + i);
+
+                    // Create and add new link card based on stored instance
+                    Name translatedName = new Name(name);
+                    translatedNames.add(translatedName);
+                }
+                namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
+                namesRecyclerView.setAdapter(nameAdapter);
             }
         }
     }
