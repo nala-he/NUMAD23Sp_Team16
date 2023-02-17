@@ -2,14 +2,17 @@ package com.ebookfrenzy.numad23sp_team16;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.Switch;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +28,9 @@ public class WebServiceActivity extends AppCompatActivity {
 
     private EditText countryEditText ;
     private TextView capitalTextView ;
-//    private TextView currencyTextView;
+    private TextView currencyTextView;
+    private ImageView flagImageView;
     private Handler textHandler = new Handler();
-    private JSONObject jObject;
 
     private SwitchCompat capitalButton;
     private SwitchCompat currencyButton;
@@ -41,7 +44,8 @@ public class WebServiceActivity extends AppCompatActivity {
 
         countryEditText = (EditText)findViewById(R.id.country_edittext);
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
-//        currencyTextView = (TextView)findViewById(R.id.currency_textview);
+        currencyTextView = (TextView)findViewById(R.id.currency_textview);
+        flagImageView = (ImageView)findViewById(R.id.flag_imageview);
         capitalButton = findViewById(R.id.capital_switch_button);
         currencyButton = findViewById(R.id.currency_switch_button);
         flagButton = findViewById(R.id.flag_switch_button);
@@ -52,9 +56,9 @@ public class WebServiceActivity extends AppCompatActivity {
     public void callWebserviceButtonHandler(View view) {
         runnableThread runnableThread = new runnableThread();
         capitalTextView.setText("Capital: ");
-
+        currencyTextView.setText("Currency: ");
+        flagImageView.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.flag));
         new Thread(runnableThread).start();
-
     }
 
     class runnableThread implements Runnable {
@@ -91,11 +95,20 @@ public class WebServiceActivity extends AppCompatActivity {
 
                 // Get String response from the url address
                 String resp;
+                Bitmap flag;
+                JSONObject jObject;
                 {
                     try {
                         resp = NetworkUtil.httpResponse(url);
                         JSONArray jArray = new JSONArray(resp);
                         jObject = jArray.getJSONObject(0);
+
+                        // Obtain the flag image from the url address
+                        JSONObject flagObject = jObject.getJSONObject("flags");
+                        String pngUrl = flagObject.getString("png");
+                        URL url = new URL(pngUrl);
+                        flag = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
                     } catch (IOException e) {
 //                        Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                         runOnUiThread(new Runnable() {
@@ -123,21 +136,33 @@ public class WebServiceActivity extends AppCompatActivity {
 //                        result_view.setText(jObject.getString("region"));
 
                         if (capitalButton.isChecked()) {
-                            // call the capital info from restcountry api
+                            // call the capital info from rest country api
                             JSONArray capitalArray = jObject.getJSONArray("capital");
-                            capitalTextView.setText("Capital: " + capitalArray.getString(0).replace(",\n", ","));
+                            capitalTextView.setText("Capital: " + capitalArray.getString(0)
+                                    .replace(",\n", ","));
                         }
-
-
-//                        JSONObject currencyObject = jObject.getJSONObject("currencies");
-//                        currencyTextView.setText(currencyObject.getString("name"));
-
+                        if (currencyButton.isChecked()) {
+                            // call the currency info from rest country api
+                            JSONObject currencyObject = jObject.getJSONObject("currencies");
+                            String currencyString = currencyObject.toString()
+                                    .replace("{", "")
+                                    .replace("}", "")
+                                    .replace("\"", "")
+                                    .replace(":", ": ")
+                                    .replace(",", ", ");
+                            currencyTextView.setText("Currency: " + currencyString);
+                        }
+                        if (flagButton.isChecked()) {
+                            // set the flag info from rest country api (cannot call it here in main
+                            // activity, need to be done in a thread above)
+                            flagImageView.setImageBitmap(flag);
+                        }
                     } catch (Exception e) {
                         // commented out this part to avoid repetitive exception toast messages showing up
                         // when the user input an invalid country name
 //                        runOnUiThread(new Runnable() {
 //                            public void run() {
-//                                Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_LONG).show();
 //                            }
 //                        });
                     }

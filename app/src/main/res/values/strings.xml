@@ -11,4 +11,6 @@
     <string name="united_states">United States</string>
     <string name="capital">Capital:</string>
     <string name="currency">Currency:</string>
+    <string name="flag_sample">flag_sample</string>
+    <string name="flag">Flag:</string>
 </resources>
