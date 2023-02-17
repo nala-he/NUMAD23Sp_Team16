@@ -66,10 +66,10 @@ public class WebServiceActivity extends AppCompatActivity {
     private String capitalName;
     private String currencyString;
     private String pngUrl;
-    Boolean capitalChecked;
-    Boolean currencyChecked;
-    Boolean flagChecked;
-    Boolean translationChecked;
+    Boolean capitalChecked = false;
+    Boolean currencyChecked = false;
+    Boolean flagChecked = false;
+    Boolean translationChecked = false;
     static final String CAPITAL_BUTTON = "CAPITAL_BUTTON";
     static final String CURRENCY_BUTTON = "CURRENCY_BUTTON";
     static final String FLAG_BUTTON = "FLAG_BUTTON";
