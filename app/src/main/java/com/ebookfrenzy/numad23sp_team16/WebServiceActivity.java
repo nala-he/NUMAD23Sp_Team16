@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,17 +33,15 @@ import java.util.List;
 import java.util.Set;
 
 public class WebServiceActivity extends AppCompatActivity {
-    private static final String TAG = "WebServiceActivity";
+//    private static final String TAG = "WebServiceActivity";
 
     private EditText countryEditText;
+    private ProgressBar progressBar;
     private TextView countryTextView;
     private TextView capitalTextView;
     private TextView currencyTextView;
     private ImageView flagImageView;
-
-    // temporary translation view, need to be updated to recyclerView
     private TextView translationTextView;
-
     private Handler textHandler = new Handler();
     private Handler imageHandler = new Handler();
 
@@ -81,21 +80,25 @@ public class WebServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_service);
 
+//        // use constraintSet for dynamic layout instead
+//        WebServiceConstraintLayout webServiceConstraintLayout = new WebServiceConstraintLayout(this);
+//        setContentView(webServiceConstraintLayout);
+
         countryEditText = (EditText)findViewById(R.id.country_edittext);
         countryTextView = (TextView)findViewById(R.id.country_textview);
         capitalTextView = (TextView)findViewById(R.id.capital_textview);
         currencyTextView = (TextView)findViewById(R.id.currency_textview);
         flagImageView = (ImageView)findViewById(R.id.flag_imageview);
         namesRecyclerView = findViewById(R.id.nameRecyclerView);
-        // officialNameText = findViewById(R.id.officialNameText);
-
-        // temporary translation view, need to be updated to recyclerView
         translationTextView = (TextView)findViewById(R.id.temp_translation_textview);
-
         capitalButton = findViewById(R.id.capital_switch_button);
         currencyButton = findViewById(R.id.currency_switch_button);
         flagButton = findViewById(R.id.flag_switch_button);
         translationButton = findViewById(R.id.translation_switch_button);
+
+        // added progress bar as active indication of the running app when fetching data from API
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
 
         //add icons
         ImageView countryIcon = findViewById(R.id.imageView_country);
@@ -106,6 +109,7 @@ public class WebServiceActivity extends AppCompatActivity {
         capitalIcon.setImageResource(R.drawable.capital);
         currencyIcon.setImageResource(R.drawable.currency);
         translationIcon.setImageResource(R.drawable.translation);
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -119,6 +123,8 @@ public class WebServiceActivity extends AppCompatActivity {
         // to be updated after implementing recycler view
         translationTextView.setText("Translations: ");
 
+        // start progress bar
+        progressBar.setVisibility(View.VISIBLE);
         new Thread(runnableThread).start();
     }
 
@@ -174,6 +180,8 @@ public class WebServiceActivity extends AppCompatActivity {
 //                        Toast.makeText(getApplication(),e.toString(),Toast.LENGTH_SHORT).show();
                         runOnUiThread(new Runnable() {
                             public void run() {
+                                // hide the progress bar
+                                progressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(getApplication(),"Please type in a full country name",Toast.LENGTH_LONG).show();
                             }
                         });
@@ -266,27 +274,10 @@ public class WebServiceActivity extends AppCompatActivity {
                             // Get recycler view from layout, set layout and adapter
                             namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
                             namesRecyclerView.setAdapter(nameAdapter);
-
-                            // yutong's temp translation implementation
-//                            String translationString = jObject.getJSONObject("translations")
-//                                    .toString().replace("{", "")
-//                                    .replace("-", "")
-//                                    .replace("\"", "")
-//                                    .replace(":", ": ")
-//                                    .replace("},", "\n")
-//                                    .replace("}", "");
-//                            translationTextView.setText("Translations:\n"
-//                                    + translationString);
                         }
 
-
-                        // Commented out - implemented by yutong
-                        // Retrieve official name of country
-                        //JSONObject countryName = jObject.getJSONObject("name");
-                        //String officialName = countryName.getString("official");
-                        //officialNameText.setText(officialName);
-
-
+                        // hide the progress bar after fetching all requested info
+                        progressBar.setVisibility(View.INVISIBLE);
 
                     } catch (Exception e) {
                         // commented out this part to avoid repetitive exception toast messages showing up
