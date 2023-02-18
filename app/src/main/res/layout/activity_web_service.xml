@@ -126,7 +126,6 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="5dp"
-
             android:contentDescription="@string/country_name"
             android:text="@string/official_name"
             app:layout_constraintBottom_toTopOf="@+id/capital_textview"
@@ -143,7 +142,6 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="5dp"
-
             android:contentDescription="@string/capital"
             android:text="@string/capital"
             app:layout_constraintBottom_toTopOf="@+id/currency_textview"
@@ -253,12 +251,12 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginLeft="28dp"
-            android:layout_marginTop="68dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toStartOf="@+id/country_textview"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currency_switch_button"
+            app:layout_constraintTop_toBottomOf="@+id/progressBar"
             app:srcCompat="@drawable/country" />
 
 
