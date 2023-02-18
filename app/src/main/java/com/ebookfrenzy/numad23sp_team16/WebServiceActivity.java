@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 public class WebServiceActivity extends AppCompatActivity {
-    private static final String TAG = "WebServiceActivity";
+//    private static final String TAG = "WebServiceActivity";
 
     private EditText countryEditText;
     private ProgressBar progressBar;
@@ -45,10 +45,7 @@ public class WebServiceActivity extends AppCompatActivity {
     private TextView capitalTextView;
     private TextView currencyTextView;
     private ImageView flagImageView;
-
-    // temporary translation view, need to be updated to recyclerView
     private TextView translationTextView;
-
     private Handler textHandler = new Handler();
     private Handler imageHandler = new Handler();
 
@@ -85,11 +82,11 @@ public class WebServiceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web_service);
+//        setContentView(R.layout.activity_web_service);
 
         // use constraintSet for dynamic layout instead
-//        WebServiceConstraintLayout webServiceConstraintLayout = new WebServiceConstraintLayout(this);
-//        setContentView(webServiceConstraintLayout);
+        WebServiceConstraintLayout webServiceConstraintLayout = new WebServiceConstraintLayout(this);
+        setContentView(webServiceConstraintLayout);
 
         countryEditText = (EditText)findViewById(R.id.country_edittext);
         countryTextView = (TextView)findViewById(R.id.country_textview);
@@ -109,7 +106,7 @@ public class WebServiceActivity extends AppCompatActivity {
         // added progress bar as active indication of the running app when fetching data from API
         progressBar = findViewById(R.id.progressBar);
         // hide progress bar
-        progressBar.setVisibility(View.INVISIBLE);
+//        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @SuppressLint("SetTextI18n")
@@ -273,17 +270,6 @@ public class WebServiceActivity extends AppCompatActivity {
                             // Get recycler view from layout, set layout and adapter
                             namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
                             namesRecyclerView.setAdapter(nameAdapter);
-
-                            // yutong's temp translation implementation
-//                            String translationString = jObject.getJSONObject("translations")
-//                                    .toString().replace("{", "")
-//                                    .replace("-", "")
-//                                    .replace("\"", "")
-//                                    .replace(":", ": ")
-//                                    .replace("},", "\n")
-//                                    .replace("}", "");
-//                            translationTextView.setText("Translations:\n"
-//                                    + translationString);
                         }
 
                         // hide the progress bar after fetching all requested info
