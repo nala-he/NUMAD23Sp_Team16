@@ -10,13 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -100,6 +96,16 @@ public class WebServiceActivity extends AppCompatActivity {
         currencyButton = findViewById(R.id.currency_switch_button);
         flagButton = findViewById(R.id.flag_switch_button);
         translationButton = findViewById(R.id.translation_switch_button);
+
+        //add icons
+        ImageView countryIcon = findViewById(R.id.imageView_country);
+        ImageView currencyIcon = findViewById(R.id.imageView_currency);
+        ImageView capitalIcon = findViewById(R.id.imageView_capital);
+        ImageView translationIcon = findViewById(R.id.imageView_translation);
+        countryIcon.setImageResource(R.drawable.country);
+        capitalIcon.setImageResource(R.drawable.capital);
+        currencyIcon.setImageResource(R.drawable.currency);
+        translationIcon.setImageResource(R.drawable.translation);
     }
 
     @SuppressLint("SetTextI18n")
