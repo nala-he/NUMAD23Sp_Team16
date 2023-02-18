@@ -90,6 +90,9 @@ public class WebServiceActivity extends AppCompatActivity {
         currencyTextView = (TextView)findViewById(R.id.currency_textview);
         flagImageView = (ImageView)findViewById(R.id.flag_imageview);
         namesRecyclerView = findViewById(R.id.nameRecyclerView);
+        // Get recycler view from layout, set layout and adapter
+        namesRecyclerView.setAdapter(nameAdapter);
+        namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
         translationTextView = (TextView)findViewById(R.id.temp_translation_textview);
         capitalButton = findViewById(R.id.capital_switch_button);
         currencyButton = findViewById(R.id.currency_switch_button);
@@ -271,9 +274,6 @@ public class WebServiceActivity extends AppCompatActivity {
                                 translatedNames.add(translation);
                             }
 
-                            // Get recycler view from layout, set layout and adapter
-                            namesRecyclerView.setLayoutManager(new LinearLayoutManager(WebServiceActivity.this));
-                            namesRecyclerView.setAdapter(nameAdapter);
                         }
 
                         // hide the progress bar after fetching all requested info
