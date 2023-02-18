@@ -124,12 +124,15 @@
             android:layout_width="300dp"
             android:layout_height="28dp"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="5dp"
+
+            android:contentDescription="@string/country_name"
             android:text="@string/official_name"
             app:layout_constraintBottom_toTopOf="@+id/capital_textview"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.666"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/call_service_button" />
 
@@ -142,10 +145,11 @@
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="5dp"
 
+            android:contentDescription="@string/capital"
             android:text="@string/capital"
             app:layout_constraintBottom_toTopOf="@+id/currency_textview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintHorizontal_bias="0.666"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/country_textview" />
 
@@ -157,9 +161,11 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="5dp"
+            android:contentDescription="@string/currency"
             android:text="@string/currency"
             app:layout_constraintBottom_toTopOf="@+id/flag_imageview"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.666"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/capital_textview" />
 
@@ -181,11 +187,11 @@
             android:layout_width="303dp"
             android:layout_height="28dp"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="12dp"
             android:text="@string/translations"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.523"
+            app:layout_constraintHorizontal_bias="0.69"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/flag_imageview" />
 
@@ -194,37 +200,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
+            android:layout_marginEnd="15dp"
             android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/temp_translation_textview"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.509" />
 
-        <ImageView
-            android:id="@+id/imageView_country"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView_capital"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.034"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.944"
-            app:srcCompat="@drawable/country" />
 
         <ImageView
             android:id="@+id/imageView_currency"
-            android:layout_width="29dp"
-            android:layout_height="30dp"
-
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="40dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView_translation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.029"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/currency"
+            app:layout_constraintBottom_toBottomOf="@+id/currency_textview"
+            app:layout_constraintEnd_toStartOf="@+id/currency_textview"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/currency" />
 
@@ -232,28 +227,40 @@
             android:id="@+id/imageView_capital"
             android:layout_width="28dp"
             android:layout_height="28dp"
-
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/capital"
             app:layout_constraintBottom_toTopOf="@+id/imageView_currency"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.032"
+            app:layout_constraintEnd_toStartOf="@+id/capital_textview"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_country"
             app:srcCompat="@drawable/capital" />
 
         <ImageView
             android:id="@+id/imageView_translation"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/nameRecyclerView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.032"
+            android:layout_marginEnd="14dp"
+            android:contentDescription="@string/translations"
+            app:layout_constraintBottom_toBottomOf="@+id/temp_translation_textview"
+            app:layout_constraintEnd_toStartOf="@+id/temp_translation_textview"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.992"
             app:srcCompat="@drawable/translation" />
+
+        <ImageView
+            android:id="@+id/imageView_country"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="68dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toStartOf="@+id/country_textview"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currency_switch_button"
+            app:srcCompat="@drawable/country" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
