@@ -120,8 +120,8 @@
 
         <TextView
             android:id="@+id/country_textview"
-            android:layout_width="300dp"
-            android:layout_height="28dp"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
@@ -136,8 +136,8 @@
 
         <TextView
             android:id="@+id/capital_textview"
-            android:layout_width="300dp"
-            android:layout_height="28dp"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
@@ -152,8 +152,8 @@
 
         <TextView
             android:id="@+id/currency_textview"
-            android:layout_width="300dp"
-            android:layout_height="28dp"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
@@ -181,14 +181,14 @@
 
         <TextView
             android:id="@+id/temp_translation_textview"
-            android:layout_width="303dp"
-            android:layout_height="28dp"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="12dp"
             android:text="@string/translations"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.69"
+            app:layout_constraintHorizontal_bias="0.666"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/flag_imageview" />
 
@@ -206,19 +206,18 @@
             app:layout_constraintTop_toBottomOf="@+id/temp_translation_textview"
             app:layout_constraintVertical_bias="0.509" />
 
-
         <ImageView
-            android:id="@+id/imageView_currency"
+            android:id="@+id/imageView_country"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
-            android:contentDescription="@string/currency"
-            app:layout_constraintBottom_toBottomOf="@+id/currency_textview"
-            app:layout_constraintEnd_toStartOf="@+id/currency_textview"
+            app:layout_constraintEnd_toStartOf="@+id/country_textview"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/currency" />
+            app:layout_constraintTop_toBottomOf="@+id/progressBar"
+            app:srcCompat="@drawable/country" />
 
         <ImageView
             android:id="@+id/imageView_capital"
@@ -235,6 +234,19 @@
             app:srcCompat="@drawable/capital" />
 
         <ImageView
+            android:id="@+id/imageView_currency"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/currency"
+            app:layout_constraintBottom_toBottomOf="@+id/currency_textview"
+            app:layout_constraintEnd_toStartOf="@+id/currency_textview"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/currency" />
+
+        <ImageView
             android:id="@+id/imageView_translation"
             android:layout_width="28dp"
             android:layout_height="28dp"
@@ -245,19 +257,6 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/translation" />
-
-        <ImageView
-            android:id="@+id/imageView_country"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginLeft="28dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toStartOf="@+id/country_textview"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progressBar"
-            app:srcCompat="@drawable/country" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
