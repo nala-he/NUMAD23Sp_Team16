@@ -82,11 +82,11 @@ public class WebServiceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_web_service);
+        setContentView(R.layout.activity_web_service);
 
-        // use constraintSet for dynamic layout instead
-        WebServiceConstraintLayout webServiceConstraintLayout = new WebServiceConstraintLayout(this);
-        setContentView(webServiceConstraintLayout);
+//        // use constraintSet for dynamic layout instead
+//        WebServiceConstraintLayout webServiceConstraintLayout = new WebServiceConstraintLayout(this);
+//        setContentView(webServiceConstraintLayout);
 
         countryEditText = (EditText)findViewById(R.id.country_edittext);
         countryTextView = (TextView)findViewById(R.id.country_textview);
@@ -94,19 +94,14 @@ public class WebServiceActivity extends AppCompatActivity {
         currencyTextView = (TextView)findViewById(R.id.currency_textview);
         flagImageView = (ImageView)findViewById(R.id.flag_imageview);
         namesRecyclerView = findViewById(R.id.nameRecyclerView);
-        // officialNameText = findViewById(R.id.officialNameText);
-
-        // temporary translation view, need to be updated to recyclerView
         translationTextView = (TextView)findViewById(R.id.temp_translation_textview);
-
         capitalButton = findViewById(R.id.capital_switch_button);
         currencyButton = findViewById(R.id.currency_switch_button);
         flagButton = findViewById(R.id.flag_switch_button);
         translationButton = findViewById(R.id.translation_switch_button);
         // added progress bar as active indication of the running app when fetching data from API
         progressBar = findViewById(R.id.progressBar);
-        // hide progress bar
-//        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @SuppressLint("SetTextI18n")

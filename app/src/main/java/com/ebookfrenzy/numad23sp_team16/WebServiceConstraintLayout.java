@@ -2,6 +2,8 @@ package com.ebookfrenzy.numad23sp_team16;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
+// Not working properly as XML layouts. Keep it here as a reference for the attempt to try ConstraintSet.
 public class WebServiceConstraintLayout extends ConstraintLayout {
     TextView country_name;
     EditText country_edittext;
@@ -75,6 +78,7 @@ public class WebServiceConstraintLayout extends ConstraintLayout {
 
         progressBar = new ProgressBar(context);
         progressBar.setId(View.generateViewId());
+        progressBar.setVisibility(View.INVISIBLE);
         addView(progressBar);
 
         translation_switch_button = new SwitchCompat(context);
