@@ -51,14 +51,20 @@ public class LoginActivity extends AppCompatActivity {
 
 
         // Click on login button - checks database for user
-        // TODO: creates new user if username doesn't exist, logins as user if user exists
+        // TODO: creates new user if username doesn't exist, logs in as user if user exists
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get username from user
+                // Get username from input
                 String user = username.getText().toString();
 
                 Toast.makeText(getApplicationContext(), user, Toast.LENGTH_LONG).show();
+
+                // Check database for user
+
+                // Username exists - continue to StickItToEm activity as current user
+
+                // Username doesn't exist - create new user and continue to StickItToEm activity
             }
         });
 
