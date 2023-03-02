@@ -3,12 +3,14 @@ package edu.northeastern.numad23sp_team16;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class StickItToEmActivity extends AppCompatActivity {
 
     private final String CURRENT_USER = "CURRENT_USER";
     private String currentUser;
+    private TextView currentlyLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,8 @@ public class StickItToEmActivity extends AppCompatActivity {
             currentUser = extras.getString(CURRENT_USER);
         }
 
-        Toast.makeText(getApplicationContext(), currentUser, Toast.LENGTH_LONG).show();
+        // Set title for currently logged in user
+        currentlyLoggedIn = findViewById(R.id.currentUserTitle);
+        currentlyLoggedIn.setText("Currently Logged In: " + currentUser);
     }
 }

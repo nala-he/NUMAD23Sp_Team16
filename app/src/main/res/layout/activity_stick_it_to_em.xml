@@ -6,4 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".StickItToEmActivity">
 
+    <TextView
+        android:id="@+id/currentUserTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Currently Logged In: " />
 </androidx.constraintlayout.widget.ConstraintLayout>

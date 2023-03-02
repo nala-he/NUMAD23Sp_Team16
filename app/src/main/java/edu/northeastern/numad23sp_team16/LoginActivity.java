@@ -90,8 +90,8 @@ public class LoginActivity extends AppCompatActivity {
                             if (!snapshot.exists()) {
                                 // Username doesn't exist - create new user and notify user created
                                 writeNewUser(user);
-                                Toast.makeText(getApplicationContext(), user + " created",
-                                        Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Created new user: "
+                                                + user, Toast.LENGTH_LONG).show();
                             }
 
                             // Continue to StickItToEm activity - passing currently logged in user
