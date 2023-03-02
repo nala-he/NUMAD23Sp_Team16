@@ -18,6 +18,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, WebServiceActivity.class));
     }
 
+    public void startAboutActivity(View view) {
+        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+    }
+
     public void startStickItToEmActivity(View view) {
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
