@@ -1,10 +1,12 @@
 package edu.northeastern.numad23sp_team16;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -14,15 +16,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import edu.northeastern.numad23sp_team16.models.User;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText username;
     private Button loginButton;
     private Button closeButton;
-    private DatabaseReference database;
+    private DatabaseReference mDatabase;
+
+    private final String CURRENT_USER = "CURRENT_USER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Get Firebase Realtime Database instance
-        database = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Prompt user to log in
         login();
@@ -61,20 +70,45 @@ public class LoginActivity extends AppCompatActivity {
 
 
         // Click on login button - checks database for user
-        // TODO: creates new user if username doesn't exist, logs in as user if user exists
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get username from input
                 String user = username.getText().toString();
 
-                Toast.makeText(getApplicationContext(), user, Toast.LENGTH_LONG).show();
+                // Ensure username not empty
+                if (user.isEmpty() || user.trim().isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Username cannot be blank",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    // Check database for user
+                    DatabaseReference userRef = mDatabase.child("users").child(user);
 
-                // Check database for user
+                    ValueEventListener eventListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (!snapshot.exists()) {
+                                // Username doesn't exist - create new user and notify user created
+                                writeNewUser(user);
+                                Toast.makeText(getApplicationContext(), user + " created",
+                                        Toast.LENGTH_LONG).show();
+                            }
 
-                // Username exists - continue to StickItToEm activity as current user
+                            // Continue to StickItToEm activity - passing currently logged in user
+                            Intent intent = new Intent(LoginActivity.this,
+                                    StickItToEmActivity.class);
+                            intent.putExtra(CURRENT_USER, user);
+                            startActivity(intent);
+                        }
 
-                // Username doesn't exist - create new user and continue to StickItToEm activity
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(getApplicationContext(), "An error occurred",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    };
+                    userRef.addListenerForSingleValueEvent(eventListener);
+                }
             }
         });
 
@@ -106,5 +140,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    public void writeNewUser(String username) {
+        User user = new User(username);
+        mDatabase.child("users").child(username).setValue(user);
     }
 }
