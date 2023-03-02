@@ -19,6 +19,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startStickItToEmActivity(View view) {
-        startActivity(new Intent(MainActivity.this, StickItToEmActivity.class));
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 }
