@@ -1,8 +1,9 @@
 package edu.northeastern.numad23sp_team16.receivednotification;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -11,6 +12,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,36 +24,51 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 import edu.northeastern.numad23sp_team16.R;
 
 public class RealtimeDatabaseActivity extends AppCompatActivity {
     private static final String TAG = RealtimeDatabaseActivity.class.getSimpleName();
 
     private DatabaseReference mDatabase;
+    private String loggedInUser;
     private TextView username1;
     private TextView sticker1;
     private TextView username2;
     private TextView sticker2;
-    private RadioButton receiverA;
+    private RadioButton receiver1;
     private RadioButton option1;
+
+    private int messageId;
+
+
+    private String channelId = "notification_channel_0";
+    private int notificationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime_database);
 
+        loggedInUser = "C";
         username1 = (TextView) findViewById(R.id.username1);
         username2 = (TextView) findViewById(R.id.username2);
         sticker1 = (TextView) findViewById(R.id.sticker1);
         sticker2 = (TextView) findViewById(R.id.sticker2);
-        receiverA = (RadioButton) findViewById(R.id.receiverA);
+        receiver1 = (RadioButton) findViewById(R.id.receiver1);
         option1 = (RadioButton) findViewById(R.id.sticker_option1);
+        messageId = 2;
+        notificationId = 0;
+
+        createNotificationChannel();
 
         // Connect with firebase
         //
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Update the sticker in realtime
-        mDatabase.child("messages").addChildEventListener(
+        mDatabase.child("Messages")
+                .addChildEventListener(
                 new ChildEventListener() {
 
                     @Override
@@ -86,7 +107,9 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
 
     // Send sticker button
     public void sendSticker(View view) {
-        RealtimeDatabaseActivity.this.onSendSticker(mDatabase, receiverA.isChecked() ? "receiver A" : "receiver B");
+        RealtimeDatabaseActivity.this.onSendSticker(mDatabase,
+                receiver1.isChecked() ? "A" : "B", loggedInUser,
+                option1.isChecked() ? "1" : "2");
     }
 
 //    // Reset USERS Button
@@ -112,30 +135,30 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
 //
 //    }
 
+    private void onSendSticker(DatabaseReference postRef,
+                               String receiver, String sender, String sticker) {
 
-    /**
-     * Called on score_user1 add
-     *
-     * @param postRef
-     * @param user
-     */
-    private void onSendSticker(DatabaseReference postRef, String user) {
+        postRef.child("Messages")
+                .child("message" + String.valueOf(messageId++))
+                .setValue(new Message(receiver, sender, sticker));
         postRef
-                .child("users")
-                .child(user)
+                .child("Messages")
+                .child("message" + messageId)
                 .runTransaction(new Transaction.Handler() {
                     @Override
                     public Transaction.Result doTransaction(MutableData mutableData) {
 
-                        User user = mutableData.getValue(User.class);
-                        if (user == null) {
+//                        User user = mutableData.getValue(User.class);
+                        Message message = mutableData.getValue(Message.class);
+
+                        if (receiver == null || message == null) {
                             return Transaction.success(mutableData);
                         }
 
-                        user.score = String.valueOf(Integer.valueOf(user.score) + 5);
-
-                        mutableData.setValue(user);
-                        int i =0 ;
+                        if (message.receiverName.equals(receiver)) {
+                            message.stickerId = sticker;
+                            mutableData.setValue(message);
+                        }
 
                         return Transaction.success(mutableData);
                     }
@@ -145,26 +168,85 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                                            DataSnapshot dataSnapshot) {
                         // Transaction completed
                         Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-                        Toast.makeText(getApplicationContext()
-                                , "DBError: " + databaseError, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext()
+//                                , "DBError: " + databaseError, Toast.LENGTH_SHORT).show();
                     }
-
-
-
                 });
     }
 
 
     private void showSticker(DataSnapshot dataSnapshot) {
-        User user = dataSnapshot.getValue(User.class);
+//        User user = dataSnapshot.getValue(User.class);
+        Message message = dataSnapshot.getValue(Message.class);
+        if (message != null) {
+            if (Objects.equals(message.receiverName, loggedInUser)) {
+                sendNotification(message.senderName);
+            }
+//            sendNotification();
 
-        if (dataSnapshot.getKey().equalsIgnoreCase("user1")) {
-            score_user1.setText(String.valueOf(user.score));
-            user1.setText(user.username);
-        } else {
-            score_user2.setText(String.valueOf(user.score));
-            user2.setText(user.username);
+            if (message.receiverName.equalsIgnoreCase("A")) {
+                username1.setText("A");
+                sticker1.setText(message.stickerId);
+            } else {
+                username2.setText("B");
+                sticker2.setText(message.stickerId);
+            }
         }
+    }
+
+    public void createNotificationChannel() {
+        // This must be called early because it must be called before a notification is sent.
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Notification Name";
+            String description = "Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public void sendNotification(String sender) {
+
+        // Prepare intent which is triggered if the
+        // notification is selected
+        // pick one way to create PendingIntent
+//        Intent intent = new Intent(this, ReceiveNotificationActivity.class);
+//        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent
+//                , PendingIntent.FLAG_IMMUTABLE);
+        // pick one way to create PendingIntent
+//        PendingIntent callIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(),
+//                new Intent(this, FakeCallActivity.class), 0);
+//        PendingIntent callIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(),
+//                new Intent(this, FakeCallActivity.class), PendingIntent.FLAG_IMMUTABLE);
+
+        // Build notification
+        // Need to define a channel ID after Android Oreo
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.thinking_face);
+        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+                //"Notification icons must be entirely white."
+                .setSmallIcon(R.drawable.foo)
+                .setContentTitle("New sticker from " + sender)
+                .setContentText("Subject")
+                .setLargeIcon(myBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(myBitmap)
+                        .bigLargeIcon(null))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // hide the notification after its selected
+                .setAutoCancel(true);
+//                .addAction(R.drawable.foo, "Call", callIntent);
+//                .setContentIntent(pIntent);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        // // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(notificationId++, notifyBuild.build());
     }
 
 }

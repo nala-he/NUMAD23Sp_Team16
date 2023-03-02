@@ -83,17 +83,17 @@
             android:layout_height="wrap_content">
 
             <RadioButton
-                android:checked="true"
-                android:text="@string/receiver_a"
-                android:id="@+id/receiverA"
+                android:id="@+id/receiver1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/receiver1" />
 
             <RadioButton
-                android:text="@string/receiver_b"
-                android:id="@+id/receiverB"
+                android:id="@+id/receiver2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/receiver2" />
         </RadioGroup>
 
         <TextView

@@ -8,6 +8,7 @@ import android.view.View;
 
 import edu.northeastern.numad23sp_team16.receivednotification.RealtimeDatabaseActivity;
 
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

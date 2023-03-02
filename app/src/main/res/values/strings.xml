@@ -31,4 +31,6 @@
     <string name="select_a_sticker">Select a sticker</string>
     <string name="reset_users">Reset Users</string>
     <string name="send_sticker">send sticker</string>
+    <string name="receiver1">receiver1</string>
+    <string name="receiver2">receiver2</string>
 </resources>
