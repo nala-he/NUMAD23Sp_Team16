@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".receivednotification.RealtimeDatabaseActivity">
+
+    <LinearLayout
+        android:id="@+id/dataAddLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="2"
+            android:id="@+id/tableLayout" >
+
+            <TableRow>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/receiver"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:layout_width="206dp"
+                    android:layout_height="match_parent"
+                    android:gravity="start"
+                    android:text="@string/sticker"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </TableRow>
+
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/username1"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/sticker1"
+                    android:layout_width="176dp"
+                    android:layout_height="match_parent"
+                    android:gravity="start"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/username2"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/sticker2"
+                    android:layout_width="206dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/sender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sender_logged_in_user" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:checked="true"
+                android:text="@string/receiver_a"
+                android:id="@+id/receiverA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:text="@string/receiver_b"
+                android:id="@+id/receiverB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/select_sticker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_a_sticker" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/sticker_option1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/sticker_option_1" />
+
+            <RadioButton
+                android:id="@+id/sticker_option2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sticker_option_2" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="sendSticker"
+            android:text="@string/send_sticker" />
+
+        <Button
+            android:id="@+id/reset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="resetUsers"
+            android:text="@string/reset_users" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

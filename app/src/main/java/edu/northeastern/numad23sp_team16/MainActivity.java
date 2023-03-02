@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import edu.northeastern.numad23sp_team16.receivednotification.RealtimeDatabaseActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -20,5 +22,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startAboutActivity(View view) {
         startActivity(new Intent(MainActivity.this, AboutActivity.class));
+    }
+
+    // test the received notification feature, to be revised or deleted later
+    public void startRealtimeDatabaseActivity(View view) {
+        startActivity(new Intent(MainActivity.this, RealtimeDatabaseActivity.class));
     }
 }
