@@ -22,6 +22,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Prompt user to log in
+        login();
+    }
+
+    public void login() {
         // Set up login dialog
         AlertDialog.Builder login = new AlertDialog.Builder(this);
 
@@ -67,5 +72,6 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
         });
+
     }
 }
