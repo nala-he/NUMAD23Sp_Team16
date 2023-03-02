@@ -4,9 +4,16 @@ plugins {
 
 android {
     signingConfigs {
-        team16ReleaseConfig {
+        debug {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
             storePassword 'GoodluckNEU2023!'
-            keyAlias 'groupKey'
+            keyAlias 'key0'
+            keyPassword 'GoodluckNEU2023!'
+        }
+        team16Release {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storePassword 'GoodluckNEU2023!'
+            keyAlias 'key0'
             keyPassword 'GoodluckNEU2023!'
         }
     }
@@ -21,7 +28,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.team16ReleaseConfig
+        signingConfig signingConfigs.team16Release
     }
 
     buildTypes {
