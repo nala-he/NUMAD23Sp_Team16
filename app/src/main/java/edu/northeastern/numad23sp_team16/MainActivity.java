@@ -17,4 +17,8 @@ public class MainActivity extends AppCompatActivity {
     public void startWebServiceActivity(View view) {
         startActivity(new Intent(MainActivity.this, WebServiceActivity.class));
     }
+
+    public void startAboutActivity(View view) {
+        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+    }
 }

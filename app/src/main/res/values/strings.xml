@@ -16,4 +16,8 @@
     <string name="official_name">Official Name:</string>
     <string name="translations">Translations:</string>
     <string name="country_image_icon">country_image_icon</string>
+    <string name="about">About</string>
+    <string name="macee_qi">Macee Qi</string>
+    <string name="yutong_he">Yutong He</string>
+    <string name="yuan_kuang">Yuan Kuang</string>
 </resources>
