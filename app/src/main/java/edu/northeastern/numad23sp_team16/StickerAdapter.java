@@ -12,13 +12,18 @@ import java.util.ArrayList;
 
 public class StickerAdapter extends RecyclerView.Adapter<StickerAdapter.StickerViewHolder> {
 
-   private ArrayList<Sticker> stickerList;
+   private static ArrayList<Sticker> stickerList;
 
    public StickerAdapter(ArrayList<Sticker> stickerList){
        this.stickerList = stickerList;
 
    }
-   public static class StickerViewHolder extends RecyclerView.ViewHolder{
+
+    public static Sticker getItem(int position) {
+       return stickerList.get(position);
+    }
+
+    public static class StickerViewHolder extends RecyclerView.ViewHolder{
        ImageView imageView;
 
        public StickerViewHolder(View itemView){
