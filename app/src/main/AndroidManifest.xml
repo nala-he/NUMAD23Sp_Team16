@@ -19,6 +19,12 @@
             android:name=".AboutActivity"
             android:exported="false" />
         <activity
+            android:name=".LoginActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".StickItToEmActivity"
+            android:exported="false" />
+        <activity
             android:name=".WebServiceActivity"
             android:exported="false" />
         <activity
