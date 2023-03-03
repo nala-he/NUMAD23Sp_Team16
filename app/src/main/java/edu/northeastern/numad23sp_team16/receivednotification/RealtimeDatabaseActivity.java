@@ -28,6 +28,10 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
@@ -51,13 +55,16 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     private String channelId = "notification_channel_0";
     private int notificationId;
 
+    private List<Message> receivedHistory;
+    private Map<String, Integer> sentStickersCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime_database);
 
         // hardcoded for testing, needs to update later
-        loggedInUser = "A";
+        loggedInUser = "B";
         username1 = (TextView) findViewById(R.id.username1);
         username2 = (TextView) findViewById(R.id.username2);
         sticker1 = (TextView) findViewById(R.id.sticker1);
@@ -65,6 +72,8 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         receiver1 = (RadioButton) findViewById(R.id.receiver1);
         option1 = (RadioButton) findViewById(R.id.sticker_option1);
         notificationId = 0;
+        receivedHistory = new ArrayList<>();
+        sentStickersCount = new HashMap<>();
 
         createNotificationChannel();
 
@@ -111,7 +120,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     // Send sticker button
     public void sendSticker(View view) {
         RealtimeDatabaseActivity.this.onSendSticker(mDatabase,
-                receiver1.isChecked() ? "B" : "C", loggedInUser,
+                receiver1.isChecked() ? "A" : "C", loggedInUser,
                 option1.isChecked() ? "1" : "2");
     }
 
@@ -157,15 +166,33 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         if (message != null) {
             if (Objects.equals(message.receiverName, loggedInUser)) {
                 sendNotification(message.senderName);
+
+                //Display history of stickers user has received (which sticker received, who sent it,
+                // when it was sent)
+
+                // add the matched message to the history list
+                receivedHistory.add(message);
             }
-            if (message.receiverName.equalsIgnoreCase("B")) {
-                username1.setText("B");
-                sticker1.setText(message.stickerId);
-            } else {
-                username2.setText("C");
-                sticker2.setText(message.stickerId);
+            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
+            Log.e(TAG, "receivedHistory:" + receivedHistory.get(0).stickerId);
+
+            //Display how many of each kind of sticker a user sent
+
+            // add sticker count to sentStickersCount map
+            if (Objects.equals(message.senderName, loggedInUser)) {
+                if (sentStickersCount.containsKey(message.stickerId)) {
+                    Integer count = sentStickersCount.get(message.stickerId);
+                    count += 1;
+                    sentStickersCount.put(message.stickerId, count);
+                } else {
+                    sentStickersCount.put(message.stickerId, 1);
+                }
             }
+            Log.e(TAG, "sentStickersCount:" + sentStickersCount.toString());
+
         }
+
+
     }
 
     public void createNotificationChannel() {
