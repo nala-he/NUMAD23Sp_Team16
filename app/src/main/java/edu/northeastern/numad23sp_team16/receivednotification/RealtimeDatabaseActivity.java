@@ -40,10 +40,10 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     private RadioButton receiver1;
     private RadioButton option1;
 
-    private int messageId;
+    private static int messageId = 2;
 
 
-    private String channelId = "notification_channel_0";
+    private String channelId = "notification_channel_2";
     private int notificationId;
 
     @Override
@@ -51,14 +51,13 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime_database);
 
-        loggedInUser = "C";
+        loggedInUser = "A";
         username1 = (TextView) findViewById(R.id.username1);
         username2 = (TextView) findViewById(R.id.username2);
         sticker1 = (TextView) findViewById(R.id.sticker1);
         sticker2 = (TextView) findViewById(R.id.sticker2);
         receiver1 = (RadioButton) findViewById(R.id.receiver1);
         option1 = (RadioButton) findViewById(R.id.sticker_option1);
-        messageId = 2;
         notificationId = 0;
 
         createNotificationChannel();
@@ -108,7 +107,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     // Send sticker button
     public void sendSticker(View view) {
         RealtimeDatabaseActivity.this.onSendSticker(mDatabase,
-                receiver1.isChecked() ? "A" : "B", loggedInUser,
+                receiver1.isChecked() ? "B" : "C", loggedInUser,
                 option1.isChecked() ? "1" : "2");
     }
 
@@ -184,11 +183,11 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
             }
 //            sendNotification();
 
-            if (message.receiverName.equalsIgnoreCase("A")) {
-                username1.setText("A");
+            if (message.receiverName.equalsIgnoreCase("B")) {
+                username1.setText("B");
                 sticker1.setText(message.stickerId);
             } else {
-                username2.setText("B");
+                username2.setText("C");
                 sticker2.setText(message.stickerId);
             }
         }
