@@ -1,20 +1,21 @@
 plugins {
     id 'com.android.application'
+    // Add the Google services Gradle plugin
     id 'com.google.gms.google-services'
 }
 
 android {
     signingConfigs {
         debug {
-            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
             storePassword 'GoodluckNEU2023!'
-            keyAlias 'key0'
+            keyAlias 'groupKey'
             keyPassword 'GoodluckNEU2023!'
         }
         team16Release {
-            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
             storePassword 'GoodluckNEU2023!'
-            keyAlias 'key0'
+            keyAlias 'groupKey'
             keyPassword 'GoodluckNEU2023!'
         }
     }
@@ -56,8 +57,6 @@ dependencies {
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
 
-
-    // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
