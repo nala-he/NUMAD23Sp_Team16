@@ -14,4 +14,6 @@ public class Sticker {
     public void setStickerId(int stickerId) {
         this.stickerId = stickerId;
     }
+
+
 }

@@ -2,10 +2,7 @@ package edu.northeastern.numad23sp_team16;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -16,6 +13,7 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
     }
+
 
 
 }
