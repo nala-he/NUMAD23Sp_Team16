@@ -35,7 +35,7 @@
             android:configChanges="orientation"
             android:exported="false" />
         <activity
-            android:name=".WebServiceActivity"
+            android:name=".A6.WebServiceActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

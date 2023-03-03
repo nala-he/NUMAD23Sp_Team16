@@ -1,10 +1,12 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A6;
 
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import edu.northeastern.numad23sp_team16.R;
 
 public class NameViewHolder extends RecyclerView.ViewHolder {
     TextView name;

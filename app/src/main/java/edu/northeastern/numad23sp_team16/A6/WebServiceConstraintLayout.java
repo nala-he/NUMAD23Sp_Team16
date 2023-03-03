@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A6;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,6 +15,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
+
+import edu.northeastern.numad23sp_team16.R;
 
 // Not working properly as XML layouts. Keep it here as a reference for the attempt to try ConstraintSet.
 public class WebServiceConstraintLayout extends ConstraintLayout {
