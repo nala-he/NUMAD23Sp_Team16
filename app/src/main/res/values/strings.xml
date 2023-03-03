@@ -22,4 +22,9 @@
     <string name="yuan_kuang">Yuan Kuang</string>
     <string name="send_a_sticker">send a sticker</string>
     <string name="tap_a_sticker_and_send_to_friend">tap a sticker and send to friend</string>
+    <string name="a8_stick_it_to_em_button">A8 Stick It To \'Em</string>
+    <string name="login_title">Login to Stick It To \'Em</string>
+    <string name="username_hint">Username</string>
+    <string name="close_string">Close</string>
+    <string name="login_button">Login</string>
 </resources>
