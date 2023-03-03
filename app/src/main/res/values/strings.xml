@@ -20,4 +20,6 @@
     <string name="macee_qi">Macee Qi</string>
     <string name="yutong_he">Yutong He</string>
     <string name="yuan_kuang">Yuan Kuang</string>
+    <string name="send_a_sticker">send a sticker</string>
+    <string name="tap_a_sticker_and_send_to_friend">tap a sticker and send to friend</string>
 </resources>

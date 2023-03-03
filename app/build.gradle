@@ -3,20 +3,20 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
-            storePassword 'GoodluckNEU2023!'
-            keyAlias 'key0'
-            keyPassword 'GoodluckNEU2023!'
-        }
-        team16Release {
-            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
-            storePassword 'GoodluckNEU2023!'
-            keyAlias 'key0'
-            keyPassword 'GoodluckNEU2023!'
-        }
-    }
+//    signingConfigs {
+//        debug {
+//            storeFile file('/Users/lisa/Downloads/teamWorkKeyStore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'key0'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
+//        team16Release {
+//            storeFile file('/Users/lisa/Downloads/teamWorkKeyStore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'key0'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
+//    }
     namespace 'edu.northeastern.numad23sp_team16'
     compileSdk 33
 
@@ -28,7 +28,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.team16Release
+        //signingConfig signingConfigs.team16Release
     }
 
     buildTypes {
