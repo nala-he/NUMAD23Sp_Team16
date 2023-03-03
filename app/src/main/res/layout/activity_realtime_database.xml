@@ -127,13 +127,6 @@
             android:onClick="sendSticker"
             android:text="@string/send_sticker" />
 
-        <Button
-            android:id="@+id/reset"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="resetUsers"
-            android:text="@string/reset_users" />
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package edu.northeastern.numad23sp_team16.receivednotification;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -12,8 +14,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -40,10 +44,11 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     private RadioButton receiver1;
     private RadioButton option1;
 
-    private static int messageId = 2;
+    // hardcoded for testing, needs to update later
+    private static int messageId = 1;
 
 
-    private String channelId = "notification_channel_2";
+    private String channelId = "notification_channel_0";
     private int notificationId;
 
     @Override
@@ -51,6 +56,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime_database);
 
+        // hardcoded for testing, needs to update later
         loggedInUser = "A";
         username1 = (TextView) findViewById(R.id.username1);
         username2 = (TextView) findViewById(R.id.username2);
@@ -63,45 +69,43 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         createNotificationChannel();
 
         // Connect with firebase
-        //
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Update the sticker in realtime
         mDatabase.child("Messages")
                 .addChildEventListener(
-                new ChildEventListener() {
+                        new ChildEventListener() {
 
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        showSticker(dataSnapshot);
-                        Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
-                    }
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                showSticker(dataSnapshot);
+                                Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
+                            }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        showSticker(dataSnapshot);
-                        Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
-                    }
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                showSticker(dataSnapshot);
+                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
+                            }
 
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e(TAG, "onCancelled:" + databaseError);
-                        Toast.makeText(getApplicationContext()
-                                , "DBError: " + databaseError, Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e(TAG, "onCancelled:" + databaseError);
+                                Toast.makeText(getApplicationContext()
+                                        , "DBError: " + databaseError, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
     }
-
 
 
     // Send sticker button
@@ -110,29 +114,6 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                 receiver1.isChecked() ? "B" : "C", loggedInUser,
                 option1.isChecked() ? "1" : "2");
     }
-
-//    // Reset USERS Button
-//    public void resetUsers(View view) {
-//
-//        User user;
-//        user = new User("user1", "0");
-//        Task t1 = mDatabase.child("users").child(user.username).setValue(user);
-//
-//        user = new User("user2", "0");
-//        Task t2 = mDatabase.child("users").child(user.username).setValue(user);
-//
-//        if(!t1.isSuccessful() && !t2.isSuccessful()){
-//            Toast.makeText(getApplicationContext(),"Unable to reset players!",Toast.LENGTH_SHORT).show();
-//        }
-//        else if(!t1.isSuccessful() && t2.isSuccessful()){
-//            Toast.makeText(getApplicationContext(),"Unable to reset player1!",Toast.LENGTH_SHORT).show();
-//        }
-//        else if(t1.isSuccessful() && t2.isSuccessful()){
-//            Toast.makeText(getApplicationContext(),"Unable to reset player2!",Toast.LENGTH_SHORT).show();
-//        }
-//
-//
-//    }
 
     private void onSendSticker(DatabaseReference postRef,
                                String receiver, String sender, String sticker) {
@@ -147,7 +128,6 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                     @Override
                     public Transaction.Result doTransaction(MutableData mutableData) {
 
-//                        User user = mutableData.getValue(User.class);
                         Message message = mutableData.getValue(Message.class);
 
                         if (receiver == null || message == null) {
@@ -167,22 +147,17 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                                            DataSnapshot dataSnapshot) {
                         // Transaction completed
                         Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-//                        Toast.makeText(getApplicationContext()
-//                                , "DBError: " + databaseError, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
 
     private void showSticker(DataSnapshot dataSnapshot) {
-//        User user = dataSnapshot.getValue(User.class);
         Message message = dataSnapshot.getValue(Message.class);
         if (message != null) {
             if (Objects.equals(message.receiverName, loggedInUser)) {
                 sendNotification(message.senderName);
             }
-//            sendNotification();
-
             if (message.receiverName.equalsIgnoreCase("B")) {
                 username1.setText("B");
                 sticker1.setText(message.stickerId);
@@ -213,18 +188,6 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
 
     public void sendNotification(String sender) {
 
-        // Prepare intent which is triggered if the
-        // notification is selected
-        // pick one way to create PendingIntent
-//        Intent intent = new Intent(this, ReceiveNotificationActivity.class);
-//        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent
-//                , PendingIntent.FLAG_IMMUTABLE);
-        // pick one way to create PendingIntent
-//        PendingIntent callIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(),
-//                new Intent(this, FakeCallActivity.class), 0);
-//        PendingIntent callIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(),
-//                new Intent(this, FakeCallActivity.class), PendingIntent.FLAG_IMMUTABLE);
-
         // Build notification
         // Need to define a channel ID after Android Oreo
         Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.thinking_face);
@@ -240,12 +203,41 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 // hide the notification after its selected
                 .setAutoCancel(true);
-//                .addAction(R.drawable.foo, "Call", callIntent);
-//                .setContentIntent(pIntent);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        // // notificationId is a unique int for each notification that you must define
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // calling ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+        }
+
         notificationManager.notify(notificationId++, notifyBuild.build());
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            Log.v(TAG, "The user gave access.");
+            Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Log.e(TAG, "User denied permission.");
+            // permission denied
+            Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
