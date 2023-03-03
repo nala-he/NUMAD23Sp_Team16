@@ -6,15 +6,15 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
             storePassword 'GoodluckNEU2023!'
-            keyAlias 'key0'
+            keyAlias 'groupKey'
             keyPassword 'GoodluckNEU2023!'
         }
         team16Release {
-            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
             storePassword 'GoodluckNEU2023!'
-            keyAlias 'key0'
+            keyAlias 'groupKey'
             keyPassword 'GoodluckNEU2023!'
         }
     }
