@@ -28,5 +28,8 @@ public class MainActivity extends AppCompatActivity {
     // test the received notification feature, to be revised or deleted later
     public void startRealtimeDatabaseActivity(View view) {
         startActivity(new Intent(MainActivity.this, RealtimeDatabaseActivity.class));
+
+    public void startStickItToEmActivity(View view) {
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 }

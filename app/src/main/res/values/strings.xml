@@ -20,7 +20,14 @@
     <string name="macee_qi">Macee Qi</string>
     <string name="yutong_he">Yutong He</string>
     <string name="yuan_kuang">Yuan Kuang</string>
-    <string name="a8_stick_it_to_em">A8 Stick it To \'Em</string>
+
+    <string name="a8_stick_it_to_em_button">A8 Stick It To \'Em</string>
+    <string name="login_title">Login to Stick It To \'Em</string>
+    <string name="username_hint">Username</string>
+    <string name="close_string">Close</string>
+    <string name="login_button">Login</string>
+
+========== need to revise later -- yutong
     <string name="sender_logged_in_user">Sender: logged in user</string>
     <string name="receiver_a">Receiver A</string>
     <string name="receiver_b">Receiver B</string>
@@ -33,4 +40,6 @@
     <string name="send_sticker">send sticker</string>
     <string name="receiver1">receiver1</string>
     <string name="receiver2">receiver2</string>
+=======
+
 </resources>
