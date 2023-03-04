@@ -44,14 +44,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     private Integer stickerId;
 
     private TextView userSender;
-//    private TextView sticker1;
     private TextView userReceiver;
-
-    private ArrayList<Sticker> stickerList;
-
-//    private TextView sticker2;
-//    private RadioButton receiver1;
-//    private RadioButton option1;
 
     // hardcoded for testing, needs to update later
     private static int messageId = 1;
@@ -87,11 +80,6 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
             userReceiver.setText(recipient);
         }
 
-
-//        sticker1 = (TextView) findViewById(R.id.sticker1);
-//        sticker2 = (TextView) findViewById(R.id.sticker2);
-//        receiver1 = (RadioButton) findViewById(R.id.receiver1);
-//        option1 = (RadioButton) findViewById(R.id.sticker_option1);
         notificationId = 0;
         receivedHistory = new ArrayList<>();
         sentStickersCount = new HashMap<>();
@@ -155,8 +143,6 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
 //        RealtimeDatabaseActivity.this.onSendSticker(mDatabase, receiver, loggedInUser, stickerId);
 //    }
 
-
-
     private void onSendSticker(DatabaseReference postRef,
                                String receiver, String sender, Integer sticker) {
 
@@ -192,7 +178,6 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
 
     public void showStickerCount(DataSnapshot dataSnapshot) {

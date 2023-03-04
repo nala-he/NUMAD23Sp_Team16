@@ -37,7 +37,6 @@ public class StickItToEmActivity extends AppCompatActivity {
     private final String CURRENT_USER = "CURRENT_USER";
     private final String RECEIVER = "RECEIVER";
     private final String STICKER = "STICKER";
-    private final String STICKER_LIST = "STICKER_LIST";
 
     private String currentUser;
     private String recipient;
