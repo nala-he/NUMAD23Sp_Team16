@@ -35,9 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.storage.FirebaseStorage;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,8 +61,8 @@ public class StickItToEmActivity extends AppCompatActivity {
     // hardcoded for testing, needs to update later
     private static int messageId = 1;
     private final String CURRENT_USER = "CURRENT_USER";
-    private final String RECEIVER = "RECEIVER";
-    private final String STICKER = "STICKER";
+//    private final String RECEIVER = "RECEIVER";
+//    private final String STICKER = "STICKER";
 
     private String currentUser;
     private String recipient;
@@ -81,6 +79,15 @@ public class StickItToEmActivity extends AppCompatActivity {
 //    FirebaseStorage storage;
 
     public DatabaseReference mDatabase;
+
+    private String channelId = "notification_channel_0";
+    private int notificationId;
+
+    private List<Message> receivedHistory;
+    private Map<String, Integer> sentStickersCount;
+
+    // hardcoded for testing, needs to update later
+    private static int messageId = 1;
 
     // keep track of when user logged in
     private Timestamp loginTime;
@@ -304,14 +311,6 @@ public class StickItToEmActivity extends AppCompatActivity {
                         recipient = users[which];
                         stickerId = stickerList.get(position).getStickerId();
 
-//                        // Continue to RealtimeDatabaseActivity - passing currently logged in user, recipient, and
-//                        // selected sticker id to send message to the database and send notification
-//                        Intent intent = new Intent(StickItToEmActivity.this, RealtimeDatabaseActivity.class);
-//                        intent.putExtra(CURRENT_USER, currentUser);
-//                        intent.putExtra(RECEIVER, recipient);
-//                        intent.putExtra(STICKER, stickerId);
-//                        startActivity(intent);
-
                         // Send the new message containing sticker sending info to the Realtime Database
                         onSendSticker(mDatabase, recipient, currentUser, stickerId);
                     });
@@ -375,7 +374,6 @@ public class StickItToEmActivity extends AppCompatActivity {
         //  when it was sent)
     }
 
-
     public void createNotificationChannel() {
         // This must be called early because it must be called before a notification is sent.
         // Create the NotificationChannel, but only on API 26+ because
@@ -430,6 +428,7 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         // if only want to let the notification panel show the latest one notification, use this below
 //        notificationManager.notify(notificationId, notifyBuild.build());
+
     }
 
     @Override
