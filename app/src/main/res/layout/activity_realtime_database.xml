@@ -108,6 +108,20 @@
             android:onClick="showStickerCount"
             android:text="@string/show_counts_of_sent_stickers" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sticker_count_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/temp_translation_textview"
+            app:layout_constraintVertical_bias="0.5" />
+
         <TextView
             android:id="@+id/sticker_history"
             android:layout_width="match_parent"
@@ -121,6 +135,20 @@
             android:padding="5dp"
             android:onClick="showStickerHistory"
             android:text="@string/show_history_of_stickers_received" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sticker_history_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/temp_translation_textview"
+            app:layout_constraintVertical_bias="0.5" />
 
 <!--        <RadioGroup-->
 <!--            android:layout_width="match_parent"-->
