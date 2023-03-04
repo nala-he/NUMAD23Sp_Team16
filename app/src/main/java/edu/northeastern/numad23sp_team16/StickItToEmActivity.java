@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -217,6 +219,26 @@ public class StickItToEmActivity extends AppCompatActivity {
                 );
 
         tapSticker();
+
+        // initialize the two buttons for the history lists
+        Button countButton = (Button) findViewById(R.id.show_sticker_count_button);
+        Button historyButton = (Button) findViewById(R.id.show_history_button);
+        countButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showStickerCount();
+            }
+        });
+        historyButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showStickerHistory();
+            }
+        });
     }
 
     private void onSendSticker(DatabaseReference postRef,

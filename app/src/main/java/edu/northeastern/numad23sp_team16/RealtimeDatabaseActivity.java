@@ -37,6 +37,7 @@ import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.models.Message;
 
+// moved majority of codes to StickItToEmActivity. Do not need this activity anymore.
 public class RealtimeDatabaseActivity extends AppCompatActivity {
     private static final String TAG = RealtimeDatabaseActivity.class.getSimpleName();
 
