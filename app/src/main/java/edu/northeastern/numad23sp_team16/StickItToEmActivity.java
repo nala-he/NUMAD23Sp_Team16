@@ -3,11 +3,21 @@ package edu.northeastern.numad23sp_team16;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -15,25 +25,41 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.models.Message;
 import edu.northeastern.numad23sp_team16.models.User;
 
 public class StickItToEmActivity extends AppCompatActivity {
+    private static final String TAG = "StickItToEmActivity";
 
-//    private static final String CHANNEL_ID = "ch";
+    private String channelId = "notification_channel_0";
+    private int notificationId;
+
+    private List<Message> receivedHistory;
+    private Map<String, Integer> sentStickersCount;
+
+    // hardcoded for testing, needs to update later
+    private static int messageId = 1;
     private final String CURRENT_USER = "CURRENT_USER";
     private final String RECEIVER = "RECEIVER";
     private final String STICKER = "STICKER";
@@ -54,6 +80,8 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     public DatabaseReference mDatabase;
 
+    // keep track of when user logged in
+    private Timestamp loginTime;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -63,8 +91,11 @@ public class StickItToEmActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         currentlyLoggedIn = findViewById(R.id.currentUserTitle);
         textView = findViewById(R.id.textView);
-//        storage = FirebaseStorage.getInstance();
 
+        // Login time
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date date = new Date();
+        loginTime = new Timestamp(date.getTime());
 
         // Retrieve currently logged in user
         Bundle extras = getIntent().getExtras();
@@ -93,6 +124,12 @@ public class StickItToEmActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // initialize an empty userList to store our signup users from realtime database
         userList = new ArrayList<>();
+
+        notificationId = 0;
+        receivedHistory = new ArrayList<>();
+        sentStickersCount = new HashMap<>();
+
+        createNotificationChannel();
 
         mDatabase.child("users")
                 .addChildEventListener(
@@ -130,8 +167,96 @@ public class StickItToEmActivity extends AppCompatActivity {
                         }
                 );
 
+        // Update the sticker in realtime
+        mDatabase.child("messages")
+                .addChildEventListener(
+                        new ChildEventListener() {
+
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                                showSticker(dataSnapshot);
+                                getStickerCountAndHistory(dataSnapshot);
+
+//                                Message message = dataSnapshot.getValue(Message.class);
+//
+//                                if (message != null
+//                                        && Objects.equals(message.receiverName, loggedInUser)) {
+//                                    sendNotification(message.senderName, message.stickerId);
+//                                }
+                                Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                                showSticker(dataSnapshot);
+//                                Message message = dataSnapshot.getValue(Message.class);
+//                                if (message != null
+//                                        && Objects.equals(message.receiverName, loggedInUser)) {
+//                                    sendNotification(message.senderName, message.stickerId);
+//                                }
+//                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e(TAG, "onCancelled:" + databaseError);
+                                Toast.makeText(getApplicationContext()
+                                        , "DBError: " + databaseError, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
 
         tapSticker();
+    }
+
+    private void onSendSticker(DatabaseReference postRef,
+                               String receiver, String sender, Integer sticker) {
+        // add the time as part of the message id to avoid new message overriding the previous message
+        // with the same id
+        String time = String.valueOf(System.currentTimeMillis()/1000);
+        postRef.child("messages")
+                .child("message" + time + messageId++)
+                .setValue(new Message(receiver, sender, String.valueOf(sticker)));
+        postRef
+                .child("messages")
+                .child("message" + time + messageId)
+                .runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+
+                        Message message = mutableData.getValue(Message.class);
+
+                        if (receiver == null || message == null) {
+                            return Transaction.success(mutableData);
+                        }
+
+                        if (message.receiverName.equals(receiver)) {
+                            message.stickerId = String.valueOf(sticker);
+                            mutableData.setValue(message);
+                        }
+
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b,
+                                           DataSnapshot dataSnapshot) {
+                        Toast.makeText(getApplicationContext(), "Sticker sent to " + receiver,
+                                Toast.LENGTH_LONG).show();
+                        // Transaction completed
+                        Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+                    }
+                });
     }
 
     private void tapSticker() {
@@ -157,13 +282,16 @@ public class StickItToEmActivity extends AppCompatActivity {
                         recipient = users[which];
                         stickerId = stickerList.get(position).getStickerId();
 
-                        // Continue to RealtimeDatabaseActivity - passing currently logged in user, recipient, and
-                        // selected sticker id to send message to the database and send notification
-                        Intent intent = new Intent(StickItToEmActivity.this, RealtimeDatabaseActivity.class);
-                        intent.putExtra(CURRENT_USER, currentUser);
-                        intent.putExtra(RECEIVER, recipient);
-                        intent.putExtra(STICKER, stickerId);
-                        startActivity(intent);
+//                        // Continue to RealtimeDatabaseActivity - passing currently logged in user, recipient, and
+//                        // selected sticker id to send message to the database and send notification
+//                        Intent intent = new Intent(StickItToEmActivity.this, RealtimeDatabaseActivity.class);
+//                        intent.putExtra(CURRENT_USER, currentUser);
+//                        intent.putExtra(RECEIVER, recipient);
+//                        intent.putExtra(STICKER, stickerId);
+//                        startActivity(intent);
+
+                        // Send the new message containing sticker sending info to the Realtime Database
+                        onSendSticker(mDatabase, recipient, currentUser, stickerId);
                     });
                     builder.show();
 
@@ -184,6 +312,123 @@ public class StickItToEmActivity extends AppCompatActivity {
         });
     }
 
+    private void getStickerCountAndHistory(DataSnapshot dataSnapshot) {
+        Message message = dataSnapshot.getValue(Message.class);
+        // Convert message time to timestamp
+        Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+
+        if (message != null) {
+
+            // add sticker count to sentStickersCount map
+            if (Objects.equals(message.senderName, currentUser)) {
+                if (sentStickersCount.containsKey(message.stickerId)) {
+                    Integer count = sentStickersCount.get(message.stickerId);
+                    count += 1;
+                    sentStickersCount.put(message.stickerId, count);
+                } else {
+                    sentStickersCount.put(message.stickerId, 1);
+                }
+            }
+
+            Log.e(TAG, "sentStickersCount:" + sentStickersCount.toString());
+
+            if (Objects.equals(message.receiverName, currentUser) && messageTime.after(loginTime)) {
+                // send notification to the specific receiver
+                sendNotification(message.senderName, message.stickerId);
+
+                // add the matched message to the history list
+                receivedHistory.add(message);
+            }
+
+            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
+        }
+    }
+
+    public void showStickerCount() {
+        //TODO: Display how many of each kind of sticker a user sent
+    }
+
+    public void showStickerHistory() {
+        // TODO: Display history of stickers user has received (which sticker received, who sent it,
+        //  when it was sent)
+    }
+
+
+    public void createNotificationChannel() {
+        // This must be called early because it must be called before a notification is sent.
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Notification Name";
+            String description = "Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public void sendNotification(String sender, String stickerId) {
+
+        // Build notification
+        // Need to define a channel ID after Android Oreo
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(stickerId));
+        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+                //"Notification icons must be entirely white."
+                .setSmallIcon(R.drawable.foo)
+                .setContentTitle("You received a sticker from " + sender)
+//                .setContentText("Subject")
+                .setLargeIcon(myBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(myBitmap)
+                        .bigLargeIcon(null))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // hide the notification after its selected
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // calling ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+        }
+
+        notificationManager.notify(notificationId++, notifyBuild.build());
+
+        // if only want to let the notification panel show the latest one notification, use this below
+//        notificationManager.notify(notificationId, notifyBuild.build());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            Log.v(TAG, "The user gave access.");
+            Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Log.e(TAG, "User denied permission.");
+            // permission denied
+            Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     //save recyclerview state
     @Override
