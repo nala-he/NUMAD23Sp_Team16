@@ -379,6 +379,12 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         // Set adapter to recycler view
         receivedStickers.setAdapter(receivedStickerAdapter);
+
+        // If user has never received any messages, indicate with toast
+        if (receivedHistory.size() == 0) {
+            Toast.makeText(getApplicationContext(), "You have not received any messages",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     public void createNotificationChannel() {
