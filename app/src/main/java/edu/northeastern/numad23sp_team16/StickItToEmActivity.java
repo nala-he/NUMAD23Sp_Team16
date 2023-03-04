@@ -22,9 +22,12 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,11 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,10 +52,17 @@ import edu.northeastern.numad23sp_team16.models.User;
 public class StickItToEmActivity extends AppCompatActivity {
     private static final String TAG = "StickItToEmActivity";
 
-//    private static final String CHANNEL_ID = "ch";
+    private String channelId = "notification_channel_0";
+    private int notificationId;
+
+    private List<Message> receivedHistory;
+    private Map<String, Integer> sentStickersCount;
+
+    // hardcoded for testing, needs to update later
+    private static int messageId = 1;
     private final String CURRENT_USER = "CURRENT_USER";
-    private final String RECEIVER = "RECEIVER";
-    private final String STICKER = "STICKER";
+//    private final String RECEIVER = "RECEIVER";
+//    private final String STICKER = "STICKER";
 
     private String currentUser;
     private String recipient;
@@ -74,15 +80,6 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     public DatabaseReference mDatabase;
 
-    private String channelId = "notification_channel_0";
-    private int notificationId;
-
-    private List<Message> receivedHistory;
-    private Map<String, Integer> sentStickersCount;
-
-    // hardcoded for testing, needs to update later
-    private static int messageId = 1;
-
     // keep track of when user logged in
     private Timestamp loginTime;
 
@@ -94,7 +91,6 @@ public class StickItToEmActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         currentlyLoggedIn = findViewById(R.id.currentUserTitle);
         textView = findViewById(R.id.textView);
-//        storage = FirebaseStorage.getInstance();
 
         // Login time
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
@@ -171,9 +167,7 @@ public class StickItToEmActivity extends AppCompatActivity {
                         }
                 );
 
-
         // Update the sticker in realtime
-        // moved from yutong's RealtimeDatabaseActivity.java
         mDatabase.child("messages")
                 .addChildEventListener(
                         new ChildEventListener() {
@@ -181,29 +175,26 @@ public class StickItToEmActivity extends AppCompatActivity {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 //                                showSticker(dataSnapshot);
-                                Message message = dataSnapshot.getValue(Message.class);
+                                getStickerCountAndHistory(dataSnapshot);
 
-                                // Convert message time to timestamp
-                                Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-
-                                if (message != null
-                                        && Objects.equals(message.receiverName, currentUser)
-                                        && messageTime.after(loginTime)) {
-                                    sendNotification(message.senderName, message.stickerId);
-                                }
-                                Log.d(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
-                                //Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
+//                                Message message = dataSnapshot.getValue(Message.class);
+//
+//                                if (message != null
+//                                        && Objects.equals(message.receiverName, loggedInUser)) {
+//                                    sendNotification(message.senderName, message.stickerId);
+//                                }
+                                Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
                             }
 
                             @Override
                             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 //                                showSticker(dataSnapshot);
-                                Message message = dataSnapshot.getValue(Message.class);
-                                if (message != null
-                                        && Objects.equals(message.receiverName, currentUser)) {
-                                    sendNotification(message.senderName, message.stickerId);
-                                }
-                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
+//                                Message message = dataSnapshot.getValue(Message.class);
+//                                if (message != null
+//                                        && Objects.equals(message.receiverName, loggedInUser)) {
+//                                    sendNotification(message.senderName, message.stickerId);
+//                                }
+//                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
                             }
 
                             @Override
@@ -226,9 +217,28 @@ public class StickItToEmActivity extends AppCompatActivity {
                 );
 
         tapSticker();
+
+        // initialize the two buttons for the history lists
+        Button countButton = (Button) findViewById(R.id.show_sticker_count_button);
+        Button historyButton = (Button) findViewById(R.id.show_history_button);
+        countButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showStickerCount();
+            }
+        });
+        historyButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showStickerHistory();
+            }
+        });
     }
 
-    // moved from yutong's RealtimeDatabaseActivity.java
     private void onSendSticker(DatabaseReference postRef,
                                String receiver, String sender, Integer sticker) {
         // add the time as part of the message id to avoid new message overriding the previous message
@@ -261,7 +271,6 @@ public class StickItToEmActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b,
                                            DataSnapshot dataSnapshot) {
-
                         Toast.makeText(getApplicationContext(), "Sticker sent to " + receiver,
                                 Toast.LENGTH_LONG).show();
                         // Transaction completed
@@ -315,7 +324,47 @@ public class StickItToEmActivity extends AppCompatActivity {
         });
     }
 
-    // moved from yutong's RealtimeDatabaseActivity.java
+    private void getStickerCountAndHistory(DataSnapshot dataSnapshot) {
+        Message message = dataSnapshot.getValue(Message.class);
+        // Convert message time to timestamp
+        Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+
+        if (message != null) {
+
+            // add sticker count to sentStickersCount map
+            if (Objects.equals(message.senderName, currentUser)) {
+                if (sentStickersCount.containsKey(message.stickerId)) {
+                    Integer count = sentStickersCount.get(message.stickerId);
+                    count += 1;
+                    sentStickersCount.put(message.stickerId, count);
+                } else {
+                    sentStickersCount.put(message.stickerId, 1);
+                }
+            }
+
+            Log.e(TAG, "sentStickersCount:" + sentStickersCount.toString());
+
+            if (Objects.equals(message.receiverName, currentUser) && messageTime.after(loginTime)) {
+                // send notification to the specific receiver
+                sendNotification(message.senderName, message.stickerId);
+
+                // add the matched message to the history list
+                receivedHistory.add(message);
+            }
+
+            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
+        }
+    }
+
+    public void showStickerCount() {
+        //TODO: Display how many of each kind of sticker a user sent
+    }
+
+    public void showStickerHistory() {
+        // TODO: Display history of stickers user has received (which sticker received, who sent it,
+        //  when it was sent)
+    }
+
     public void createNotificationChannel() {
         // This must be called early because it must be called before a notification is sent.
         // Create the NotificationChannel, but only on API 26+ because
@@ -334,7 +383,6 @@ public class StickItToEmActivity extends AppCompatActivity {
         }
     }
 
-    // moved from yutong's RealtimeDatabaseActivity.java
     public void sendNotification(String sender, String stickerId) {
 
         // Build notification
@@ -368,9 +416,12 @@ public class StickItToEmActivity extends AppCompatActivity {
         }
 
         notificationManager.notify(notificationId++, notifyBuild.build());
+
+        // if only want to let the notification panel show the latest one notification, use this below
+//        notificationManager.notify(notificationId, notifyBuild.build());
+
     }
 
-    // moved from yutong's RealtimeDatabaseActivity.java
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -390,8 +441,6 @@ public class StickItToEmActivity extends AppCompatActivity {
             Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
     //save recyclerview state
     @Override
