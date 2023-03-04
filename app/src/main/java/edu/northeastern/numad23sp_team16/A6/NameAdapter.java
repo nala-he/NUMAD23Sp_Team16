@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A6;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+
+import edu.northeastern.numad23sp_team16.R;
 
 public class NameAdapter extends RecyclerView.Adapter<NameViewHolder> {
 

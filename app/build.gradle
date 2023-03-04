@@ -19,6 +19,7 @@ android {
             keyPassword 'GoodluckNEU2023!'
         }
     }
+
     namespace 'edu.northeastern.numad23sp_team16'
     compileSdk 33
 
@@ -57,13 +58,23 @@ dependencies {
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
 
-    // When using the BoM, you don't specify versions in Firebase library dependencies
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
-    // Add the dependency for the Firebase SDK for Google Analytics
-    implementation 'com.google.firebase:firebase-analytics'
 
-    // Add dependencies for Firebase products
-    implementation 'com.google.firebase:firebase-database:19.6.0'
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
+    implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    implementation 'com.google.firebase:firebase-inappmessaging-display'
+    implementation 'com.google.firebase:firebase-inappmessaging'
+
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-storage:20.1.0'
+
+    //add glide to load images
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
 }

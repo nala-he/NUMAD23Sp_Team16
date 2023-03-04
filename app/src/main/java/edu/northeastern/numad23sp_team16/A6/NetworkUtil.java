@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A6;
 
 import java.io.BufferedReader;
 import java.io.IOException;
