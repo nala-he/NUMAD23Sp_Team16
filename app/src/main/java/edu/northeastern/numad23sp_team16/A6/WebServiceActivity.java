@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A6;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +31,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import edu.northeastern.numad23sp_team16.R;
 
 public class WebServiceActivity extends AppCompatActivity {
 //    private static final String TAG = "WebServiceActivity";

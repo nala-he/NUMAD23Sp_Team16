@@ -74,9 +74,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Get username from input
-                String user = username.getText().toString();
+                String user = username.getText().toString().trim();
 
                 // Ensure username not empty
+                // Trimmed spaces at the end of the input username
                 if (user.isEmpty() || user.trim().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Username cannot be blank",
                             Toast.LENGTH_LONG).show();

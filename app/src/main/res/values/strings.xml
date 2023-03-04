@@ -43,6 +43,14 @@
     <string name="send_sticker">send sticker</string>
     <string name="receiver1">receiver1</string>
     <string name="receiver2">receiver2</string>
-=======
+    <string name="received_count">received count</string>
+    <string name="sender">sender:</string>
+    <string name="current_user">current user</string>
+    <string name="show_counts_of_sent_stickers">Show Counts of Sent Stickers</string>
+    <string name="history_of_stickers_received">HISTORY OF STICKERS RECEIVED</string>
+    <string name="show_history_of_stickers_received">Show History of Stickers Received</string>
+    <string name="recently_sent_sticker">recently sent sticker:</string>
+    <string name="_0">0</string>
+    =======
 
 </resources>

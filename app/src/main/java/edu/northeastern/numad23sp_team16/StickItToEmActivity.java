@@ -3,60 +3,59 @@ package edu.northeastern.numad23sp_team16;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.PendingIntent;
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.net.URL;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import edu.northeastern.numad23sp_team16.models.Message;
+import edu.northeastern.numad23sp_team16.models.User;
 
 public class StickItToEmActivity extends AppCompatActivity {
 
-    private static final String CHANNEL_ID = "ch";
+//    private static final String CHANNEL_ID = "ch";
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String RECEIVER = "RECEIVER";
+    private final String STICKER = "STICKER";
+
     private String currentUser;
+    private String recipient;
+    private int stickerId;
     private TextView currentlyLoggedIn;
     //text to remind user to tap
     private TextView textView;
     private RecyclerView recyclerView;
     private ArrayList<Sticker> stickerList;
-    public final String[] users =  {"Yuan", "Yutong", "Macee"};
+    private List<String> userList;
 
-    FirebaseStorage storage;
+    // We will retrieve the signup user list from the database instead of hardcoding
+    //    public final String[] users =  {"Yuan", "Yutong", "Macee"};
+//    FirebaseStorage storage;
 
+    public DatabaseReference mDatabase;
+
+
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +63,7 @@ public class StickItToEmActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         currentlyLoggedIn = findViewById(R.id.currentUserTitle);
         textView = findViewById(R.id.textView);
-        storage = FirebaseStorage.getInstance();
+//        storage = FirebaseStorage.getInstance();
 
 
         // Retrieve currently logged in user
@@ -90,8 +89,49 @@ public class StickItToEmActivity extends AppCompatActivity {
         recyclerView.setAdapter(new StickerAdapter(stickerList));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        tapSticker();
+        // Connect with firebase
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        // initialize an empty userList to store our signup users from realtime database
+        userList = new ArrayList<>();
 
+        mDatabase.child("users")
+                .addChildEventListener(
+                        new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                User user = dataSnapshot.getValue(User.class);
+                                if (user != null && !userList.contains(user.username)) {
+                                    userList.add(user.username);
+                                }
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                User user = dataSnapshot.getValue(User.class);
+                                if (user != null && !userList.contains(user.username)) {
+                                    userList.add(user.username);
+                                }
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(getApplicationContext()
+                                        , "DBError: " + databaseError, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
+
+
+        tapSticker();
     }
 
     private void tapSticker() {
@@ -105,15 +145,28 @@ public class StickItToEmActivity extends AppCompatActivity {
                     // Show the popup dialog with the list of users
                     AlertDialog.Builder builder = new AlertDialog.Builder(StickItToEmActivity.this);
                     builder.setTitle("Select a recipient to send this sticker:");
+
+                    String[] users = new String[userList.size()];
+                    for (int i = 0; i < userList.size(); i++) {
+                        users[i] = userList.get(i);
+                    }
+
                     //the code inside the lambda expression will be executed when the user selects an item from the list in the dialog
                     builder.setItems(users, (dialog, which) -> {
                         // which user is selected
-                        String recipient = users[which];
-                        // send the image to the selected user using Firebase
-                        //TODO:replace the following method with database logic,recipient is the name(String),stickerList.get(position) is the sticker,eg.new Sticker(R.drawable.giraffe),currentUser is the sender
-                        //sendImageToFirebase(recipient, stickerList.get(position));
+                        recipient = users[which];
+                        stickerId = stickerList.get(position).getStickerId();
+
+                        // Continue to RealtimeDatabaseActivity - passing currently logged in user, recipient, and
+                        // selected sticker id to send message to the database and send notification
+                        Intent intent = new Intent(StickItToEmActivity.this, RealtimeDatabaseActivity.class);
+                        intent.putExtra(CURRENT_USER, currentUser);
+                        intent.putExtra(RECEIVER, recipient);
+                        intent.putExtra(STICKER, stickerId);
+                        startActivity(intent);
                     });
                     builder.show();
+
                     return true;
                 }
                 return false;
@@ -129,7 +182,6 @@ public class StickItToEmActivity extends AppCompatActivity {
                 // Not needed for this implementation
             }
         });
-
     }
 
 

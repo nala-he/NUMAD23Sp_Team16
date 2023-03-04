@@ -46,24 +46,6 @@
         app:layout_constraintBottom_toTopOf="@+id/button_a8"
         app:layout_constraintTop_toBottomOf="@+id/about_button" />
 
-<!--    <Button-->
-<!--        android:id="@+id/button_a8"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:onClick="startRealtimeDatabaseActivity"-->
-<!--        android:text="@string/a8_stick_it_to_em"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/button_a6" />-->
-
-<!--=======-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/button_a8"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/about_button" />-->
-
-
     <Button
         android:id="@+id/button_a8"
         android:layout_width="wrap_content"
@@ -75,6 +57,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_a6" />
-<!--&gt;>>>>>> A8-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

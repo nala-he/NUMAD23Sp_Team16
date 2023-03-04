@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16.receivednotification;
+package edu.northeastern.numad23sp_team16.models;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;

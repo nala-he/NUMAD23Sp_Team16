@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import edu.northeastern.numad23sp_team16.receivednotification.RealtimeDatabaseActivity;
+import edu.northeastern.numad23sp_team16.A6.WebServiceActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
-    // test the received notification feature, to be revised or deleted later
-    public void startRealtimeDatabaseActivity(View view) {
-        startActivity(new Intent(MainActivity.this, RealtimeDatabaseActivity.class));
-    }
+//    // test the received notification feature, to be revised or deleted later
+//    public void startRealtimeDatabaseActivity(View view) {
+//        startActivity(new Intent(MainActivity.this, RealtimeDatabaseActivity.class));
+//    }
 }

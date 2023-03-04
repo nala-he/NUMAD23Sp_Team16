@@ -1,132 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".receivednotification.RealtimeDatabaseActivity">
+    android:scrollbars="vertical"
+    android:fadeScrollbars="false" >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RealtimeDatabaseActivity">
 
-    <LinearLayout
-        android:id="@+id/dataAddLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="3dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <TableLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/dataAddLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:shrinkColumns="2"
-            android:id="@+id/tableLayout" >
-
-            <TableRow>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/receiver"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                <TextView
-                    android:layout_width="206dp"
-                    android:layout_height="match_parent"
-                    android:gravity="start"
-                    android:text="@string/sticker"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-            </TableRow>
+            android:orientation="vertical"
+            android:padding="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
 
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/username1"
-                    android:layout_width="185dp"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/sticker1"
-                    android:layout_width="176dp"
-                    android:layout_height="match_parent"
-                    android:gravity="start"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </TableRow>
-
-            <TableRow>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/username2"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/sticker2"
-                    android:layout_width="206dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    />
-            </TableRow>
-        </TableLayout>
-
-        <TextView
-            android:id="@+id/sender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sender_logged_in_user" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:id="@+id/receiver1"
+            <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/receiver1" />
+                android:shrinkColumns="2"
+                android:padding="5dp">
 
-            <RadioButton
-                android:id="@+id/receiver2"
+                <TableRow>
+                    <TextView
+                        android:layout_width="185dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/current_user"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:layout_width="185dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="@string/receiver"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/username_sender"
+                        android:layout_width="185dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/username_receiver"
+                        android:layout_width="185dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+            </TableLayout>
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/sender"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:text="@string/sender" />-->
+
+    <!--        <RadioGroup-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content">-->
+
+    <!--            <RadioButton-->
+    <!--                android:id="@+id/receiver1"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:checked="true"-->
+    <!--                android:text="@string/receiver1" />-->
+
+    <!--            <RadioButton-->
+    <!--                android:id="@+id/receiver2"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="@string/receiver2" />-->
+    <!--        </RadioGroup>-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/recently_sent_sticker"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <ImageView
+                android:id="@+id/sent_sticker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:srcCompat="@drawable/image_placeholder" />
+
+            <TextView
+                android:id="@+id/sticker_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/receiver2" />
-        </RadioGroup>
+                android:padding="5dp"
+                android:text="COUNTS OF STICKERS SENT" />
 
-        <TextView
-            android:id="@+id/select_sticker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/select_a_sticker" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:id="@+id/sticker_option1"
+            <Button
+                android:id="@+id/show_sticker_count_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/sticker_option_1" />
+                android:padding="5dp"
+                android:onClick="showStickerCount"
+                app:layout_constraintTop_toBottomOf="@id/sticker_count"
+                app:layout_constraintBottom_toTopOf="@id/sticker_count_list"
+                android:text="@string/show_counts_of_sent_stickers" />
 
-            <RadioButton
-                android:id="@+id/sticker_option2"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sticker_count_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/sticker_option_2" />
-        </RadioGroup>
+                android:layout_marginTop="11dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintBottom_toTopOf="@id/sticker_history"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_sticker_count_button"
+                app:layout_constraintVertical_bias="0.5" />
 
-        <Button
-            android:id="@+id/send_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="sendSticker"
-            android:text="@string/send_sticker" />
+            <TextView
+                android:id="@+id/sticker_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/history_of_stickers_received" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/show_history_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="showStickerHistory"
+                android:padding="5dp"
+                app:layout_constraintTop_toBottomOf="@id/sticker_history"
+                app:layout_constraintBottom_toTopOf="@id/sticker_history_list"
+                android:text="@string/show_history_of_stickers_received" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sticker_history_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_history_button"
+                app:layout_constraintVertical_bias="0.5" />
+
+    <!--        <RadioGroup-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content">-->
+
+    <!--            <RadioButton-->
+    <!--                android:id="@+id/sticker_option1"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:checked="true"-->
+    <!--                android:text="@string/sticker_option_1" />-->
+
+    <!--            <RadioButton-->
+    <!--                android:id="@+id/sticker_option2"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="@string/sticker_option_2" />-->
+    <!--        </RadioGroup>-->
+
+    <!--        <Button-->
+    <!--            android:id="@+id/send_button"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:onClick="sendSticker"-->
+    <!--            android:text="@string/send_sticker" />-->
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
