@@ -32,13 +32,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -78,7 +83,8 @@ public class StickItToEmActivity extends AppCompatActivity {
     // hardcoded for testing, needs to update later
     private static int messageId = 1;
 
-
+    // keep track of when user logged in
+    private Timestamp loginTime;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -90,6 +96,10 @@ public class StickItToEmActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
 //        storage = FirebaseStorage.getInstance();
 
+        // Login time
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date date = new Date();
+        loginTime = new Timestamp(date.getTime());
 
         // Retrieve currently logged in user
         Bundle extras = getIntent().getExtras();
@@ -173,8 +183,12 @@ public class StickItToEmActivity extends AppCompatActivity {
 //                                showSticker(dataSnapshot);
                                 Message message = dataSnapshot.getValue(Message.class);
 
+                                // Convert message time to timestamp
+                                Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+
                                 if (message != null
-                                        && Objects.equals(message.receiverName, currentUser)) {
+                                        && Objects.equals(message.receiverName, currentUser)
+                                        && messageTime.after(loginTime)) {
                                     sendNotification(message.senderName, message.stickerId);
                                 }
                                 Log.d(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
