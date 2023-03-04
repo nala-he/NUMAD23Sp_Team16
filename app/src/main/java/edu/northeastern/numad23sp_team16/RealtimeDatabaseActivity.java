@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
 
     private TextView userSender;
     private TextView userReceiver;
+    private ImageView sentSticker;
 
     // hardcoded for testing, needs to update later
     private static int messageId = 1;
@@ -68,16 +70,19 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
 
         userSender = (TextView) findViewById(R.id.username_sender);
         userReceiver = (TextView) findViewById(R.id.username_receiver);
+        sentSticker = (ImageView) findViewById(R.id.sent_sticker);
 
         // Retrieve currently logged in user
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             loggedInUser = extras.getString(CURRENT_USER);
             recipient = extras.getString(RECEIVER);
-            // stickerId will be updated later when the current user received other messages
+            // stickerId will be updated later when the current user sent other messages
             stickerId = extras.getInt(STICKER);
             userSender.setText(loggedInUser);
             userReceiver.setText(recipient);
+            // sentSticker will be updated later when the current user sent other messages
+            sentSticker.setImageResource(stickerId);
         }
 
         notificationId = 0;
