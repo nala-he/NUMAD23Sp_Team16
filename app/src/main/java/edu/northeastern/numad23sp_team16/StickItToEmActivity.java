@@ -80,15 +80,6 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     public DatabaseReference mDatabase;
 
-    private String channelId = "notification_channel_0";
-    private int notificationId;
-
-    private List<Message> receivedHistory;
-    private Map<String, Integer> sentStickersCount;
-
-    // hardcoded for testing, needs to update later
-    private static int messageId = 1;
-
     // keep track of when user logged in
     private Timestamp loginTime;
 
