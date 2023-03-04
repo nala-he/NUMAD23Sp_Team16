@@ -247,6 +247,9 @@ public class StickItToEmActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b,
                                            DataSnapshot dataSnapshot) {
+
+                        Toast.makeText(getApplicationContext(), "Sticker sent to " + receiver,
+                                Toast.LENGTH_LONG).show();
                         // Transaction completed
                         Log.d(TAG, "postTransaction:onComplete:" + databaseError);
                     }
