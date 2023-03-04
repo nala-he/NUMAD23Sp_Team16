@@ -9,16 +9,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import edu.northeastern.numad23sp_team16.models.Message;
 
 public class ReceivedStickerAdapter extends RecyclerView.Adapter<ReceivedStickerViewHolder> {
 
     private Context context;
-    private ArrayList<Message> messageList;
+    private List<Message> messageList;
 
-    public ReceivedStickerAdapter(Context context, ArrayList<Message> messageList) {
+    public ReceivedStickerAdapter(Context context, List<Message> messageList) {
         this.context = context;
         this.messageList = messageList;
     }
