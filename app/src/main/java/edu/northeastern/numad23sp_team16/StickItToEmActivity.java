@@ -193,6 +193,9 @@ public class StickItToEmActivity extends AppCompatActivity {
                                     receivedHistory.add(message);
                                 }
 
+                                // Show history of received stickers
+                                showStickerHistory();
+
                                 Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
                             }
 
@@ -230,21 +233,12 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         // initialize the two buttons for the history lists
         Button countButton = (Button) findViewById(R.id.show_sticker_count_button);
-        Button historyButton = (Button) findViewById(R.id.show_history_button);
         countButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
                 showStickerCount();
-            }
-        });
-        historyButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                showStickerHistory();
             }
         });
     }
@@ -379,12 +373,6 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         // Set adapter to recycler view
         receivedStickers.setAdapter(receivedStickerAdapter);
-
-        // If user has never received any messages, indicate with toast
-        if (receivedHistory.size() == 0) {
-            Toast.makeText(getApplicationContext(), "You have not received any messages",
-                    Toast.LENGTH_LONG).show();
-        }
     }
 
     public void createNotificationChannel() {

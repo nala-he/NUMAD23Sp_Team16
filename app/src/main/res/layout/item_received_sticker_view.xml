@@ -19,8 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/sticker_image"
         android:layout_marginTop="10dp"
-        android:textColor="@color/black"
-        android:textSize="18dp"
         tools:text="Sender Name"/>
 
     <TextView
@@ -30,7 +28,6 @@
         android:layout_toEndOf="@id/sticker_image"
         android:layout_marginTop="5dp"
         android:layout_below="@id/sender_name"
-        android:textColor="@color/black"
         tools:text="Date Sent"/>
     
     <LinearLayout
