@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ReceivedStickerViewHolder extends RecyclerView.ViewHolder{
 
-    private ImageView sticker;
-    private TextView username;
-    private TextView date;
+    ImageView sticker;
+    TextView username;
+    TextView date;
 
     public ReceivedStickerViewHolder(@NonNull View itemView) {
         super(itemView);

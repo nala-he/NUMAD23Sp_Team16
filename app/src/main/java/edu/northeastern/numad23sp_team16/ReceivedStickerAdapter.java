@@ -1,6 +1,9 @@
 package edu.northeastern.numad23sp_team16;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -8,29 +11,46 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import edu.northeastern.numad23sp_team16.models.Message;
+
 public class ReceivedStickerAdapter extends RecyclerView.Adapter<ReceivedStickerViewHolder> {
 
     private Context context;
-    private ArrayList<Sticker> stickerList;
+    private ArrayList<Message> messageList;
 
-    public ReceivedStickerAdapter(Context context, ArrayList<Sticker> stickerList) {
+    public ReceivedStickerAdapter(Context context, ArrayList<Message> messageList) {
         this.context = context;
-        this.stickerList = stickerList;
+        this.messageList = messageList;
     }
 
     @NonNull
     @Override
     public ReceivedStickerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        // Create view holder to display received stickers
+        return new ReceivedStickerViewHolder(LayoutInflater.from(context)
+                .inflate(R.layout.item_received_sticker_view, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReceivedStickerViewHolder holder, int position) {
+        // Get the message from list
+        Message message = messageList.get(position);
 
+        // Bind the data to view holder
+        // Set sender name
+        holder.username.setText(message.senderName);
+
+        // Set date
+        holder.date.setText(message.timeStamp);
+
+        // Set sticker image
+        Bitmap image = BitmapFactory.decodeResource(context.getResources(),
+                Integer.parseInt(message.stickerId));
+        holder.sticker.setImageBitmap(image);
     }
 
     @Override
     public int getItemCount() {
-        return stickerList.size();
+        return messageList.size();
     }
 }
