@@ -82,6 +82,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/recently_sent_sticker"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -89,18 +90,21 @@
             android:id="@+id/sent_sticker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             app:srcCompat="@drawable/image_placeholder" />
 
         <TextView
             android:id="@+id/sticker_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="COUNTS OF STICKERS SENT" />
 
         <Button
             android:id="@+id/show_sticker_count_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:onClick="showStickerCount"
             android:text="@string/show_counts_of_sent_stickers" />
 
@@ -108,11 +112,13 @@
             android:id="@+id/sticker_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/history_of_stickers_received" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:onClick="showStickerHistory"
             android:text="@string/show_history_of_stickers_received" />
 
