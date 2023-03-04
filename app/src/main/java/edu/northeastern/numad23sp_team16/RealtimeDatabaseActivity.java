@@ -102,6 +102,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 //                                showSticker(dataSnapshot);
                                 Message message = dataSnapshot.getValue(Message.class);
+
                                 if (message != null
                                         && Objects.equals(message.receiverName, loggedInUser)) {
                                     sendNotification(message.senderName, message.stickerId);
@@ -150,13 +151,15 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
 
     private void onSendSticker(DatabaseReference postRef,
                                String receiver, String sender, Integer sticker) {
-
+        // add the time as part of the message id to avoid new message overriding the previous message
+        // with the same id
+        String time = String.valueOf(System.currentTimeMillis()/1000);
         postRef.child("messages")
-                .child("message" + messageId++)
+                .child("message" + time + messageId++)
                 .setValue(new Message(receiver, sender, String.valueOf(sticker)));
         postRef
                 .child("messages")
-                .child("message" + messageId)
+                .child("message" + time + messageId)
                 .runTransaction(new Transaction.Handler() {
                     @Override
                     public Transaction.Result doTransaction(MutableData mutableData) {
