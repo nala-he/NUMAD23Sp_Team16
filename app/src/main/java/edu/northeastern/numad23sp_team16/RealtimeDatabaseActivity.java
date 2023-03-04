@@ -1,6 +1,5 @@
-package edu.northeastern.numad23sp_team16.receivednotification;
+package edu.northeastern.numad23sp_team16;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -34,19 +33,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.Message;
 
 public class RealtimeDatabaseActivity extends AppCompatActivity {
     private static final String TAG = RealtimeDatabaseActivity.class.getSimpleName();
 
     private DatabaseReference mDatabase;
     private String loggedInUser;
-    private TextView username1;
-    private TextView sticker1;
-    private TextView username2;
-    private TextView sticker2;
-    private RadioButton receiver1;
-    private RadioButton option1;
+    private String recipient;
+    private Integer stickerId;
+
+    private TextView userSender;
+//    private TextView sticker1;
+    private TextView userReceiver;
+
+    private ArrayList<Sticker> stickerList;
+
+//    private TextView sticker2;
+//    private RadioButton receiver1;
+//    private RadioButton option1;
 
     // hardcoded for testing, needs to update later
     private static int messageId = 1;
@@ -58,19 +63,35 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     private List<Message> receivedHistory;
     private Map<String, Integer> sentStickersCount;
 
+    private final String CURRENT_USER = "CURRENT_USER";
+    private final String RECEIVER = "RECEIVER";
+    private final String STICKER = "STICKER";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime_database);
 
-        // hardcoded for testing, needs to update later
-        loggedInUser = "B";
-        username1 = (TextView) findViewById(R.id.username1);
-        username2 = (TextView) findViewById(R.id.username2);
-        sticker1 = (TextView) findViewById(R.id.sticker1);
-        sticker2 = (TextView) findViewById(R.id.sticker2);
-        receiver1 = (RadioButton) findViewById(R.id.receiver1);
-        option1 = (RadioButton) findViewById(R.id.sticker_option1);
+        userSender = (TextView) findViewById(R.id.username_sender);
+        userReceiver = (TextView) findViewById(R.id.username_receiver);
+
+        // Retrieve currently logged in user
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            loggedInUser = extras.getString(CURRENT_USER);
+            recipient = extras.getString(RECEIVER);
+            // stickerId will be updated later when the current user received other messages
+            stickerId = extras.getInt(STICKER);
+            userSender.setText(loggedInUser);
+            userReceiver.setText(recipient);
+        }
+
+
+//        sticker1 = (TextView) findViewById(R.id.sticker1);
+//        sticker2 = (TextView) findViewById(R.id.sticker2);
+//        receiver1 = (RadioButton) findViewById(R.id.receiver1);
+//        option1 = (RadioButton) findViewById(R.id.sticker_option1);
         notificationId = 0;
         receivedHistory = new ArrayList<>();
         sentStickersCount = new HashMap<>();
@@ -80,19 +101,29 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         // Connect with firebase
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Update the sticker in realtime
-        mDatabase.child("Messages")
+        mDatabase.child("messages")
                 .addChildEventListener(
                         new ChildEventListener() {
 
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                showSticker(dataSnapshot);
+//                                showSticker(dataSnapshot);
+                                Message message = dataSnapshot.getValue(Message.class);
+                                if (message != null
+                                        && Objects.equals(message.receiverName, loggedInUser)) {
+                                    sendNotification(message.senderName, message.stickerId);
+                                }
                                 Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
                             }
 
                             @Override
                             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                showSticker(dataSnapshot);
+//                                showSticker(dataSnapshot);
+                                Message message = dataSnapshot.getValue(Message.class);
+                                if (message != null
+                                        && Objects.equals(message.receiverName, loggedInUser)) {
+                                    sendNotification(message.senderName, message.stickerId);
+                                }
                                 Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
                             }
 
@@ -114,24 +145,26 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                             }
                         }
                 );
+        // Send the new message containing sticker sending info to the Realtime Database
+        onSendSticker(mDatabase, recipient, loggedInUser, stickerId);
     }
 
 
     // Send sticker button
-    public void sendSticker(View view) {
-        RealtimeDatabaseActivity.this.onSendSticker(mDatabase,
-                receiver1.isChecked() ? "A" : "C", loggedInUser,
-                option1.isChecked() ? "1" : "2");
-    }
+//    public void sendSticker(View view) {
+//        RealtimeDatabaseActivity.this.onSendSticker(mDatabase, receiver, loggedInUser, stickerId);
+//    }
+
+
 
     private void onSendSticker(DatabaseReference postRef,
-                               String receiver, String sender, String sticker) {
+                               String receiver, String sender, Integer sticker) {
 
-        postRef.child("Messages")
-                .child("message" + String.valueOf(messageId++))
-                .setValue(new Message(receiver, sender, sticker));
+        postRef.child("messages")
+                .child("message" + messageId++)
+                .setValue(new Message(receiver, sender, String.valueOf(sticker)));
         postRef
-                .child("Messages")
+                .child("messages")
                 .child("message" + messageId)
                 .runTransaction(new Transaction.Handler() {
                     @Override
@@ -144,7 +177,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                         }
 
                         if (message.receiverName.equals(receiver)) {
-                            message.stickerId = sticker;
+                            message.stickerId = String.valueOf(sticker);
                             mutableData.setValue(message);
                         }
 
@@ -161,22 +194,10 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     }
 
 
-    private void showSticker(DataSnapshot dataSnapshot) {
+
+    public void showStickerCount(DataSnapshot dataSnapshot) {
         Message message = dataSnapshot.getValue(Message.class);
         if (message != null) {
-            if (Objects.equals(message.receiverName, loggedInUser)) {
-                sendNotification(message.senderName);
-
-                //Display history of stickers user has received (which sticker received, who sent it,
-                // when it was sent)
-
-                // add the matched message to the history list
-                receivedHistory.add(message);
-            }
-            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
-            Log.e(TAG, "receivedHistory:" + receivedHistory.get(0).stickerId);
-
-            //Display how many of each kind of sticker a user sent
 
             // add sticker count to sentStickersCount map
             if (Objects.equals(message.senderName, loggedInUser)) {
@@ -188,11 +209,26 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                     sentStickersCount.put(message.stickerId, 1);
                 }
             }
+
+            //TODO: Display how many of each kind of sticker a user sent
             Log.e(TAG, "sentStickersCount:" + sentStickersCount.toString());
 
         }
+    }
 
+    public void showStickerHistory(DataSnapshot dataSnapshot) {
+        Message message = dataSnapshot.getValue(Message.class);
+        if (message != null) {
+            if (Objects.equals(message.receiverName, loggedInUser)) {
+                // add the matched message to the history list
+                receivedHistory.add(message);
+            }
+            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
+            Log.e(TAG, "receivedHistory:" + receivedHistory.get(0).stickerId);
 
+            // TODO: Display history of stickers user has received (which sticker received, who sent it,
+            //  when it was sent)
+        }
     }
 
     public void createNotificationChannel() {
@@ -213,16 +249,16 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         }
     }
 
-    public void sendNotification(String sender) {
+    public void sendNotification(String sender, String stickerId) {
 
         // Build notification
         // Need to define a channel ID after Android Oreo
-        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.thinking_face);
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(stickerId));
         NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
                 //"Notification icons must be entirely white."
                 .setSmallIcon(R.drawable.foo)
-                .setContentTitle("New sticker from " + sender)
-                .setContentText("Subject")
+                .setContentTitle("You received a sticker from " + sender)
+//                .setContentText("Subject")
                 .setLargeIcon(myBitmap)
                 .setStyle(new NotificationCompat.BigPictureStyle()
                         .bigPicture(myBitmap)
