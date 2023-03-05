@@ -63,7 +63,6 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     private RecyclerView receivedStickers;
     private ReceivedStickerAdapter receivedStickerAdapter;
-    private ArrayList<Sticker> stickerCountList;
     private Map<String, Integer> sentStickersCount;
 
     // hardcoded for testing, needs to update later
@@ -213,8 +212,6 @@ public class StickItToEmActivity extends AppCompatActivity {
                                     int id = Integer.parseInt(message.stickerId);
                                     if (id != R.drawable.giraffe && id != R.drawable.gorilla
                                             && id != R.drawable.lion && id != R.drawable.hedgehog) {
-                                        Toast.makeText(StickItToEmActivity.this, "Received an unknown sticker id.",
-                                                Toast.LENGTH_LONG).show();
                                         message.stickerId = String.valueOf(R.drawable.unknown_sticker);
                                     }
 
@@ -357,8 +354,6 @@ public class StickItToEmActivity extends AppCompatActivity {
                 int id = Integer.parseInt(message.stickerId);
                 if (id != R.drawable.giraffe && id != R.drawable.gorilla
                         && id != R.drawable.lion && id != R.drawable.hedgehog) {
-                    Toast.makeText(StickItToEmActivity.this, "Received an unknown sticker id.",
-                            Toast.LENGTH_LONG).show();
                     message.stickerId = String.valueOf(R.drawable.unknown_sticker);
                 }
 
