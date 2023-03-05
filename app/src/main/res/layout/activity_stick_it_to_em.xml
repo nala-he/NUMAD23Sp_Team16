@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="COUNTS OF STICKERS SENT"
+            android:text="@string/counts_of_stickers_sent"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/sticker_count_list"
             app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
