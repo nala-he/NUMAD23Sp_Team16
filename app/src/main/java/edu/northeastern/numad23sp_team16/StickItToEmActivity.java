@@ -58,6 +58,8 @@ public class StickItToEmActivity extends AppCompatActivity {
     private int notificationId;
 
     private List<Message> receivedHistory;
+    private RecyclerView receivedStickers;
+    private ReceivedStickerAdapter receivedStickerAdapter;
     private ArrayList<Sticker> stickerCountList;
     private Map<String, Integer> sentStickersCount;
 
@@ -80,6 +82,7 @@ public class StickItToEmActivity extends AppCompatActivity {
     private StickerCountAdapter stickerCountAdapter;
     private ArrayList<Sticker> stickerList;
     private List<String> userList;
+
 
     // We will retrieve the signup user list from the database instead of hardcoding
     //    public final String[] users =  {"Yuan", "Yutong", "Macee"};
@@ -146,10 +149,15 @@ public class StickItToEmActivity extends AppCompatActivity {
         userList = new ArrayList<>();
 
         notificationId = 0;
+
         receivedHistory = new ArrayList<>();
+        // Add list to adapter
+        receivedStickerAdapter = new ReceivedStickerAdapter(this, receivedHistory);
+
         sentStickersCount = new HashMap<>();
 
         createNotificationChannel();
+
 
         mDatabase.child("users")
                 .addChildEventListener(
@@ -197,12 +205,17 @@ public class StickItToEmActivity extends AppCompatActivity {
 //                                showSticker(dataSnapshot);
                                 getStickerCountAndHistory(dataSnapshot);
 
-//                                Message message = dataSnapshot.getValue(Message.class);
-//
-//                                if (message != null
-//                                        && Objects.equals(message.receiverName, loggedInUser)) {
-//                                    sendNotification(message.senderName, message.stickerId);
-//                                }
+                                // Add old and new received stickers to list
+                                Message message = dataSnapshot.getValue(Message.class);
+
+                                if (message != null
+                                        && Objects.equals(message.receiverName, currentUser)) {
+                                    receivedHistory.add(message);
+                                }
+
+                                // Show history of received stickers
+                                showStickerHistory();
+
                                 Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
                             }
 
@@ -387,8 +400,8 @@ public class StickItToEmActivity extends AppCompatActivity {
                 // send notification to the specific receiver
                 sendNotification(message.senderName, message.stickerId);
 
-                // add the matched message to the history list
-                receivedHistory.add(message);
+                // notify adapter for history of received stickers that list was updated
+                receivedStickerAdapter.notifyDataSetChanged();
             }
 
             Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
@@ -403,9 +416,15 @@ public class StickItToEmActivity extends AppCompatActivity {
         sentStickersCount.forEach((id, num) -> stickerCountList.add(new Sticker(Integer.parseInt(id), num)));
     }
 
+    // Display history of stickers user has received (sticker, who sent it, when it was sent)
     public void showStickerHistory() {
-        // TODO: Display history of stickers user has received (which sticker received, who sent it,
-        //  when it was sent)
+        // Set up recycler view
+        receivedStickers = findViewById(R.id.sticker_history_list);
+        receivedStickers.setHasFixedSize(true);
+        receivedStickers.setLayoutManager(new LinearLayoutManager(this));
+
+        // Set adapter to recycler view
+        receivedStickers.setAdapter(receivedStickerAdapter);
     }
 
     public void createNotificationChannel() {
