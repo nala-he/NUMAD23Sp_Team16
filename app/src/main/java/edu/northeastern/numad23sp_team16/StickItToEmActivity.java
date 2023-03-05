@@ -472,7 +472,9 @@ public class StickItToEmActivity extends AppCompatActivity {
                         .bigLargeIcon(null))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 // hide the notification after its selected
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
