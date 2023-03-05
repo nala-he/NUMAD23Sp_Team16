@@ -491,7 +491,6 @@ public class StickItToEmActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelable("recyclerViewState", recyclerView.getLayoutManager().onSaveInstanceState());
         outState.putInt("positionOfSticker",position);
-        String currentUser = currentlyLoggedIn.getText().toString();
         outState.putString("currentUser", currentUser);
         String text = textView.getText().toString();
         outState.putString("remind", text);
@@ -522,11 +521,10 @@ public class StickItToEmActivity extends AppCompatActivity {
             recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
             position = savedInstanceState.getInt("positionOfSticker");
             //restore username
-            String currentUser = savedInstanceState.getString("currentUser");
-            currentlyLoggedIn.setText(currentUser);
+            //String currentUser = savedInstanceState.getString("currentUser");
+            currentlyLoggedIn.setText("Currently Logged In: "+ savedInstanceState.getString("currentUser"));
             //restore reminding text
-            String text = savedInstanceState.getString("remind");
-            textView.setText(text);
+            textView.setText(savedInstanceState.getString("remind"));
              //Restore the state of the dialog if it was previously shown
             users = savedInstanceState.getStringArray("users");
             if (savedInstanceState.getBoolean("isDialogOpen", false)) {
