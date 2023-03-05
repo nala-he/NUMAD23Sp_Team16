@@ -205,6 +205,17 @@ public class StickItToEmActivity extends AppCompatActivity {
 
                                 if (message != null
                                         && Objects.equals(message.receiverName, currentUser)) {
+
+                                    // check if the stickerId is an unknown id, if yes, set a default unknown_sticker image
+                                    // as an image placeholder
+                                    int id = Integer.parseInt(message.stickerId);
+                                    if (id != R.drawable.giraffe && id != R.drawable.gorilla
+                                            && id != R.drawable.lion && id != R.drawable.hedgehog) {
+                                        Toast.makeText(StickItToEmActivity.this, "Received an unknown sticker id.",
+                                                Toast.LENGTH_LONG).show();
+                                        message.stickerId = String.valueOf(R.drawable.unknown_sticker);
+                                    }
+
                                     receivedHistory.add(message);
                                 }
 
@@ -216,13 +227,6 @@ public class StickItToEmActivity extends AppCompatActivity {
 
                             @Override
                             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                                showSticker(dataSnapshot);
-//                                Message message = dataSnapshot.getValue(Message.class);
-//                                if (message != null
-//                                        && Objects.equals(message.receiverName, loggedInUser)) {
-//                                    sendNotification(message.senderName, message.stickerId);
-//                                }
-//                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
                             }
 
                             @Override
@@ -345,6 +349,17 @@ public class StickItToEmActivity extends AppCompatActivity {
 
             // add sticker count to sentStickersCount map
             if (Objects.equals(message.senderName, currentUser)) {
+
+                // check if the stickerId is an unknown id, if yes, set a default unknown_sticker image
+                // as an image placeholder
+                int id = Integer.parseInt(message.stickerId);
+                if (id != R.drawable.giraffe && id != R.drawable.gorilla
+                        && id != R.drawable.lion && id != R.drawable.hedgehog) {
+                    Toast.makeText(StickItToEmActivity.this, "Received an unknown sticker id.",
+                            Toast.LENGTH_LONG).show();
+                    message.stickerId = String.valueOf(R.drawable.unknown_sticker);
+                }
+
                 if (sentStickersCount.containsKey(message.stickerId)) {
                     Integer count = sentStickersCount.get(message.stickerId);
                     count += 1;
@@ -413,15 +428,17 @@ public class StickItToEmActivity extends AppCompatActivity {
         // Build notification
         // Need to define a channel ID after Android Oreo
 
-        // check if the stickerId is an unknown id
-//        int id = Integer.parseInt(stickerId);
-        int id = 0;
+        int id = Integer.parseInt(stickerId);
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+        // check if the stickerId is an unknown id, if yes, set a default unknown_sticker image
+        // as an image placeholder
         if (id != R.drawable.giraffe && id != R.drawable.gorilla
                 && id != R.drawable.lion && id != R.drawable.hedgehog) {
             Toast.makeText(StickItToEmActivity.this, "Received an unknown sticker id.",
                     Toast.LENGTH_LONG).show();
+            myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unknown_sticker);
         }
-        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
 
         NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
                 //"Notification icons must be entirely white."
