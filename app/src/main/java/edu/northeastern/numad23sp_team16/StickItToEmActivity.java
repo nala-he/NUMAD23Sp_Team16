@@ -99,6 +99,8 @@ public class StickItToEmActivity extends AppCompatActivity {
     //users in firebase
     String[] users;
     boolean isDialogOpen;
+
+    TextView promptTextView;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +109,8 @@ public class StickItToEmActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         currentlyLoggedIn = findViewById(R.id.currentUserTitle);
         textView = findViewById(R.id.textView);
-
+        promptTextView = findViewById(R.id.prompt);
+        promptTextView.setText("Currently Logged In: ");
         // Login time
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         Date date = new Date();
@@ -122,7 +125,8 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         // Set title for currently logged in user
         // currentlyLoggedIn = findViewById(R.id.currentUserTitle);
-        currentlyLoggedIn.setText("Currently Logged In: " + currentUser);
+        //currentlyLoggedIn.setText("Currently Logged In: " + currentUser);
+        currentlyLoggedIn.setText(currentUser);
 
         //display 4 stickers in recyclerview for user to send
         stickerList = new ArrayList<>();
@@ -511,6 +515,7 @@ public class StickItToEmActivity extends AppCompatActivity {
         outState.putParcelable("recyclerViewState", recyclerView.getLayoutManager().onSaveInstanceState());
         outState.putInt("positionOfSticker",position);
         outState.putString("currentUser", currentUser);
+        outState.putString("prompt", promptTextView.getText().toString());
         String text = textView.getText().toString();
         outState.putString("remind", text);
         // Save the state of the dialog if it is currently shown
@@ -540,10 +545,11 @@ public class StickItToEmActivity extends AppCompatActivity {
             recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
             position = savedInstanceState.getInt("positionOfSticker");
             //restore username
-            //String currentUser = savedInstanceState.getString("currentUser");
-            currentlyLoggedIn.setText("Currently Logged In: "+ savedInstanceState.getString("currentUser"));
+            currentlyLoggedIn.setText(savedInstanceState.getString("currentUser"));
             //restore reminding text
             textView.setText(savedInstanceState.getString("remind"));
+            //restore prompt textView
+            promptTextView.setText(savedInstanceState.getString("prompt"));
              //Restore the state of the dialog if it was previously shown
             users = savedInstanceState.getStringArray("users");
             if (savedInstanceState.getBoolean("isDialogOpen", false)) {
