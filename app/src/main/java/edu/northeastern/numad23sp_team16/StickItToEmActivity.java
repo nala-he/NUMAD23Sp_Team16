@@ -46,6 +46,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import edu.northeastern.numad23sp_team16.models.Message;
 import edu.northeastern.numad23sp_team16.models.User;
@@ -410,12 +411,22 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         // Build notification
         // Need to define a channel ID after Android Oreo
-        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(stickerId));
+
+        // check if the stickerId is an unknown id
+//        int id = Integer.parseInt(stickerId);
+        int id = 0;
+        if (id != R.drawable.giraffe && id != R.drawable.gorilla
+                && id != R.drawable.lion && id != R.drawable.hedgehog) {
+            Toast.makeText(StickItToEmActivity.this, "Received an unknown sticker id.",
+                    Toast.LENGTH_LONG).show();
+        }
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+
         NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
                 //"Notification icons must be entirely white."
                 .setSmallIcon(R.drawable.foo)
                 .setContentTitle("You received a sticker from " + sender)
-//                .setContentText("Subject")
+                //                .setContentText("Subject")
                 .setLargeIcon(myBitmap)
                 .setStyle(new NotificationCompat.BigPictureStyle()
                         .bigPicture(myBitmap)
@@ -441,7 +452,7 @@ public class StickItToEmActivity extends AppCompatActivity {
         notificationManager.notify(notificationId++, notifyBuild.build());
 
         // if only want to let the notification panel show the latest one notification, use this below
-//        notificationManager.notify(notificationId, notifyBuild.build());
+        //        notificationManager.notify(notificationId, notifyBuild.build());
 
     }
 
