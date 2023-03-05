@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.models.Message;
 
+// moved majority of codes to StickItToEmActivity. Do not need this activity anymore.
 public class RealtimeDatabaseActivity extends AppCompatActivity {
     private static final String TAG = RealtimeDatabaseActivity.class.getSimpleName();
 
@@ -61,7 +63,6 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
     private final String CURRENT_USER = "CURRENT_USER";
     private final String RECEIVER = "RECEIVER";
     private final String STICKER = "STICKER";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,24 +102,26 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 //                                showSticker(dataSnapshot);
-                                Message message = dataSnapshot.getValue(Message.class);
+                                getStickerCountAndHistory(dataSnapshot);
 
-                                if (message != null
-                                        && Objects.equals(message.receiverName, loggedInUser)) {
-                                    sendNotification(message.senderName, message.stickerId);
-                                }
+//                                Message message = dataSnapshot.getValue(Message.class);
+//
+//                                if (message != null
+//                                        && Objects.equals(message.receiverName, loggedInUser)) {
+//                                    sendNotification(message.senderName, message.stickerId);
+//                                }
                                 Log.e(TAG, "onChildAdded: dataSnapshot = " + dataSnapshot.getValue().toString());
                             }
 
                             @Override
                             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 //                                showSticker(dataSnapshot);
-                                Message message = dataSnapshot.getValue(Message.class);
-                                if (message != null
-                                        && Objects.equals(message.receiverName, loggedInUser)) {
-                                    sendNotification(message.senderName, message.stickerId);
-                                }
-                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
+//                                Message message = dataSnapshot.getValue(Message.class);
+//                                if (message != null
+//                                        && Objects.equals(message.receiverName, loggedInUser)) {
+//                                    sendNotification(message.senderName, message.stickerId);
+//                                }
+//                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
                             }
 
                             @Override
@@ -139,8 +142,29 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                             }
                         }
                 );
+
         // Send the new message containing sticker sending info to the Realtime Database
         onSendSticker(mDatabase, recipient, loggedInUser, stickerId);
+
+        // initialize the two buttons for the history lists
+        Button countButton = (Button) findViewById(R.id.show_sticker_count_button);
+        Button historyButton = (Button) findViewById(R.id.show_history_button);
+        countButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showStickerCount();
+            }
+        });
+        historyButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showStickerHistory();
+            }
+        });
     }
 
 
@@ -187,8 +211,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                 });
     }
 
-
-    public void showStickerCount(DataSnapshot dataSnapshot) {
+    private void getStickerCountAndHistory(DataSnapshot dataSnapshot) {
         Message message = dataSnapshot.getValue(Message.class);
         if (message != null) {
 
@@ -203,26 +226,43 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
                 }
             }
 
-            //TODO: Display how many of each kind of sticker a user sent
             Log.e(TAG, "sentStickersCount:" + sentStickersCount.toString());
 
-        }
-    }
-
-    public void showStickerHistory(DataSnapshot dataSnapshot) {
-        Message message = dataSnapshot.getValue(Message.class);
-        if (message != null) {
             if (Objects.equals(message.receiverName, loggedInUser)) {
+                // send notification to the specific receiver
+                sendNotification(message.senderName, message.stickerId);
+
                 // add the matched message to the history list
                 receivedHistory.add(message);
             }
-            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
-            Log.e(TAG, "receivedHistory:" + receivedHistory.get(0).stickerId);
 
-            // TODO: Display history of stickers user has received (which sticker received, who sent it,
-            //  when it was sent)
+            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
         }
     }
+
+//    private void getStickerHistory(DataSnapshot dataSnapshot) {
+//        Message message = dataSnapshot.getValue(Message.class);
+//        if (message != null) {
+//            if (Objects.equals(message.receiverName, loggedInUser)) {
+//                // add the matched message to the history list
+//                receivedHistory.add(message);
+//            }
+//            Log.e(TAG, "receivedHistory:" + receivedHistory.toString());
+//            Log.e(TAG, "receivedHistory:" + receivedHistory.get(0).stickerId);
+//
+
+//        }
+//    }
+
+    public void showStickerCount() {
+        //TODO: Display how many of each kind of sticker a user sent
+    }
+
+    public void showStickerHistory() {
+        // TODO: Display history of stickers user has received (which sticker received, who sent it,
+        //  when it was sent)
+    }
+
 
     public void createNotificationChannel() {
         // This must be called early because it must be called before a notification is sent.
@@ -275,6 +315,9 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         }
 
         notificationManager.notify(notificationId++, notifyBuild.build());
+
+        // if only want to let the notification panel show the latest one notification, use this below
+//        notificationManager.notify(notificationId, notifyBuild.build());
     }
 
     @Override
