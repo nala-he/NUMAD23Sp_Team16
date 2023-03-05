@@ -102,6 +102,7 @@
             app:layout_constraintBottom_toTopOf="@+id/sticker_history_list"
             tools:layout_editor_absoluteX="10dp" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sticker_history_list"
             android:layout_width="match_parent"

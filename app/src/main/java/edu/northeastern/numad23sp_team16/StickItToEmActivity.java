@@ -48,6 +48,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+
 import edu.northeastern.numad23sp_team16.models.Message;
 import edu.northeastern.numad23sp_team16.models.User;
 
@@ -62,6 +63,7 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     private RecyclerView receivedStickers;
     private ReceivedStickerAdapter receivedStickerAdapter;
+    private ArrayList<Sticker> stickerCountList;
     private Map<String, Integer> sentStickersCount;
 
     // hardcoded for testing, needs to update later
