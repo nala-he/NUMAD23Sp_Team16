@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -85,7 +86,13 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     // keep track of when user logged in
     private Timestamp loginTime;
-
+    // show dialog to choose a recipient
+    Dialog dialog;
+    //position in recyclerview to represent which sticker is tapped
+    int position;
+    //users in firebase
+    String[] users;
+    boolean isDialogOpen;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,29 +282,11 @@ public class StickItToEmActivity extends AppCompatActivity {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 // which position is tapped?
-                int position = rv.getChildAdapterPosition(rv.findChildViewUnder(e.getX(), e.getY()));
+                position = rv.getChildAdapterPosition(rv.findChildViewUnder(e.getX(), e.getY()));
                 // Check if the tapped item is an image item
                 if (position != RecyclerView.NO_POSITION) {
                     // Show the popup dialog with the list of users
-                    AlertDialog.Builder builder = new AlertDialog.Builder(StickItToEmActivity.this);
-                    builder.setTitle("Select a recipient to send this sticker:");
-
-                    String[] users = new String[userList.size()];
-                    for (int i = 0; i < userList.size(); i++) {
-                        users[i] = userList.get(i);
-                    }
-
-                    //the code inside the lambda expression will be executed when the user selects an item from the list in the dialog
-                    builder.setItems(users, (dialog, which) -> {
-                        // which user is selected
-                        recipient = users[which];
-                        stickerId = stickerList.get(position).getStickerId();
-
-                        // Send the new message containing sticker sending info to the Realtime Database
-                        onSendSticker(mDatabase, recipient, currentUser, stickerId);
-                    });
-                    builder.show();
-
+                    showDialog();
                     return true;
                 }
                 return false;
@@ -314,7 +303,36 @@ public class StickItToEmActivity extends AppCompatActivity {
             }
         });
     }
+    private void showDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(StickItToEmActivity.this);
+        builder.setTitle("Select a recipient to send this sticker:");
 
+        users = new String[userList.size()];
+        for (int i = 0; i < userList.size(); i++) {
+            users[i] = userList.get(i);
+        }
+
+        //the code inside the lambda expression will be executed when the user selects an item from the list in the dialog
+        builder.setItems(users, (dialog, which) -> {
+            // which user is selected
+            recipient = users[which];
+            stickerId = stickerList.get(position).getStickerId();
+
+            // Send the new message containing sticker sending info to the Realtime Database
+            onSendSticker(mDatabase, recipient, currentUser, stickerId);
+        });
+        // Save the state of the dialog
+        isDialogOpen = true;
+        //save the state into a bundle
+        Bundle bundle = new Bundle();
+        bundle.putStringArray("users",users);
+        dialog = builder.create();
+        dialog.setOnDismissListener(dialog -> isDialogOpen = false);
+        dialog.show();
+
+
+
+    }
     // moved from yutong's RealtimeDatabaseActivity.java
     public void createNotificationChannel() {
         // This must be called early because it must be called before a notification is sent.
@@ -398,25 +416,68 @@ public class StickItToEmActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("recyclerViewState", recyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putInt("positionOfSticker",position);
         String currentUser = currentlyLoggedIn.getText().toString();
         outState.putString("currentUser", currentUser);
         String text = textView.getText().toString();
         outState.putString("remind", text);
+        // Save the state of the dialog if it is currently shown
+        if (dialog != null && isDialogOpen) {
+            outState.putBoolean("isDialogOpen", true);
+            outState.putStringArray("users",users);
+            dialog.dismiss();
+        }
     }
 
-    //TODO: why doesn't the state of textView get restored?? how to change??
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Dismiss the dialog if it is currently shown
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    //restore the state
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
             Parcelable recyclerViewState = savedInstanceState.getParcelable("recyclerViewState");
             recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+            position = savedInstanceState.getInt("positionOfSticker");
             //restore username
             String currentUser = savedInstanceState.getString("currentUser");
             currentlyLoggedIn.setText(currentUser);
             //restore reminding text
             String text = savedInstanceState.getString("remind");
             textView.setText(text);
+             //Restore the state of the dialog if it was previously shown
+            users = savedInstanceState.getStringArray("users");
+            if (savedInstanceState.getBoolean("isDialogOpen", false)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(StickItToEmActivity.this);
+                builder.setTitle("Select a recipient to send this sticker:");
+
+                users = savedInstanceState.getStringArray("users");
+                for (int i = 0; i < userList.size(); i++) {
+                    users[i] = userList.get(i);
+                }
+
+                //the code inside the lambda expression will be executed when the user selects an item from the list in the dialog
+                builder.setItems(users, (dialog, which) -> {
+                    // which user is selected
+                    recipient = users[which];
+                    stickerId = stickerList.get(position).getStickerId();
+
+                    // Send the new message containing sticker sending info to the Realtime Database
+                    onSendSticker(mDatabase, recipient, currentUser, stickerId);
+                });
+                dialog = builder.create();
+                dialog.show();
+            }
+
+
         }
     }
     /**
