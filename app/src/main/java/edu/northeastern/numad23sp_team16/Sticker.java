@@ -10,6 +10,12 @@ public class Sticker {
         this.stickerId = stickerId;
     }
 
+    public Sticker(int stickerId, int stickerCount) {
+        this.stickerId = stickerId;
+        this.stickerCount = stickerCount;
+    }
+
+
     public int getStickerId() {
         return stickerId;
     }
