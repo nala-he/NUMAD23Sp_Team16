@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import edu.northeastern.numad23sp_team16.models.Message;
 import edu.northeastern.numad23sp_team16.models.User;
@@ -58,6 +59,7 @@ public class StickItToEmActivity extends AppCompatActivity {
     private List<Message> receivedHistory;
     private RecyclerView receivedStickers;
     private ReceivedStickerAdapter receivedStickerAdapter;
+    private ArrayList<Sticker> stickerCountList;
     private Map<String, Integer> sentStickersCount;
 
     // hardcoded for testing, needs to update later
@@ -73,6 +75,10 @@ public class StickItToEmActivity extends AppCompatActivity {
     //text to remind user to tap
     private TextView textView;
     private RecyclerView recyclerView;
+
+    private RecyclerView stickerCountRecyclerView;
+
+    private StickerCountAdapter stickerCountAdapter;
     private ArrayList<Sticker> stickerList;
     private List<String> userList;
 
@@ -122,6 +128,13 @@ public class StickItToEmActivity extends AppCompatActivity {
         //recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setAdapter(new StickerAdapter(stickerList));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // set the recycler view for sent sticker counts history
+        stickerCountRecyclerView = findViewById(R.id.sticker_count_list);
+        stickerCountList = new ArrayList<>();
+        stickerCountAdapter = new StickerCountAdapter(stickerCountList);
+        stickerCountRecyclerView.setAdapter(stickerCountAdapter);
+        stickerCountRecyclerView.setLayoutManager(new LinearLayoutManager(StickItToEmActivity.this));
 
         // Connect with firebase
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -231,21 +244,31 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         tapSticker();
 
-        // initialize the two buttons for the history lists
-        Button countButton = (Button) findViewById(R.id.show_sticker_count_button);
-        countButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                showStickerCount();
-            }
-        });
+//        // initialize the two buttons for the history lists
+//        Button countButton = (Button) findViewById(R.id.show_sticker_count_button);
+//        Button historyButton = (Button) findViewById(R.id.show_history_button);
+//        countButton.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View v)
+//            {
+//                showStickerCount();
+//            }
+//        });
+//        historyButton.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View v)
+//            {
+//                showStickerHistory();
+//            }
+//        });
     }
 
     private void onSendSticker(DatabaseReference postRef,
                                String receiver, String sender, Integer sticker) {
-        // add the time as part of the message id to avoid new message overriding the previous message
+
+        // add the time as part of the message id to avoid new message overwriting the previous message
         // with the same id
         String time = String.valueOf(System.currentTimeMillis()/1000);
         postRef.child("messages")
@@ -330,10 +353,12 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     private void getStickerCountAndHistory(DataSnapshot dataSnapshot) {
         Message message = dataSnapshot.getValue(Message.class);
-        // Convert message time to timestamp
-        Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+
+//        stickerCountAdapter.notifyDataSetChanged();
 
         if (message != null) {
+            // Convert message time to timestamp
+            Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
 
             // add sticker count to sentStickersCount map
             if (Objects.equals(message.senderName, currentUser)) {
@@ -343,12 +368,15 @@ public class StickItToEmActivity extends AppCompatActivity {
                     sentStickersCount.put(message.stickerId, count);
                 } else {
                     sentStickersCount.put(message.stickerId, 1);
+//                    stickerCountList.add(new Sticker(Integer.parseInt(message.stickerId), 1));
                 }
             }
 
             Log.e(TAG, "sentStickersCount:" + sentStickersCount.toString());
+            showStickerCount();
 
             if (Objects.equals(message.receiverName, currentUser) && messageTime.after(loginTime)) {
+
                 // send notification to the specific receiver
                 sendNotification(message.senderName, message.stickerId);
 
@@ -362,6 +390,10 @@ public class StickItToEmActivity extends AppCompatActivity {
 
     public void showStickerCount() {
         //TODO: Display how many of each kind of sticker a user sent
+        stickerCountAdapter.notifyDataSetChanged();
+        // clean the data of the sticker count list before adding new record
+        stickerCountList.clear();
+        sentStickersCount.forEach((id, num) -> stickerCountList.add(new Sticker(Integer.parseInt(id), num)));
     }
 
     // Display history of stickers user has received (sticker, who sent it, when it was sent)
