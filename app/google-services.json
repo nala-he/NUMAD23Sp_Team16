@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "636617372604",
+    "project_id": "a8-test-receive-notification",
+    "storage_bucket": "a8-test-receive-notification.appspot.com"
+
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636617372604:android:0d4b21d88af38fb77671b9",
+
+        "android_client_info": {
+          "package_name": "edu.northeastern.numad23sp_team16"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "636617372604-oe0jk7uanlf07srpgesuh6kipduuqtkp.apps.googleusercontent.com",
+
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb_r3q8OFgY50LiAsh9ta9Tm8lBXnUAa0"
+
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "636617372604-oe0jk7uanlf07srpgesuh6kipduuqtkp.apps.googleusercontent.com",
+
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -16,4 +16,42 @@
     <string name="official_name">Official Name:</string>
     <string name="translations">Translations:</string>
     <string name="country_image_icon">country_image_icon</string>
+    <string name="about">About</string>
+    <string name="macee_qi">Macee Qi</string>
+    <string name="yutong_he">Yutong He</string>
+    <string name="yuan_kuang">Yuan Kuang</string>
+
+    <string name="send_a_sticker">send a sticker</string>
+    <string name="tap_a_sticker_and_send_to_friend">tap a sticker and send to friend</string>
+
+    <string name="a8_stick_it_to_em_button">A8 Stick It To \'Em</string>
+    <string name="login_title">Login to Stick It To \'Em</string>
+    <string name="username_hint">Username</string>
+    <string name="close_string">Close</string>
+    <string name="login_button">Login</string>
+
+========== need to revise later -- yutong
+    <string name="sender_logged_in_user">Sender: logged in user</string>
+    <string name="receiver_a">Receiver A</string>
+    <string name="receiver_b">Receiver B</string>
+    <string name="sticker">sticker</string>
+    <string name="receiver">receiver</string>
+    <string name="sticker_option_1">Sticker Option 1</string>
+    <string name="sticker_option_2">Sticker Option 2</string>
+    <string name="select_a_sticker">Select a sticker</string>
+    <string name="reset_users">Reset Users</string>
+    <string name="send_sticker">send sticker</string>
+    <string name="receiver1">receiver1</string>
+    <string name="receiver2">receiver2</string>
+    <string name="received_count">received count</string>
+    <string name="sender">sender:</string>
+    <string name="current_user">current user</string>
+    <string name="show_counts_of_sent_stickers">Show Counts of Sent Stickers</string>
+    <string name="history_of_stickers_received">HISTORY OF STICKERS RECEIVED:</string>
+    <string name="show_history_of_stickers_received">Show History of Stickers Received</string>
+    <string name="recently_sent_sticker">recently sent sticker:</string>
+    <string name="_0">0</string>
+    <string name="counts_of_stickers_sent">COUNTS OF STICKERS SENT:</string>
+    =======
+
 </resources>
