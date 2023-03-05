@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dp"
-        tools:src="@drawable/giraffe" />
+        tools:src="@drawable/unknown_sticker" />
 
     <TextView
         android:id="@+id/sender_name"

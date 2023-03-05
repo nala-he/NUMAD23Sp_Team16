@@ -47,6 +47,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.IntStream;
+
 
 import edu.northeastern.numad23sp_team16.models.Message;
 import edu.northeastern.numad23sp_team16.models.User;
@@ -58,9 +60,10 @@ public class StickItToEmActivity extends AppCompatActivity {
     private int notificationId;
 
     private List<Message> receivedHistory;
+    private ArrayList<Sticker> stickerCountList;
+
     private RecyclerView receivedStickers;
     private ReceivedStickerAdapter receivedStickerAdapter;
-    private ArrayList<Sticker> stickerCountList;
     private Map<String, Integer> sentStickersCount;
 
     // hardcoded for testing, needs to update later
@@ -214,6 +217,15 @@ public class StickItToEmActivity extends AppCompatActivity {
 
                                 if (message != null
                                         && Objects.equals(message.receiverName, currentUser)) {
+
+                                    // check if the stickerId is an unknown id, if yes, set a default unknown_sticker image
+                                    // as an image placeholder
+                                    int id = Integer.parseInt(message.stickerId);
+                                    if (id != R.drawable.giraffe && id != R.drawable.gorilla
+                                            && id != R.drawable.lion && id != R.drawable.hedgehog) {
+                                        message.stickerId = String.valueOf(R.drawable.unknown_sticker);
+                                    }
+
                                     receivedHistory.add(message);
                                 }
 
@@ -225,13 +237,6 @@ public class StickItToEmActivity extends AppCompatActivity {
 
                             @Override
                             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                                showSticker(dataSnapshot);
-//                                Message message = dataSnapshot.getValue(Message.class);
-//                                if (message != null
-//                                        && Objects.equals(message.receiverName, loggedInUser)) {
-//                                    sendNotification(message.senderName, message.stickerId);
-//                                }
-//                                Log.v(TAG, "onChildChanged: " + dataSnapshot.getValue().toString());
                             }
 
                             @Override
@@ -255,25 +260,6 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         tapSticker();
 
-//        // initialize the two buttons for the history lists
-//        Button countButton = (Button) findViewById(R.id.show_sticker_count_button);
-//        Button historyButton = (Button) findViewById(R.id.show_history_button);
-//        countButton.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                showStickerCount();
-//            }
-//        });
-//        historyButton.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                showStickerHistory();
-//            }
-//        });
     }
 
     private void onSendSticker(DatabaseReference postRef,
@@ -386,6 +372,15 @@ public class StickItToEmActivity extends AppCompatActivity {
 
             // add sticker count to sentStickersCount map
             if (Objects.equals(message.senderName, currentUser)) {
+
+                // check if the stickerId is an unknown id, if yes, set a default unknown_sticker image
+                // as an image placeholder
+                int id = Integer.parseInt(message.stickerId);
+                if (id != R.drawable.giraffe && id != R.drawable.gorilla
+                        && id != R.drawable.lion && id != R.drawable.hedgehog) {
+                    message.stickerId = String.valueOf(R.drawable.unknown_sticker);
+                }
+
                 if (sentStickersCount.containsKey(message.stickerId)) {
                     Integer count = sentStickersCount.get(message.stickerId);
                     count += 1;
@@ -453,19 +448,33 @@ public class StickItToEmActivity extends AppCompatActivity {
 
         // Build notification
         // Need to define a channel ID after Android Oreo
-        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(stickerId));
+
+        int id = Integer.parseInt(stickerId);
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+        // check if the stickerId is an unknown id, if yes, set a default unknown_sticker image
+        // as an image placeholder
+        if (id != R.drawable.giraffe && id != R.drawable.gorilla
+                && id != R.drawable.lion && id != R.drawable.hedgehog) {
+            Toast.makeText(StickItToEmActivity.this, "Received an unknown sticker id.",
+                    Toast.LENGTH_LONG).show();
+            myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unknown_sticker);
+        }
+
         NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
                 //"Notification icons must be entirely white."
                 .setSmallIcon(R.drawable.foo)
                 .setContentTitle("You received a sticker from " + sender)
-//                .setContentText("Subject")
+                //                .setContentText("Subject")
                 .setLargeIcon(myBitmap)
                 .setStyle(new NotificationCompat.BigPictureStyle()
                         .bigPicture(myBitmap)
                         .bigLargeIcon(null))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 // hide the notification after its selected
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
@@ -484,7 +493,7 @@ public class StickItToEmActivity extends AppCompatActivity {
         notificationManager.notify(notificationId++, notifyBuild.build());
 
         // if only want to let the notification panel show the latest one notification, use this below
-//        notificationManager.notify(notificationId, notifyBuild.build());
+        //        notificationManager.notify(notificationId, notifyBuild.build());
 
     }
 

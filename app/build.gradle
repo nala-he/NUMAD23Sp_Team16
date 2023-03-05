@@ -5,20 +5,20 @@ plugins {
 }
 
 android {
-//    signingConfigs {
-//        debug {
-//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
-//            storePassword 'GoodluckNEU2023!'
-//            keyAlias 'groupKey'
-//            keyPassword 'GoodluckNEU2023!'
-//        }
-//        team16Release {
-//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
-//            storePassword 'GoodluckNEU2023!'
-//            keyAlias 'groupKey'
-//            keyPassword 'GoodluckNEU2023!'
-//        }
-//    }
+    signingConfigs {
+        debug {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storePassword 'GoodluckNEU2023!'
+            keyAlias 'key0'
+            keyPassword 'GoodluckNEU2023!'
+        }
+        team16Release {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storePassword 'GoodluckNEU2023!'
+            keyAlias 'key0'
+            keyPassword 'GoodluckNEU2023!'
+        }
+    }
 
     namespace 'edu.northeastern.numad23sp_team16'
     compileSdk 33
