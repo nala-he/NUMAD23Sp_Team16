@@ -48,7 +48,7 @@
             android:id="@+id/title_goal_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="@string/name_title_string"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
@@ -56,13 +56,16 @@
 
         <EditText
             android:id="@+id/text_goal_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:ems="10"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="@+id/title_goal_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/title_goal_name"
             app:layout_constraintTop_toTopOf="@+id/title_goal_name" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
