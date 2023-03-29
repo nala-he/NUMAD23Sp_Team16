@@ -11,6 +11,7 @@ public class IconViewHolder extends RecyclerView.ViewHolder {
 
     ImageView icon;
     TextView iconName;
+    ImageView checkmark;
 
     public IconViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -18,5 +19,6 @@ public class IconViewHolder extends RecyclerView.ViewHolder {
         // Get references to views
         icon = itemView.findViewById(R.id.icon_image);
         iconName = itemView.findViewById(R.id.icon_name);
+        checkmark = itemView.findViewById(R.id.checkmark);
     }
 }

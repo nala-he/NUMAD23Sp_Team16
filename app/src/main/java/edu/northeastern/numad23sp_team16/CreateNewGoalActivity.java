@@ -4,6 +4,10 @@ package edu.northeastern.numad23sp_team16;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,16 +20,23 @@ import java.util.List;
 import edu.northeastern.numad23sp_team16.models.Icon;
 
 public class CreateNewGoalActivity extends AppCompatActivity {
+    private static final String TAG = "CreateNewGoalActivity";
 
     private Toolbar toolbar;
     private RecyclerView iconRecyclerView;
     private IconAdapter iconAdapter;
     private List<Icon> iconsList;
+    private EditText editGoalName;
+
+    private String goalName;
+    private int selectedIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_goal);
+
+        editGoalName = findViewById(R.id.text_goal_name);
 
         // Set custom action bar with back button
         toolbar = findViewById(R.id.create_goal_toolbar);
@@ -67,5 +78,17 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         iconsList.add(new Icon(R.drawable.icon_reading, "Reading"));
 
         return iconsList;
+    }
+
+    public void saveNewGoal(View view) {
+        // Retrieve inputted goal name
+        goalName = editGoalName.getText().toString();
+
+        // Retrieve selected icon
+        selectedIcon = iconAdapter.getSelectedIcon().getIconId();
+        String iconName = iconAdapter.getSelectedIcon().getIconName();
+
+        // TODO: navigate back to home screen with new goal info
+        Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName);
     }
 }
