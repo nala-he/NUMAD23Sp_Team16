@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="65dp"
     android:layout_height="wrap_content"
+    android:layout_margin="3dp"
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
         android:id="@+id/icon_image"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_centerVertical="true"/>
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"/>
     
     <TextView
         android:id="@+id/icon_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:textColor="@color/black"
         android:layout_below="@id/icon_image"
         android:textSize="12sp"
