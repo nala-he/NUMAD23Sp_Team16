@@ -2,12 +2,10 @@ package edu.northeastern.numad23sp_team16.Project;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.text.HtmlCompat;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.MenuItem;
 
 import edu.northeastern.numad23sp_team16.R;

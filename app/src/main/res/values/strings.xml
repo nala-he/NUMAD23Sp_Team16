@@ -56,6 +56,12 @@
     <string name="project">Project</string>
     <string name="share">Share</string>
     <string name="user_profile">User Profile</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="pet_name">Pet Name</string>
+    <string name="current_pet">Current Pet</string>
+    <string name="save_updates">Save Updates</string>
     =======
 
 </resources>
