@@ -54,6 +54,7 @@
     <string name="counts_of_stickers_sent">COUNTS OF STICKERS SENT:</string>
     <string name="project_app_name">GoalForIt!</string>
     <string name="create_new_goal_string">Create a New Goal</string>
+    <string name="name_title_string">Name</string>
     =======
 
 </resources>

@@ -15,7 +15,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_goal);
 
-        // Set custom action bar
+        // Set custom action bar with back button
         toolbar = findViewById(R.id.create_goal_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
