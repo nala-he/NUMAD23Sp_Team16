@@ -48,7 +48,7 @@ public class IconAdapter extends RecyclerView.Adapter<IconViewHolder> {
         }
 
         // Set onClick listener for when icons are chosen to update selected icon
-        holder.icon.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 holder.checkmark.setVisibility(VISIBLE);

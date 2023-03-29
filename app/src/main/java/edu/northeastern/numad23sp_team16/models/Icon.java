@@ -17,7 +17,6 @@ public class Icon {
         return iconId;
     }
 
-
     public void setIconId(int iconId) {
         this.iconId = iconId;
     }
