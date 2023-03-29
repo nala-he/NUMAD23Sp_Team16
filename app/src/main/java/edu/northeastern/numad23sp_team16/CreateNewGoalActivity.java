@@ -1,7 +1,9 @@
 package edu.northeastern.numad23sp_team16;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -46,8 +48,19 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Set recycler view to display icons for goal categories
         iconRecyclerView = findViewById(R.id.icons_recycler_view);
-        iconRecyclerView.setLayoutManager(new GridLayoutManager(CreateNewGoalActivity.this, 5));
         iconAdapter = new IconAdapter(getApplicationContext(), iconsList);
         iconRecyclerView.setAdapter(iconAdapter);
+
+        // Dynamically calculate number of columns depending on size of screen
+        iconRecyclerView.setLayoutManager(new GridLayoutManager(CreateNewGoalActivity.this,
+                calculateNumberColumns(getApplicationContext())));
+
+    }
+
+    public int calculateNumberColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = (displayMetrics.widthPixels / displayMetrics.density) - 20;
+        int numberOfColumns = (int) (dpWidth / 75);
+        return numberOfColumns;
     }
 }
