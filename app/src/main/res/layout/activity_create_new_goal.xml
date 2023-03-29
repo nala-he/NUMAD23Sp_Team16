@@ -82,6 +82,15 @@
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/title_goal_name" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/icons_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/title_icon" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
