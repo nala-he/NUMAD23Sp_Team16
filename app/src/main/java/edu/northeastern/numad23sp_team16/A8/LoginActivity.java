@@ -1,10 +1,9 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A8;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import edu.northeastern.numad23sp_team16.models.User;
+import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.A8.models.User;
 
 public class LoginActivity extends AppCompatActivity {
 

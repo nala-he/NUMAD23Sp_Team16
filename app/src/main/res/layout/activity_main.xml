@@ -25,10 +25,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:onClick="startAboutActivity"
-        app:layout_constraintHorizontal_bias="0.5"
         android:text="@string/about"
         app:layout_constraintBottom_toTopOf="@+id/button_a6"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/team16_name" />
 
@@ -40,10 +40,10 @@
         android:layout_marginBottom="10dp"
         android:onClick="startWebServiceActivity"
         android:text="@string/a6_at_your_service_button"
+        app:layout_constraintBottom_toTopOf="@+id/button_a8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/button_a8"
         app:layout_constraintTop_toBottomOf="@+id/about_button" />
 
     <Button
@@ -53,9 +53,21 @@
         android:layout_marginTop="10dp"
         android:onClick="startStickItToEmActivity"
         android:text="@string/a8_stick_it_to_em_button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_project"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_a6" />
+
+    <Button
+        android:id="@+id/button_project"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="startProjectActivity"
+        android:text="@string/project"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_a8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

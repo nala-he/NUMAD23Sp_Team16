@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A8;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import edu.northeastern.numad23sp_team16.models.Message;
+import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.A8.models.Message;
 
 public class ReceivedStickerAdapter extends RecyclerView.Adapter<ReceivedStickerViewHolder> {
 
