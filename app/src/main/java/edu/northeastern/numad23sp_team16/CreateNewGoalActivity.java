@@ -29,7 +29,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private EditText editGoalName;
 
     private String goalName;
-    private int selectedIcon;
+    private Icon selectedIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +85,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         goalName = editGoalName.getText().toString();
 
         // Retrieve selected icon
-        selectedIcon = iconAdapter.getSelectedIcon().getIconId();
-        String iconName = iconAdapter.getSelectedIcon().getIconName();
+        selectedIcon = iconAdapter.getSelectedIcon();
+        String iconName = selectedIcon.getIconName();
 
         // TODO: navigate back to home screen with new goal info
         Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName);

@@ -56,6 +56,7 @@
     <string name="create_new_goal_string">Create a New Goal</string>
     <string name="name_title_string">Name</string>
     <string name="icon_title_string">Icon:</string>
+    <string name="reminder_string">Reminder:</string>
     =======
 
 </resources>
