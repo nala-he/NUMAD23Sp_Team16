@@ -29,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
+    public void startGoalForItActivity(View view) {
+        startActivity(new Intent(MainActivity.this, GoalForItActivity.class));
+    }
+
 //    // test the received notification feature, to be revised or deleted later
 //    public void startRealtimeDatabaseActivity(View view) {
 //        startActivity(new Intent(MainActivity.this, RealtimeDatabaseActivity.class));
