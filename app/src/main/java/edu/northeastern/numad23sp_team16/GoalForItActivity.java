@@ -14,6 +14,7 @@ public class GoalForItActivity extends AppCompatActivity {
         setContentView(R.layout.activity_goal_for_it);
     }
 
+    // TODO: remove temp button for creating new goal and associate onClick from Yuan's part to this method
     public void startCreateNewGoalActivity(View view) {
         startActivity(new Intent(GoalForItActivity.this, CreateNewGoalActivity.class));
     }
