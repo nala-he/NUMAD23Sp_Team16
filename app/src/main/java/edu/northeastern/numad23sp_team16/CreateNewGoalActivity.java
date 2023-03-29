@@ -33,18 +33,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        // Add icons to icons list for recycler view
-        iconsList = new ArrayList<>();
-        iconsList.add(new Icon(R.drawable.icon_self_care, "Self-Care"));
-        iconsList.add(new Icon(R.drawable.icon_growth, "Growth"));
-        iconsList.add(new Icon(R.drawable.icon_social, "Social"));
-        iconsList.add(new Icon(R.drawable.icon_productivity, "Productivity"));
-        iconsList.add(new Icon(R.drawable.icon_health, "Health"));
-        iconsList.add(new Icon(R.drawable.icon_hydration, "Hydration"));
-        iconsList.add(new Icon(R.drawable.icon_finances, "Finances"));
-        iconsList.add(new Icon(R.drawable.icon_language, "Language"));
-        iconsList.add(new Icon(R.drawable.icon_reading, "Reading"));
-
+        // Add all icons to icons list for recycler view
+        createListOfIcons();
 
         // Set recycler view to display icons for goal categories
         iconRecyclerView = findViewById(R.id.icons_recycler_view);
@@ -62,5 +52,20 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         float dpWidth = (displayMetrics.widthPixels / displayMetrics.density) - 20;
         int numberOfColumns = (int) (dpWidth / 75);
         return numberOfColumns;
+    }
+
+    public List<Icon> createListOfIcons() {
+        iconsList = new ArrayList<>();
+        iconsList.add(new Icon(R.drawable.icon_self_care, "Self-Care"));
+        iconsList.add(new Icon(R.drawable.icon_growth, "Growth"));
+        iconsList.add(new Icon(R.drawable.icon_social, "Social"));
+        iconsList.add(new Icon(R.drawable.icon_productivity, "Productivity"));
+        iconsList.add(new Icon(R.drawable.icon_health, "Health"));
+        iconsList.add(new Icon(R.drawable.icon_hydration, "Hydration"));
+        iconsList.add(new Icon(R.drawable.icon_finances, "Finances"));
+        iconsList.add(new Icon(R.drawable.icon_language, "Language"));
+        iconsList.add(new Icon(R.drawable.icon_reading, "Reading"));
+
+        return iconsList;
     }
 }

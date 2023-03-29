@@ -26,4 +26,11 @@
         android:layout_centerHorizontal="true"
         tools:text="Icon"/>
 
+    <ImageView
+        android:id="@+id/checkmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_checkmark"
+        android:layout_toEndOf="@id/icon_image"/>
+
 </RelativeLayout>
