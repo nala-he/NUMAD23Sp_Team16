@@ -55,6 +55,7 @@
     <string name="project_app_name">GoalForIt!</string>
     <string name="create_new_goal_string">Create a New Goal</string>
     <string name="name_title_string">Name</string>
+    <string name="icon_title_string">Icon:</string>
     =======
 
 </resources>
