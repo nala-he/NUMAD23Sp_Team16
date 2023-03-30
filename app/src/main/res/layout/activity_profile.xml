@@ -174,7 +174,6 @@
                 android:text="@string/dog"
                 android:textSize="10pt"
                 android:gravity="center"
-                android:checked="true"
                 android:buttonTint="@color/orange" />
 
             <RadioButton
@@ -235,6 +234,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:backgroundTint="@color/grey"
+            android:onClick="onClickSaveUpdates"
             android:padding="0dp"
             android:text="@string/save_updates"
             android:textAllCaps="false"

@@ -4,14 +4,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RadioButton;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import edu.northeastern.numad23sp_team16.MainActivity;
 import edu.northeastern.numad23sp_team16.R;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -43,16 +46,22 @@ public class ProfileActivity extends AppCompatActivity {
         password_input.setText("FirstUser");
         email_input.setText("firstUser@gmail.com");
         petname_input.setText("Juni");
+        dog_button.setChecked(true);
     }
 
     // this event will enable the back function to the back button on press in customized action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //TODO: change ProjectEntryActivity to HomeActivity after merging with Yuan's code
+    public void onClickSaveUpdates(View view) {
+        // TODO: save updates and then navigate back to home screen
+        startActivity(new Intent(ProfileActivity.this, ProjectEntryActivity.class));
     }
 }
