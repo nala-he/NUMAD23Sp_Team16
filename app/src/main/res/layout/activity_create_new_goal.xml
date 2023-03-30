@@ -122,12 +122,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:thumb="@drawable/custom_thumb"
             app:layout_constraintBottom_toBottomOf="@+id/title_reminder"
             app:layout_constraintStart_toEndOf="@+id/reminder_question_mark"
             app:layout_constraintTop_toTopOf="@+id/title_reminder"
-            app:track="@drawable/custom_track"
-            android:thumb="@drawable/custom_thumb"
-            app:showText="true"/>
+            app:showText="true"
+            app:track="@drawable/custom_track" />
+
+        <TextView
+            android:id="@+id/title_start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/start_string"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/title_reminder" />
+
+        <EditText
+            android:id="@+id/text_start_date"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/custom_input"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/title_start_date"
+            app:layout_constraintStart_toEndOf="@id/title_start_date"
+            app:layout_constraintTop_toTopOf="@+id/title_start_date"
+            android:drawableStart="@drawable/ic_calendar"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <Button
             android:id="@+id/temp"
@@ -138,7 +167,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

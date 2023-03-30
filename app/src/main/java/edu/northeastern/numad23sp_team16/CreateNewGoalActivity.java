@@ -2,6 +2,7 @@ package edu.northeastern.numad23sp_team16;
 
 
 import android.app.ActionBar;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
@@ -25,8 +27,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import edu.northeastern.numad23sp_team16.models.Icon;
 
@@ -42,6 +48,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private EditText editReminderTime;
     private static String DEFAULT_REMINDER_MESSAGE = "Keep going, you've got this!";
     private int selectedHour, selectedMinute;
+    private EditText editStartDate, editEndDate;
 
     // New goal values
     private String goalName;
@@ -49,6 +56,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private Boolean reminderOn = false;
     private String reminderMessage = DEFAULT_REMINDER_MESSAGE; // default reminder message on first create
     private int reminderHour, reminderMinute;
+    private Calendar startDate = Calendar.getInstance();
+    private Calendar endDate = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +86,44 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Determine whether reminders turned on or off
         setReminder();
+
+        // Pick goal start date
+        selectStartDate();
+
+        // Pick goal end date
+        //selectEndDate();
+
+    }
+
+    private void selectStartDate() {
+        editStartDate = findViewById(R.id.text_start_date);
+
+        // Date picker
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                startDate.set(Calendar.YEAR, year);
+                startDate.set(Calendar.MONTH, month);
+                startDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                formatDate(startDate);
+            }
+        };
+
+        // Display date picker when click on input for start date
+        editStartDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(CreateNewGoalActivity.this, date,
+                        startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH),
+                        startDate.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void formatDate(Calendar date) {
+        String format = "MM/dd/yy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
+        editStartDate.setText(dateFormat.format(date.getTime()));
     }
 
     public void setReminder() {
@@ -234,17 +281,21 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         selectedIcon = iconAdapter.getSelectedIcon();
         String iconName = selectedIcon.getIconName();
 
+        // Format calendar date
+        SimpleDateFormat format1 = new SimpleDateFormat("MM/dd/yy", Locale.US);
+
         // TODO: navigate back to home screen with new goal info (create new goal instance)
         if (reminderOn) {
             // Reminders turned on
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
                     + ", Reminders: " + reminderOn + " - " + reminderMessage + " - "
-                    + String.format("%02d:%02d", reminderHour, reminderMinute));
+                    + String.format("%02d:%02d", reminderHour, reminderMinute) + ", "
+                    + format1.format(startDate.getTime()));
         }
         else {
             // Reminders turned off
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
-                    + ", Reminders: " + reminderOn);
+                    + ", Reminders: " + reminderOn + ", " + format1.format(startDate.getTime()));
         }
     }
 }
