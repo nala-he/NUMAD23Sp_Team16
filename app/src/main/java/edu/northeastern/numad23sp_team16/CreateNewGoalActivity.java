@@ -300,6 +300,26 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         reminderDialog.create().show();
     }
 
+    public void displayPriorityInfo(View view) {
+        // Create alert dialog with info regarding how priority works
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(CreateNewGoalActivity.this);
+
+        // Customize dialog to display info about turning how priority benefits/harms your pet more
+        infoDialog.setTitle("Priority Levels");
+        infoDialog.setMessage("Higher priority will have a bigger impact on your pet's health.");
+
+        // Dismiss dialog with OK button
+        infoDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        // Create and show dialog
+        infoDialog.create().show();
+    }
+
     public void saveNewGoal(View view) {
         // Retrieve inputted goal name
         goalName = editGoalName.getText().toString();

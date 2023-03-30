@@ -196,6 +196,7 @@
             android:text="@string/priority_string"
             android:textColor="@color/black"
             android:textSize="16sp"
+            android:onClick="displayPriorityInfo"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@id/title_start_date" />
 
@@ -204,6 +205,7 @@
             android:layout_width="26dp"
             android:layout_height="40dp"
             android:padding="5dp"
+            android:onClick="displayPriorityInfo"
             app:layout_constraintBottom_toBottomOf="@+id/title_priority"
             app:layout_constraintStart_toEndOf="@+id/title_priority"
             app:layout_constraintTop_toTopOf="@+id/title_priority"
