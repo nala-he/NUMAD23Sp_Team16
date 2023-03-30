@@ -2,6 +2,7 @@ package edu.northeastern.numad23sp_team16;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -85,6 +86,23 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
     public void displayReminderInfo(View view) {
         // Create alert dialog with info regarding reminders
+        AlertDialog.Builder reminderDialog = new AlertDialog.Builder(CreateNewGoalActivity.this);
+
+        // Customize dialog to display info about turning reminders on/off
+        reminderDialog.setTitle("Daily Reminders");
+        reminderDialog.setMessage("Turn it on to set the time for daily reminders, " +
+                "turn it off if you don't want any reminders.");
+
+        // Dismiss dialog with OK button
+        reminderDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        // Create and show dialog
+        reminderDialog.create().show();
     }
 
     public void saveNewGoal(View view) {
