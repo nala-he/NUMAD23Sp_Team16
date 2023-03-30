@@ -40,13 +40,14 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private EditText editGoalName;
     private EditText editReminderMessage;
     private EditText editReminderTime;
+    private static String DEFAULT_REMINDER_MESSAGE = "Keep going, you've got this!";
+    private int selectedHour, selectedMinute;
 
+    // New goal values
     private String goalName;
     private Icon selectedIcon;
     private Boolean reminderOn = false;
-    private static String DEFAULT_REMINDER_MESSAGE = "Keep going, you've got this!";
-    private String reminderMessage;
-    private String reminderTime;
+    private String reminderMessage = DEFAULT_REMINDER_MESSAGE; // default reminder message on first create
     private int reminderHour, reminderMinute;
 
     @Override
@@ -88,7 +89,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     // Reminders turned on
                     reminderOn = true;
 
-                    // Display setting reminders dialog
+                    // Display dialog to set reminder message and time
                     showReminderDialog();
 
                 } else {
@@ -113,18 +114,16 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         reminderDialog.setContentView(R.layout.custom_set_reminder_dialog);
         reminderDialog.show();
 
-        // Initialize contents of dialog
+
+        // Get contents of dialog and initialize with saved/default data
+
         // Get reminder message
         editReminderMessage = reminderDialog.findViewById(R.id.text_reminder_message);
-        if (reminderMessage == null) {
-            // Set reminder message to default if first time
-            editReminderMessage.setText(DEFAULT_REMINDER_MESSAGE);
-        } else {
-            editReminderMessage.setText(reminderMessage);
-        }
+        editReminderMessage.setText(reminderMessage);
 
         // Get reminder time
         editReminderTime = reminderDialog.findViewById(R.id.text_reminder_time);
+        editReminderTime.setText(String.format("%02d:%02d", reminderHour, reminderMinute));
         editReminderTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,9 +137,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Save all inputted info
+                // Save new reminder message and reminder time
                 reminderMessage = editReminderMessage.getText().toString();
-                reminderTime = editReminderTime.getText().toString();
+                reminderHour = selectedHour;
+                reminderMinute = selectedMinute;
                 reminderDialog.dismiss();
             }
         });
@@ -160,10 +160,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Set listener for selected times
         TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+            public void onTimeSet(TimePicker view, int hour, int minute) {
+                selectedHour = hour;
+                selectedMinute = minute;
+
                 // Get the selected hour and minute
-                reminderHour = selectedHour;
-                reminderMinute = selectedMinute;
+                editReminderTime.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
             }
         };
 
@@ -237,7 +239,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             // Reminders turned on
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
                     + ", Reminders: " + reminderOn + " - " + reminderMessage + " - "
-                    + reminderTime);
+                    + String.format("%02d:%02d", reminderHour, reminderMinute));
         }
         else {
             // Reminders turned off
