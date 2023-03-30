@@ -188,6 +188,27 @@
             app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
             app:layout_constraintTop_toTopOf="@+id/text_start_date" />
 
+        <TextView
+            android:id="@+id/title_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/priority_string"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/title_start_date" />
+
+        <ImageView
+            android:id="@+id/priority_question_mark"
+            android:layout_width="26dp"
+            android:layout_height="40dp"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/title_priority"
+            app:layout_constraintStart_toEndOf="@+id/title_priority"
+            app:layout_constraintTop_toTopOf="@+id/title_priority"
+            app:srcCompat="@drawable/question_mark_circle" />
+
         <Button
             android:id="@+id/temp"
             android:layout_width="wrap_content"
