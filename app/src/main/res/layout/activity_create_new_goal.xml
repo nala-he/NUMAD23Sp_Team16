@@ -117,7 +117,7 @@
             app:layout_constraintTop_toTopOf="@+id/title_reminder"
             app:srcCompat="@drawable/question_mark_circle" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/reminder_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -125,7 +125,10 @@
             app:layout_constraintBottom_toBottomOf="@+id/title_reminder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/reminder_question_mark"
-            app:layout_constraintTop_toTopOf="@+id/title_reminder" />
+            app:layout_constraintTop_toTopOf="@+id/title_reminder"
+            app:track="@drawable/custom_track"
+            android:thumb="@drawable/custom_thumb"
+            app:showText="true"/>
 
         <Button
             android:id="@+id/temp"
