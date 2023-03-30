@@ -142,21 +142,51 @@
 
         <EditText
             android:id="@+id/text_start_date"
-            android:layout_width="125dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:inputType="date"
             android:layout_marginStart="10dp"
             android:background="@drawable/custom_input"
+            android:cursorVisible="false"
+            android:drawableStart="@drawable/ic_calendar"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:inputType="date"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/title_start_date"
             app:layout_constraintStart_toEndOf="@id/title_start_date"
-            app:layout_constraintTop_toTopOf="@+id/title_start_date"
-            android:drawableStart="@drawable/ic_calendar"
+            app:layout_constraintTop_toTopOf="@+id/title_start_date" />
+
+        <TextView
+            android:id="@+id/title_end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/end_string"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
+            app:layout_constraintStart_toEndOf="@+id/text_start_date"
+            app:layout_constraintTop_toTopOf="@+id/text_start_date" />
+
+        <EditText
+            android:id="@+id/text_end_date"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/custom_input"
             android:cursorVisible="false"
+            android:drawableStart="@drawable/ic_calendar"
             android:focusable="false"
-            android:focusableInTouchMode="false"/>
+            android:focusableInTouchMode="false"
+            android:inputType="date"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/title_end_date"
+            app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
+            app:layout_constraintTop_toTopOf="@+id/text_start_date" />
 
         <Button
             android:id="@+id/temp"
