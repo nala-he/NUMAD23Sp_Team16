@@ -91,10 +91,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         selectStartDate();
 
         // Pick goal end date
-        //selectEndDate();
+        selectEndDate();
 
     }
 
+    // Choose goal start date
     private void selectStartDate() {
         editStartDate = findViewById(R.id.text_start_date);
 
@@ -105,7 +106,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                 startDate.set(Calendar.YEAR, year);
                 startDate.set(Calendar.MONTH, month);
                 startDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                formatDate(startDate);
+                formatDate(editStartDate, startDate);
             }
         };
 
@@ -120,10 +121,36 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         });
     }
 
-    private void formatDate(Calendar date) {
+    // Choose goal end date
+    private void selectEndDate() {
+        editEndDate = findViewById(R.id.text_end_date);
+
+        // Date picker
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                endDate.set(Calendar.YEAR, year);
+                endDate.set(Calendar.MONTH, month);
+                endDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                formatDate(editEndDate, endDate);
+            }
+        };
+
+        // Display date picker when click on input for start date
+        editEndDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(CreateNewGoalActivity.this, date,
+                        endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH),
+                        endDate.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void formatDate(EditText dateToEdit, Calendar date) {
         String format = "MM/dd/yy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
-        editStartDate.setText(dateFormat.format(date.getTime()));
+        dateToEdit.setText(dateFormat.format(date.getTime()));
     }
 
     public void setReminder() {
@@ -290,12 +317,13 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
                     + ", Reminders: " + reminderOn + " - " + reminderMessage + " - "
                     + String.format("%02d:%02d", reminderHour, reminderMinute) + ", "
-                    + format1.format(startDate.getTime()));
+                    + format1.format(startDate.getTime()) + " - "+ format1.format(endDate.getTime()));
         }
         else {
             // Reminders turned off
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
-                    + ", Reminders: " + reminderOn + ", " + format1.format(startDate.getTime()));
+                    + ", Reminders: " + reminderOn + ", " + format1.format(startDate.getTime())
+                    + " - " + format1.format(endDate.getTime()));
         }
     }
 }
