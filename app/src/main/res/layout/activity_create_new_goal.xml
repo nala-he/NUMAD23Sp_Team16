@@ -105,6 +105,16 @@
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@id/icons_recycler_view" />
 
+        <ImageView
+            android:id="@+id/reminder_question_mark"
+            android:layout_width="16dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="5dp"
+            android:onClick="displayReminderInfo"
+            app:layout_constraintBottom_toBottomOf="@+id/title_reminder"
+            app:layout_constraintStart_toEndOf="@+id/title_reminder"
+            app:layout_constraintTop_toTopOf="@+id/title_reminder"
+            app:srcCompat="@drawable/question_mark_circle" />
 
         <Button
             android:id="@+id/temp"
@@ -115,6 +125,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -59,6 +60,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     }
 
     public int calculateNumberColumns(Context context) {
+        // Calculate number of columns to display icons depending on screen size
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = (displayMetrics.widthPixels / displayMetrics.density) - 20;
         int numberOfColumns = (int) (dpWidth / 75);
@@ -66,6 +68,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     }
 
     public List<Icon> createListOfIcons() {
+        // Create list of icon categories
         iconsList = new ArrayList<>();
         iconsList.add(new Icon(R.drawable.icon_self_care, "Self-Care"));
         iconsList.add(new Icon(R.drawable.icon_growth, "Growth"));
@@ -78,6 +81,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         iconsList.add(new Icon(R.drawable.icon_reading, "Reading"));
 
         return iconsList;
+    }
+
+    public void displayReminderInfo(View view) {
+        // Create alert dialog with info regarding reminders
     }
 
     public void saveNewGoal(View view) {
