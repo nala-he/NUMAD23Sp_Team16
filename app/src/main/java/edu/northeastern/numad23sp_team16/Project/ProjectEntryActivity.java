@@ -8,7 +8,7 @@ import android.view.View;
 
 import edu.northeastern.numad23sp_team16.R;
 
-// To be merged or replaced with the login/sign in page activity created by Yuan
+// TODO: to be merged or replaced with the login/sign in page activity created by Yuan
 public class ProjectEntryActivity extends AppCompatActivity {
 
     @Override
