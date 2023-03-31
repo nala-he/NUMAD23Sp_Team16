@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/temp_button"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CreateNewGoalActivity">
@@ -26,236 +26,242 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        android:fillViewport="true">
 
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="20dp" />
-
-        <TextView
-            android:id="@+id/title_goal_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"
-            android:text="@string/name_title_string"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/text_goal_name"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/custom_input"
-            android:inputType="textPersonName"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/title_goal_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/title_goal_name"
-            app:layout_constraintTop_toTopOf="@+id/title_goal_name" />
-
-        <TextView
-            android:id="@+id/title_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="@string/icon_title_string"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/title_goal_name" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/icons_recycler_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/title_icon" />
-
-        <TextView
-            android:id="@+id/title_reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:onClick="displayReminderInfo"
-            android:text="@string/reminder_string"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/icons_recycler_view" />
-
-        <ImageView
-            android:id="@+id/reminder_question_mark"
-            android:layout_width="26dp"
-            android:layout_height="40dp"
-            android:onClick="displayReminderInfo"
-            android:padding="5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/title_reminder"
-            app:layout_constraintStart_toEndOf="@+id/title_reminder"
-            app:layout_constraintTop_toTopOf="@+id/title_reminder"
-            app:srcCompat="@drawable/question_mark_circle" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/reminder_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:thumb="@drawable/custom_thumb"
-            app:layout_constraintBottom_toBottomOf="@+id/title_reminder"
-            app:layout_constraintStart_toEndOf="@+id/reminder_question_mark"
-            app:layout_constraintTop_toTopOf="@+id/title_reminder"
-            app:showText="true"
-            app:track="@drawable/custom_track" />
-
-        <TextView
-            android:id="@+id/title_start_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="@string/start_string"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/title_reminder" />
-
-        <EditText
-            android:id="@+id/text_start_date"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/custom_input"
-            android:cursorVisible="false"
-            android:drawableStart="@drawable/ic_calendar"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:inputType="date"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/title_start_date"
-            app:layout_constraintStart_toEndOf="@id/title_start_date"
-            app:layout_constraintTop_toTopOf="@+id/title_start_date" />
-
-        <TextView
-            android:id="@+id/title_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/end_string"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:layout_marginStart="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
-            app:layout_constraintStart_toEndOf="@+id/text_start_date"
-            app:layout_constraintTop_toTopOf="@+id/text_start_date" />
-
-        <EditText
-            android:id="@+id/text_end_date"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/custom_input"
-            android:cursorVisible="false"
-            android:drawableStart="@drawable/ic_calendar"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:inputType="date"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/title_end_date"
-            app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
-            app:layout_constraintTop_toTopOf="@+id/text_start_date" />
-
-        <TextView
-            android:id="@+id/title_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="@string/priority_string"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:onClick="displayPriorityInfo"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/title_start_date" />
-
-        <ImageView
-            android:id="@+id/priority_question_mark"
-            android:layout_width="26dp"
-            android:layout_height="40dp"
-            android:padding="5dp"
-            android:onClick="displayPriorityInfo"
-            app:layout_constraintBottom_toBottomOf="@+id/title_priority"
-            app:layout_constraintStart_toEndOf="@+id/title_priority"
-            app:layout_constraintTop_toTopOf="@+id/title_priority"
-            app:srcCompat="@drawable/question_mark_circle" />
-
-        <RadioGroup
-            android:id="@+id/priority_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_priority" >
-
-            <RadioButton
-                android:id="@+id/low_priority"
-                style="@style/CustomRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:drawableStart="@drawable/custom_low_priority"/>
-
-            <RadioButton
-                android:id="@+id/medium_priority"
-                style="@style/CustomRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/custom_medium_priority"/>
-
-            <RadioButton
-                android:id="@+id/high_priority"
-                style="@style/CustomRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/custom_high_priority"/>
-
-        </RadioGroup>
-
-        <Button
-            android:id="@+id/temp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="saveNewGoal"
-            android:text="Button"
+            android:layout_marginTop="?attr/actionBarSize"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="20dp" />
+
+            <TextView
+                android:id="@+id/title_goal_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:text="@string/name_title_string"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/text_goal_name"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/custom_input"
+                android:inputType="textPersonName"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/title_goal_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/title_goal_name"
+                app:layout_constraintTop_toTopOf="@+id/title_goal_name" />
+
+            <TextView
+                android:id="@+id/title_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:text="@string/icon_title_string"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/title_goal_name" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/icons_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/title_icon" />
+
+            <TextView
+                android:id="@+id/title_reminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:onClick="displayReminderInfo"
+                android:text="@string/reminder_string"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@id/icons_recycler_view" />
+
+            <ImageView
+                android:id="@+id/reminder_question_mark"
+                android:layout_width="26dp"
+                android:layout_height="40dp"
+                android:onClick="displayReminderInfo"
+                android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/title_reminder"
+                app:layout_constraintStart_toEndOf="@+id/title_reminder"
+                app:layout_constraintTop_toTopOf="@+id/title_reminder"
+                app:srcCompat="@drawable/question_mark_circle" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/reminder_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:thumb="@drawable/custom_thumb"
+                app:layout_constraintBottom_toBottomOf="@+id/title_reminder"
+                app:layout_constraintStart_toEndOf="@+id/reminder_question_mark"
+                app:layout_constraintTop_toTopOf="@+id/title_reminder"
+                app:showText="true"
+                app:track="@drawable/custom_track" />
+
+            <TextView
+                android:id="@+id/title_start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:text="@string/start_string"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@id/title_reminder" />
+
+            <EditText
+                android:id="@+id/text_start_date"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/custom_input"
+                android:cursorVisible="false"
+                android:drawableStart="@drawable/ic_calendar"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="date"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/title_start_date"
+                app:layout_constraintStart_toEndOf="@id/title_start_date"
+                app:layout_constraintTop_toTopOf="@+id/title_start_date" />
+
+            <TextView
+                android:id="@+id/title_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/end_string"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginStart="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
+                app:layout_constraintStart_toEndOf="@+id/text_start_date"
+                app:layout_constraintTop_toTopOf="@+id/text_start_date" />
+
+            <EditText
+                android:id="@+id/text_end_date"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/custom_input"
+                android:cursorVisible="false"
+                android:drawableStart="@drawable/ic_calendar"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="date"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/title_end_date"
+                app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
+                app:layout_constraintTop_toTopOf="@+id/text_start_date" />
+
+            <TextView
+                android:id="@+id/title_priority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/priority_string"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:onClick="displayPriorityInfo"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@id/title_start_date" />
+
+            <ImageView
+                android:id="@+id/priority_question_mark"
+                android:layout_width="26dp"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:onClick="displayPriorityInfo"
+                app:layout_constraintBottom_toBottomOf="@+id/title_priority"
+                app:layout_constraintStart_toEndOf="@+id/title_priority"
+                app:layout_constraintTop_toTopOf="@+id/title_priority"
+                app:srcCompat="@drawable/question_mark_circle" />
+
+            <RadioGroup
+                android:id="@+id/priority_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_priority" >
+
+                <RadioButton
+                    android:id="@+id/low_priority"
+                    style="@style/CustomRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:drawableStart="@drawable/custom_low_priority"/>
+
+                <RadioButton
+                    android:id="@+id/medium_priority"
+                    style="@style/CustomRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/custom_medium_priority"/>
+
+                <RadioButton
+                    android:id="@+id/high_priority"
+                    style="@style/CustomRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/custom_high_priority"/>
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="saveNewGoal"
+                android:layout_marginTop="30dp"
+                android:text="Button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
