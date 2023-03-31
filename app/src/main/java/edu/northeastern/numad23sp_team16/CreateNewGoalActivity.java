@@ -61,6 +61,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private Boolean isReminderTimeDialogOpen = false;
     private TimePickerDialog reminderTimeDialog;
     private Dialog reminderDialog;
+    private DatePickerDialog startDatePicker;
+    private DatePickerDialog endDatePicker;
+    private Boolean isStartDateCalendarOpen = false;
+    private Boolean isEndDateCalendarOpen = false;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -78,8 +82,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String REMINDER_TIME_DIALOG_OPEN = "REMINDER_TIME_DIALOG_OPEN";
     private static final String UNSAVED_HOUR = "UNSAVED_HOUR";
     private static final String UNSAVED_MINUTE = "UNSAVED_MINUTE";
-    private static final String SELECTED_HOUR = "SELECTED_HOUR";
-    private static final String SELECTED_MINUTE = "SELECTED_MINUTE";
+    private static final String START_DATE_DIALOG = "START_DATE_DIALOG";
+    private static final String UNSAVED_START_YEAR = "UNSAVED_START_YEAR";
+    private static final String UNSAVED_START_MONTH = "UNSAVED_START_MONTH";
+    private static final String UNSAVED_START_DAY = "UNSAVED_START_DAY";
+
+    private static final String END_DATE_DIALOG = "END_DATE_DIALOG";
 
     // New goal values
     private String goalName;
@@ -123,16 +131,15 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         setReminder();
 
         // Pick goal start date
-        selectStartDate();
+        selectStartDate(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH),
+                startDate.get(Calendar.DAY_OF_MONTH));
 
         // Pick goal end date
         selectEndDate();
     }
 
-    // Choose goal start date
-    private void selectStartDate() {
-        editStartDate = findViewById(R.id.text_start_date);
-
+    // Show start date picker dialog
+    private void showStartDatePickerDialog(int selectedYear, int selectedMonth, int selectedDay) {
         // Date picker
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -144,13 +151,28 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             }
         };
 
+        startDatePicker = new DatePickerDialog(CreateNewGoalActivity.this, date,
+                selectedYear, selectedMonth, selectedDay);
+        startDatePicker.show();
+        isStartDateCalendarOpen = true;
+
+        startDatePicker.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                isStartDateCalendarOpen = false;
+            }
+        });
+    }
+
+    // Choose goal start date
+    private void selectStartDate(int selectedYear, int selectedMonth, int selectedDay) {
+        editStartDate = findViewById(R.id.text_start_date);
+
         // Display date picker when click on input for start date
         editStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(CreateNewGoalActivity.this, date,
-                        startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH),
-                        startDate.get(Calendar.DAY_OF_MONTH)).show();
+                showStartDatePickerDialog(selectedYear, selectedMonth, selectedDay);
             }
         });
     }
@@ -431,6 +453,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         if (reminderTimeDialog != null && reminderTimeDialog.isShowing()) {
             reminderTimeDialog.dismiss();
         }
+        if (startDatePicker != null && startDatePicker.isShowing()) {
+            startDatePicker.dismiss();
+        }
     }
 
     @Override
@@ -458,11 +483,22 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             Log.d(TAG, "onSaveInstanceState: " + selectedHour + ":" + selectedMinute);
         }
 
+        // Store whether reminder time dialog is open
         outState.putBoolean(REMINDER_TIME_DIALOG_OPEN, isReminderTimeDialogOpen);
 
         // Store start/end date
         outState.putString(GOAL_START, dateFormat.format(startDate.getTime()));
         outState.putString(GOAL_END, dateFormat.format(endDate.getTime()));
+
+        // Store whether start date dialog open
+        outState.putBoolean(START_DATE_DIALOG, isStartDateCalendarOpen);
+        if (isStartDateCalendarOpen) {
+            DatePicker datePicker = startDatePicker.getDatePicker();
+            outState.putInt(UNSAVED_START_YEAR, datePicker.getYear());
+            outState.putInt(UNSAVED_START_MONTH, datePicker.getMonth());
+            outState.putInt(UNSAVED_START_DAY, datePicker.getDayOfMonth());
+        }
+
 
         // Store priority
         outState.putInt(GOAL_PRIORITY, priority);
@@ -524,6 +560,18 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         } catch (ParseException e) {
             Log.d(TAG, "onRestoreInstanceState: Error with restoring goal start/end date");
         }
+
+        // Restore start date picker dialog if it was open + restore last selected date
+        isStartDateCalendarOpen = savedInstanceState.getBoolean(START_DATE_DIALOG);
+        if (isStartDateCalendarOpen) {
+            // Restore date picker dialog for start date with last selected date
+            int year = savedInstanceState.getInt(UNSAVED_START_YEAR);
+            int month = savedInstanceState.getInt(UNSAVED_START_MONTH);
+            int day = savedInstanceState.getInt(UNSAVED_START_DAY);
+            showStartDatePickerDialog(year, month, day);
+        }
+
+
 
         // Restore priority
         priority = savedInstanceState.getInt(GOAL_PRIORITY);
