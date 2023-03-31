@@ -211,6 +211,27 @@
             app:layout_constraintTop_toTopOf="@+id/title_priority"
             app:srcCompat="@drawable/question_mark_circle" />
 
+        <RadioGroup
+            android:id="@+id/priority_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/title_priority" >
+
+            <RadioButton
+                android:id="@+id/low_priority"
+                style="@style/CustomRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:drawableStart="@drawable/custom_low_priority"/>
+
+
+
+
+        </RadioGroup>
+
         <Button
             android:id="@+id/temp"
             android:layout_width="wrap_content"
