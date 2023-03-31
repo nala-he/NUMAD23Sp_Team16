@@ -56,12 +56,14 @@
                 android:id="@+id/title_goal_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="30dp"
                 android:text="@string/name_title_string"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/title_icon"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="spread" />
 
             <EditText
                 android:id="@+id/text_goal_name"
@@ -83,10 +85,11 @@
                 android:id="@+id/title_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="30dp"
                 android:text="@string/icon_title_string"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/icons_recycler_view"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/title_goal_name" />
 
@@ -95,21 +98,25 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/title_reminder"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/title_icon" />
+                app:layout_constraintTop_toBottomOf="@+id/title_icon"
+                android:nestedScrollingEnabled="false"/>
 
             <TextView
                 android:id="@+id/title_reminder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="30dp"
                 android:onClick="displayReminderInfo"
                 android:text="@string/reminder_string"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/title_start_date"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@id/icons_recycler_view" />
+                app:layout_constraintTop_toBottomOf="@+id/icons_recycler_view" />
 
             <ImageView
                 android:id="@+id/reminder_question_mark"
@@ -142,8 +149,9 @@
                 android:text="@string/start_string"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/title_priority"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@id/title_reminder" />
+                app:layout_constraintTop_toBottomOf="@+id/title_reminder" />
 
             <EditText
                 android:id="@+id/text_start_date"
@@ -167,10 +175,10 @@
                 android:id="@+id/title_end_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:text="@string/end_string"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:layout_marginStart="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
                 app:layout_constraintStart_toEndOf="@+id/text_start_date"
                 app:layout_constraintTop_toTopOf="@+id/text_start_date" />
@@ -189,28 +197,29 @@
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@id/title_end_date"
                 app:layout_constraintBottom_toBottomOf="@+id/text_start_date"
+                app:layout_constraintStart_toEndOf="@id/title_end_date"
                 app:layout_constraintTop_toTopOf="@+id/text_start_date" />
 
             <TextView
                 android:id="@+id/title_priority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="35dp"
+                android:onClick="displayPriorityInfo"
                 android:text="@string/priority_string"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:onClick="displayPriorityInfo"
+                app:layout_constraintBottom_toTopOf="@+id/priority_group"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@id/title_start_date" />
+                app:layout_constraintTop_toBottomOf="@+id/title_start_date" />
 
             <ImageView
                 android:id="@+id/priority_question_mark"
                 android:layout_width="26dp"
                 android:layout_height="40dp"
-                android:padding="5dp"
                 android:onClick="displayPriorityInfo"
+                android:padding="5dp"
                 app:layout_constraintBottom_toBottomOf="@+id/title_priority"
                 app:layout_constraintStart_toEndOf="@+id/title_priority"
                 app:layout_constraintTop_toTopOf="@+id/title_priority"
@@ -222,9 +231,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
                 android:orientation="horizontal"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintBottom_toTopOf="@+id/title_memo"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title_priority" >
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/title_priority">
 
                 <RadioButton
                     android:id="@+id/low_priority"
@@ -233,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:drawableStart="@drawable/custom_low_priority"
-                    android:onClick="onPriorityClicked"/>
+                    android:onClick="onPriorityClicked" />
 
                 <RadioButton
                     android:id="@+id/medium_priority"
@@ -241,7 +252,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/custom_medium_priority"
-                    android:onClick="onPriorityClicked"/>
+                    android:onClick="onPriorityClicked" />
 
                 <RadioButton
                     android:id="@+id/high_priority"
@@ -249,7 +260,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/custom_high_priority"
-                    android:onClick="onPriorityClicked"/>
+                    android:onClick="onPriorityClicked" />
             </RadioGroup>
 
             <TextView
@@ -260,8 +271,9 @@
                 android:text="@string/memo_title_string"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/create_goal_save_button"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@id/priority_group" />
+                app:layout_constraintTop_toBottomOf="@+id/priority_group" />
 
             <EditText
                 android:id="@+id/text_memo"
@@ -283,13 +295,15 @@
                 android:id="@+id/create_goal_save_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="saveNewGoal"
-                android:layout_marginTop="30dp"
-                android:text="@string/save_button_string"
+                android:layout_marginTop="35dp"
                 android:background="@color/light_grey"
+                android:onClick="saveNewGoal"
+                android:text="@string/save_button_string"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_memo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

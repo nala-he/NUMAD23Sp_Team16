@@ -23,7 +23,8 @@
             android:name=".CreateNewGoalActivity"
             android:exported="false"
             android:theme="@style/Theme.No_Action_Bar"
-            android:parentActivityName=".GoalForItActivity"/>
+            android:parentActivityName=".GoalForItActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".GoalForItActivity"
             android:exported="false" />

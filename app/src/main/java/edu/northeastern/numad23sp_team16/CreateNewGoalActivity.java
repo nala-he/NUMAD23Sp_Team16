@@ -364,7 +364,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Format calendar date
         SimpleDateFormat format1 = new SimpleDateFormat("MM/dd/yy", Locale.US);
 
-        // TODO: navigate back to home screen with new goal info (create new goal instance)
+        // TODO: Create new goal instance from input values and save to database
         if (reminderOn) {
             // Reminders turned on
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
