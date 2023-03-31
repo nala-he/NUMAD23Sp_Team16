@@ -86,8 +86,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String UNSAVED_START_YEAR = "UNSAVED_START_YEAR";
     private static final String UNSAVED_START_MONTH = "UNSAVED_START_MONTH";
     private static final String UNSAVED_START_DAY = "UNSAVED_START_DAY";
-
     private static final String END_DATE_DIALOG = "END_DATE_DIALOG";
+    private static final String UNSAVED_END_YEAR = "UNSAVED_END_YEAR";
+    private static final String UNSAVED_END_MONTH = "UNSAVED_END_MONTH";
+    private static final String UNSAVED_END_DAY = "UNSAVED_END_DAY";
 
     // New goal values
     private String goalName;
@@ -135,7 +137,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                 startDate.get(Calendar.DAY_OF_MONTH));
 
         // Pick goal end date
-        selectEndDate();
+        selectEndDate(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH),
+                endDate.get(Calendar.DAY_OF_MONTH));
     }
 
     // Show start date picker dialog
@@ -177,10 +180,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         });
     }
 
-    // Choose goal end date
-    private void selectEndDate() {
-        editEndDate = findViewById(R.id.text_end_date);
 
+
+    // Show end date picker dialog
+    private void showEndDatePickerDialog(int selectedYear, int selectedMonth, int selectedDay) {
         // Date picker
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -192,13 +195,29 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             }
         };
 
-        // Display date picker when click on input for start date
+        endDatePicker = new DatePickerDialog(CreateNewGoalActivity.this, date,
+                selectedYear, selectedMonth, selectedDay);
+        endDatePicker.show();
+        isEndDateCalendarOpen = true;
+
+        endDatePicker.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                isEndDateCalendarOpen = false;
+            }
+        });
+    }
+
+
+    // Choose goal end date
+    private void selectEndDate(int selectedYear, int selectedMonth, int selectedDay) {
+        editEndDate = findViewById(R.id.text_end_date);
+
+        // Display date picker when click on input for end date
         editEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(CreateNewGoalActivity.this, date,
-                        endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH),
-                        endDate.get(Calendar.DAY_OF_MONTH)).show();
+                showEndDatePickerDialog(selectedYear, selectedMonth, selectedDay);
             }
         });
     }
@@ -499,6 +518,14 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             outState.putInt(UNSAVED_START_DAY, datePicker.getDayOfMonth());
         }
 
+        // Store whether end date dialog open
+        outState.putBoolean(END_DATE_DIALOG, isEndDateCalendarOpen);
+        if (isEndDateCalendarOpen) {
+            DatePicker datePicker = endDatePicker.getDatePicker();
+            outState.putInt(UNSAVED_END_YEAR, datePicker.getYear());
+            outState.putInt(UNSAVED_END_MONTH, datePicker.getMonth());
+            outState.putInt(UNSAVED_END_DAY, datePicker.getDayOfMonth());
+        }
 
         // Store priority
         outState.putInt(GOAL_PRIORITY, priority);
@@ -571,7 +598,15 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             showStartDatePickerDialog(year, month, day);
         }
 
-
+        // Restore end date picker dialog if it was open + restore last selected date
+        isEndDateCalendarOpen = savedInstanceState.getBoolean(END_DATE_DIALOG);
+        if (isEndDateCalendarOpen) {
+            // Restore date picker dialog for end date with last selected date
+            int year = savedInstanceState.getInt(UNSAVED_END_YEAR);
+            int month = savedInstanceState.getInt(UNSAVED_END_MONTH);
+            int day = savedInstanceState.getInt(UNSAVED_END_DAY);
+            showEndDatePickerDialog(year, month, day);
+        }
 
         // Restore priority
         priority = savedInstanceState.getInt(GOAL_PRIORITY);
