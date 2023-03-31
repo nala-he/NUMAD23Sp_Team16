@@ -56,6 +56,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private EditText editMemo;
     // Format calendar date
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+    private Boolean isReminderDialogOpen = false;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -68,6 +69,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String GOAL_END = "GOAL_END";
     private static final String GOAL_PRIORITY = "GOAL_PRIORITY";
     private static final String GOAL_MEMO = "GOAL_MEMO";
+    private static final String REMINDER_DIALOG_OPEN = "REMINDER_DIALOG_OPEN";
+    private static final String UNSAVED_REMINDER_MESSAGE = "UNSAVED_REMINDER_MESSAGE";
 
     // New goal values
     private String goalName;
@@ -206,7 +209,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Set and show dialog to custom reminder dialog
         reminderDialog.setContentView(R.layout.custom_set_reminder_dialog);
         reminderDialog.show();
-
+        isReminderDialogOpen = true;
 
         // Get contents of dialog and initialize with saved/default data
 
@@ -235,6 +238,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                 reminderHour = selectedHour;
                 reminderMinute = selectedMinute;
                 reminderDialog.dismiss();
+                isReminderDialogOpen = false;
             }
         });
 
@@ -244,6 +248,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 reminderDialog.dismiss();
+                isReminderDialogOpen = false;
             }
         });
     }
@@ -410,6 +415,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         outState.putInt(GOAL_REMINDER_HOUR, reminderHour);
         outState.putInt(GOAL_REMINDER_MINUTE, reminderMinute);
 
+        // Store whether reminder dialog is open
+        outState.putBoolean(REMINDER_DIALOG_OPEN, isReminderDialogOpen);
+        if (isReminderDialogOpen) {
+            outState.putString(UNSAVED_REMINDER_MESSAGE, editReminderMessage.getText().toString());
+        }
+
         // Store start/end date
         outState.putString(GOAL_START, dateFormat.format(startDate.getTime()));
         outState.putString(GOAL_END, dateFormat.format(endDate.getTime()));
@@ -438,6 +449,13 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         reminderMessage = savedInstanceState.getString(GOAL_REMINDER_MESSAGE);
         reminderHour = savedInstanceState.getInt(GOAL_REMINDER_HOUR);
         reminderMinute = savedInstanceState.getInt(GOAL_REMINDER_MINUTE);
+
+        // Restore reminder dialog if it was open
+        isReminderDialogOpen = savedInstanceState.getBoolean(REMINDER_DIALOG_OPEN);
+        if (isReminderDialogOpen) {
+            showReminderDialog();
+            editReminderMessage.setText(savedInstanceState.getString(UNSAVED_REMINDER_MESSAGE));
+        }
 
         // Restore start/end date
         try {
