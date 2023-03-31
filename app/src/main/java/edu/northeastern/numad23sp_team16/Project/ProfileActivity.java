@@ -11,10 +11,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import edu.northeastern.numad23sp_team16.MainActivity;
 import edu.northeastern.numad23sp_team16.R;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -61,6 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     //TODO: change ProjectEntryActivity to HomeActivity after merging with Yuan's code
     public void onClickSaveUpdates(View view) {
+        Toast.makeText(ProfileActivity.this, "Saved profile updates.",
+                Toast.LENGTH_LONG).show();
         // TODO: save updates and then navigate back to home screen
         startActivity(new Intent(ProfileActivity.this, ProjectEntryActivity.class));
     }

@@ -66,6 +66,9 @@
     <string name="cat">Cat</string>
     <string name="add_friends">Add friends</string>
     <string name="send_my_pet_status_to_friends">Send my pet status to friends</string>
+    <string name="list_of_users">List of Users</string>
+    <string name="add_all_selected_users_as_friends">Add All Selected Users as Friends</string>
+    <string name="send_my_pet_status_to_selected_friends">Send My Pet Status to Selected Friends</string>
     =======
 
 </resources>
