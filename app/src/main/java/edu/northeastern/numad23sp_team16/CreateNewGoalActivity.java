@@ -51,12 +51,16 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private EditText editReminderMessage;
     private EditText editReminderTime;
     private static String DEFAULT_REMINDER_MESSAGE = "Keep going, you've got this!";
-    private int selectedHour, selectedMinute;
+    private int selectedHour;
+    private int selectedMinute;
     private EditText editStartDate, editEndDate;
     private EditText editMemo;
     // Format calendar date
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
     private Boolean isReminderDialogOpen = false;
+    private Boolean isReminderTimeDialogOpen = false;
+    private TimePickerDialog reminderTimeDialog;
+    private Dialog reminderDialog;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -71,13 +75,19 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String GOAL_MEMO = "GOAL_MEMO";
     private static final String REMINDER_DIALOG_OPEN = "REMINDER_DIALOG_OPEN";
     private static final String UNSAVED_REMINDER_MESSAGE = "UNSAVED_REMINDER_MESSAGE";
+    private static final String REMINDER_TIME_DIALOG_OPEN = "REMINDER_TIME_DIALOG_OPEN";
+    private static final String UNSAVED_HOUR = "UNSAVED_HOUR";
+    private static final String UNSAVED_MINUTE = "UNSAVED_MINUTE";
+    private static final String SELECTED_HOUR = "SELECTED_HOUR";
+    private static final String SELECTED_MINUTE = "SELECTED_MINUTE";
 
     // New goal values
     private String goalName;
     private Icon selectedIcon;
     private Boolean reminderOn = false;
     private String reminderMessage = DEFAULT_REMINDER_MESSAGE; // default reminder message on first create
-    private int reminderHour, reminderMinute;
+    private int reminderHour;
+    private int reminderMinute;
     private Calendar startDate = Calendar.getInstance();
     private Calendar endDate = Calendar.getInstance();
     private int priority = 1; // default priority is low (1)
@@ -198,7 +208,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
     private void showReminderDialog() {
         // Create custom dialog for setting daily reminders
-        Dialog reminderDialog = new Dialog(CreateNewGoalActivity.this);
+        reminderDialog = new Dialog(CreateNewGoalActivity.this);
 
         // No title on dialog
         reminderDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -224,7 +234,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Prompt user with time picker dialog
-                setReminderTime();
+                setReminderTime(selectedHour, selectedMinute);
             }
         });
 
@@ -248,13 +258,15 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 reminderDialog.dismiss();
+                selectedHour = reminderHour;
+                selectedMinute = reminderMinute;
                 isReminderDialogOpen = false;
             }
         });
     }
 
     // Time picker dialog
-    private void setReminderTime() {
+    private void setReminderTime(int showHour, int showMinute) {
         // Set listener for selected times
         TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -262,21 +274,29 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                 selectedHour = hour;
                 selectedMinute = minute;
 
-                // Get the selected hour and minute
+                // Display the selected hour and minute
                 editReminderTime.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
             }
         };
 
         // Create time picker
-        TimePickerDialog reminderTimeDialog = new TimePickerDialog(CreateNewGoalActivity.this,
+        reminderTimeDialog = new TimePickerDialog(CreateNewGoalActivity.this,
                 android.R.style.Theme_Holo_Light_Dialog, onTimeSetListener,
-                reminderHour, reminderMinute, false);
+                showHour, showMinute, false);
 
         // Set title
         reminderTimeDialog.setTitle("Set reminder time:");
 
         // Show time picker dialog
         reminderTimeDialog.show();
+        isReminderTimeDialogOpen = true;
+
+        reminderTimeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                isReminderTimeDialogOpen = false;
+            }
+        });
     }
 
     public int calculateNumberColumns(Context context) {
@@ -401,6 +421,18 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         startActivity(new Intent(CreateNewGoalActivity.this, GoalForItActivity.class));
     }
 
+    // Dismiss any dialogs to avoid leakage
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (reminderDialog != null && reminderDialog.isShowing()) {
+            reminderDialog.dismiss();
+        }
+        if (reminderTimeDialog != null && reminderTimeDialog.isShowing()) {
+            reminderTimeDialog.dismiss();
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         // Store goal name
@@ -414,12 +446,19 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         outState.putString(GOAL_REMINDER_MESSAGE, reminderMessage);
         outState.putInt(GOAL_REMINDER_HOUR, reminderHour);
         outState.putInt(GOAL_REMINDER_MINUTE, reminderMinute);
+        outState.putInt(UNSAVED_HOUR, selectedHour);
+        outState.putInt(UNSAVED_MINUTE, selectedMinute);
 
         // Store whether reminder dialog is open
         outState.putBoolean(REMINDER_DIALOG_OPEN, isReminderDialogOpen);
         if (isReminderDialogOpen) {
             outState.putString(UNSAVED_REMINDER_MESSAGE, editReminderMessage.getText().toString());
+            outState.putInt(UNSAVED_HOUR, selectedHour);
+            outState.putInt(UNSAVED_MINUTE, selectedMinute);
+            Log.d(TAG, "onSaveInstanceState: " + selectedHour + ":" + selectedMinute);
         }
+
+        outState.putBoolean(REMINDER_TIME_DIALOG_OPEN, isReminderTimeDialogOpen);
 
         // Store start/end date
         outState.putString(GOAL_START, dateFormat.format(startDate.getTime()));
@@ -452,9 +491,30 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Restore reminder dialog if it was open
         isReminderDialogOpen = savedInstanceState.getBoolean(REMINDER_DIALOG_OPEN);
+        isReminderTimeDialogOpen = savedInstanceState.getBoolean(REMINDER_TIME_DIALOG_OPEN);
+        selectedHour = savedInstanceState.getInt(UNSAVED_HOUR);
+        selectedMinute = savedInstanceState.getInt(UNSAVED_MINUTE);
+
+        Log.d(TAG, "onRestoreInstanceState: selected" + selectedHour + ":" + selectedMinute);
+        Log.d(TAG, "onRestoreInstanceState: reminder" + reminderHour + ":" + reminderMinute);
+
         if (isReminderDialogOpen) {
             showReminderDialog();
+
+            // Restore any unsaved data for reminder message and time
             editReminderMessage.setText(savedInstanceState.getString(UNSAVED_REMINDER_MESSAGE));
+            editReminderTime.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
+
+            Log.d(TAG, "onRestoreInstanceState: selected" + selectedHour + ":" + selectedMinute);
+            Log.d(TAG, "onRestoreInstanceState: reminder" + reminderHour + ":" + reminderMinute);
+
+
+            // Restore reminder time dialog if it was open
+            if (isReminderTimeDialogOpen) {
+                Log.d(TAG, "onRestoreInstanceState: here!");
+                Log.d(TAG, "onRestoreInstanceState: " + selectedHour + ":" + selectedMinute);
+                setReminderTime(selectedHour, selectedMinute);
+            }
         }
 
         // Restore start/end date
