@@ -215,8 +215,10 @@
             android:id="@+id/priority_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title_priority" >
 
             <RadioButton
@@ -227,8 +229,19 @@
                 android:checked="true"
                 android:drawableStart="@drawable/custom_low_priority"/>
 
+            <RadioButton
+                android:id="@+id/medium_priority"
+                style="@style/CustomRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/custom_medium_priority"/>
 
-
+            <RadioButton
+                android:id="@+id/high_priority"
+                style="@style/CustomRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/custom_high_priority"/>
 
         </RadioGroup>
 
