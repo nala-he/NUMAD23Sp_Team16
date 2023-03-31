@@ -232,21 +232,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:drawableStart="@drawable/custom_low_priority"/>
+                    android:drawableStart="@drawable/custom_low_priority"
+                    android:onClick="onPriorityClicked"/>
 
                 <RadioButton
                     android:id="@+id/medium_priority"
                     style="@style/CustomRadioButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/custom_medium_priority"/>
+                    android:drawableStart="@drawable/custom_medium_priority"
+                    android:onClick="onPriorityClicked"/>
 
                 <RadioButton
                     android:id="@+id/high_priority"
                     style="@style/CustomRadioButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/custom_high_priority"/>
+                    android:drawableStart="@drawable/custom_high_priority"
+                    android:onClick="onPriorityClicked"/>
             </RadioGroup>
 
             <Button

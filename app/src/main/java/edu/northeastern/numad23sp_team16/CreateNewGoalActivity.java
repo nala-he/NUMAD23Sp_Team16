@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -58,6 +59,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private int reminderHour, reminderMinute;
     private Calendar startDate = Calendar.getInstance();
     private Calendar endDate = Calendar.getInstance();
+    private int priority = 1; // default priority is low (1)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,6 +322,31 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         infoDialog.create().show();
     }
 
+    // Determine which priority level is selected
+    public void onPriorityClicked(View view) {
+        // Check if the button was selected
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which priority was selected
+        switch(view.getId()) {
+            case R.id.low_priority:
+                if (checked) {
+                    priority = 1;
+                }
+                break;
+            case R.id.medium_priority:
+                if (checked) {
+                    priority = 2;
+                }
+                break;
+            case R.id.high_priority:
+                if (checked) {
+                    priority = 3;
+                }
+                break;
+        }
+    }
+
     public void saveNewGoal(View view) {
         // Retrieve inputted goal name
         goalName = editGoalName.getText().toString();
@@ -337,13 +364,14 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
                     + ", Reminders: " + reminderOn + " - " + reminderMessage + " - "
                     + String.format("%02d:%02d", reminderHour, reminderMinute) + ", "
-                    + format1.format(startDate.getTime()) + " - "+ format1.format(endDate.getTime()));
+                    + format1.format(startDate.getTime()) + " - "+ format1.format(endDate.getTime())
+                    + ", Priority: " + priority);
         }
         else {
             // Reminders turned off
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
                     + ", Reminders: " + reminderOn + ", " + format1.format(startDate.getTime())
-                    + " - " + format1.format(endDate.getTime()));
+                    + " - " + format1.format(endDate.getTime()) + ", Priority: " + priority);
         }
     }
 }
