@@ -68,4 +68,12 @@ public class IconAdapter extends RecyclerView.Adapter<IconViewHolder> {
     public Icon getSelectedIcon() {
         return icons.get(selectedIcon);
     }
+
+    public int getSelectedIconPosition() {
+        return selectedIcon;
+    }
+
+    public void setSelectedIconPosition(int position) {
+        selectedIcon = position;
+    }
 }

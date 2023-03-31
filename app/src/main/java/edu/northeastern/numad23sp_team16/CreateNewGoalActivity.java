@@ -22,6 +22,7 @@ import android.widget.RadioButton;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -29,6 +30,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,6 +54,20 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private int selectedHour, selectedMinute;
     private EditText editStartDate, editEndDate;
     private EditText editMemo;
+    // Format calendar date
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+
+    // For orientation changes
+    private static final String GOAL_NAME = "GOAL_NAME";
+    private static final String GOAL_ICON = "GOAL_ICON";
+    private static final String GOAL_REMINDER = "GOAL_REMINDER";
+    private static final String GOAL_REMINDER_MESSAGE = "GOAL_REMINDER_MESSAGE";
+    private static final String GOAL_REMINDER_HOUR = "GOAL_REMINDER_HOUR";
+    private static final String GOAL_REMINDER_MINUTE = "GOAL_REMINDER_MINUTE";
+    private static final String GOAL_START = "GOAL_START";
+    private static final String GOAL_END = "GOAL_END";
+    private static final String GOAL_PRIORITY = "GOAL_PRIORITY";
+    private static final String GOAL_MEMO = "GOAL_MEMO";
 
     // New goal values
     private String goalName;
@@ -153,8 +169,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     }
 
     private void formatDate(EditText dateToEdit, Calendar date) {
-        String format = "MM/dd/yy";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
         dateToEdit.setText(dateFormat.format(date.getTime()));
     }
 
@@ -361,27 +375,82 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Retrieve inputted memo
         memo = editMemo.getText().toString();
 
-        // Format calendar date
-        SimpleDateFormat format1 = new SimpleDateFormat("MM/dd/yy", Locale.US);
-
         // TODO: Create new goal instance from input values and save to database
         if (reminderOn) {
             // Reminders turned on
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
                     + ", Reminders: " + reminderOn + " - " + reminderMessage + " - "
                     + String.format("%02d:%02d", reminderHour, reminderMinute) + ", "
-                    + format1.format(startDate.getTime()) + " - "+ format1.format(endDate.getTime())
+                    + dateFormat.format(startDate.getTime()) + " - "+ dateFormat.format(endDate.getTime())
                     + ", Priority: " + priority + ", Memo: " + memo);
         }
         else {
             // Reminders turned off
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
-                    + ", Reminders: " + reminderOn + ", " + format1.format(startDate.getTime())
-                    + " - " + format1.format(endDate.getTime()) + ", Priority: " + priority
+                    + ", Reminders: " + reminderOn + ", " + dateFormat.format(startDate.getTime())
+                    + " - " + dateFormat.format(endDate.getTime()) + ", Priority: " + priority
                     + ", Memo: " + memo);
         }
 
         // TODO: navigate to home screen created by Yuan
         startActivity(new Intent(CreateNewGoalActivity.this, GoalForItActivity.class));
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        // Store goal name
+        outState.putString(GOAL_NAME, editGoalName.getText().toString());
+
+        // Store selected icon
+        outState.putInt(GOAL_ICON, iconAdapter.getSelectedIconPosition());
+
+        // Store reminder info
+        outState.putBoolean(GOAL_REMINDER, reminderOn);
+        outState.putString(GOAL_REMINDER_MESSAGE, reminderMessage);
+        outState.putInt(GOAL_REMINDER_HOUR, reminderHour);
+        outState.putInt(GOAL_REMINDER_MINUTE, reminderMinute);
+
+        // Store start/end date
+        outState.putString(GOAL_START, dateFormat.format(startDate.getTime()));
+        outState.putString(GOAL_END, dateFormat.format(endDate.getTime()));
+
+        // Store priority
+        outState.putInt(GOAL_PRIORITY, priority);
+
+        // Store memo
+        outState.putString(GOAL_MEMO, editMemo.getText().toString());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore goal name
+        goalName = savedInstanceState.getString(GOAL_NAME);
+
+        // Restore selected icon
+        iconAdapter.setSelectedIconPosition(savedInstanceState.getInt(GOAL_ICON));
+
+        // Restore reminder info
+        reminderOn = savedInstanceState.getBoolean(GOAL_REMINDER);
+        reminderMessage = savedInstanceState.getString(GOAL_REMINDER_MESSAGE);
+        reminderHour = savedInstanceState.getInt(GOAL_REMINDER_HOUR);
+        reminderMinute = savedInstanceState.getInt(GOAL_REMINDER_MINUTE);
+
+        // Restore start/end date
+        try {
+            startDate.setTime(dateFormat.parse(savedInstanceState.getString(GOAL_START)));
+            endDate.setTime(dateFormat.parse(savedInstanceState.getString(GOAL_END)));
+        } catch (ParseException e) {
+            Log.d(TAG, "onRestoreInstanceState: Error with restoring goal start/end date");
+        }
+
+        // Restore priority
+        priority = savedInstanceState.getInt(GOAL_PRIORITY);
+
+        // Restore memo
+        memo = savedInstanceState.getString(GOAL_MEMO);
     }
 }
