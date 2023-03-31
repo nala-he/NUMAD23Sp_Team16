@@ -52,15 +52,25 @@ public class AddFriendsActivity extends AppCompatActivity {
         AppCompatTextView title = findViewById(R.id.navbar_title);
         title.setText("Add New Friends");
 
+        // TODO: obtain friendsList from firebase database
+        // obtain friendsList from ShareActivity, needs to be replaced with data from firebase later
+        Bundle bundle= getIntent().getExtras();
+        if (bundle != null) {
+            friendsList.addAll(bundle.getParcelableArrayList(FRIENDS_LIST));
+        }
+        // get usersList data and update the previously selected friends status
+        getUsersListData();
+
         // initialize views
         userListRecyclerView = findViewById(R.id.userlist_recyclerview);
-        getUsersListData();
         usernameAdapter = new UsernameAdapter(usersList);
         userListRecyclerView.setAdapter(usernameAdapter);
         userListRecyclerView.setLayoutManager(new LinearLayoutManager(AddFriendsActivity.this));
 
         TextView userListTitle = findViewById(R.id.user_list_title);
         userListTitle.setText(R.string.list_of_users);
+
+
 
         Button addButton = findViewById(R.id.add_selected_friends_button);
         Button sendButton = findViewById(R.id.send_status_button);
@@ -115,7 +125,8 @@ public class AddFriendsActivity extends AppCompatActivity {
         "Brady"};
         for (String name : names) {
             Username user = new Username(name);
-            if (friendsList != null && friendsList.contains(user)) {
+            if (friendsList != null
+                    && friendsList.stream().anyMatch(each -> each.getName().equals(name))) {
                 user.setSelected(true);
             }
             usersList.add(user);

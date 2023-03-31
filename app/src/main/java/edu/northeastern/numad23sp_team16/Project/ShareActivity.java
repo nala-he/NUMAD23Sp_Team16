@@ -60,7 +60,12 @@ public class ShareActivity extends AppCompatActivity {
     }
 
     public void onClickAddFriends(View view) {
-        startActivity(new Intent(ShareActivity.this, AddFriendsActivity.class));
+        // TODO: for demo now, need to be revised once implementing firebase database
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
+        Intent intent = new Intent(ShareActivity.this, AddFriendsActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     public void onClickSendStatus(View view) {

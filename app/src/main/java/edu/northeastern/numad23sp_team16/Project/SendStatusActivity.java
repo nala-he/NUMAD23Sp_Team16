@@ -89,9 +89,9 @@ public class SendStatusActivity extends AppCompatActivity {
                 }
 
                 Intent intent = new Intent(SendStatusActivity.this, ShareActivity.class);
-//                // close all the activities in the call stack above ShareActivity and bring it to
-//                // the top of the call stack
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                // close all the activities in the call stack above ShareActivity and bring it to
+                // the top of the call stack
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
