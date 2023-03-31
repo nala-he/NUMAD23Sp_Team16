@@ -64,6 +64,7 @@
     <string name="start_string">Start:</string>
     <string name="end_string">End:</string>
     <string name="priority_string">Priority:</string>
+    <string name="memo_title_string">Memo:</string>
     =======
 
 </resources>

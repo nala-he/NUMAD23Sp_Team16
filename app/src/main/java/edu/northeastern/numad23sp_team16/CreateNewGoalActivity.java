@@ -50,6 +50,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static String DEFAULT_REMINDER_MESSAGE = "Keep going, you've got this!";
     private int selectedHour, selectedMinute;
     private EditText editStartDate, editEndDate;
+    private EditText editMemo;
 
     // New goal values
     private String goalName;
@@ -60,6 +61,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private Calendar startDate = Calendar.getInstance();
     private Calendar endDate = Calendar.getInstance();
     private int priority = 1; // default priority is low (1)
+    private String memo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_new_goal);
 
         editGoalName = findViewById(R.id.text_goal_name);
+        editMemo = findViewById(R.id.text_memo);
 
         // Set custom action bar with back button
         toolbar = findViewById(R.id.create_goal_toolbar);
@@ -94,7 +97,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Pick goal end date
         selectEndDate();
-
     }
 
     // Choose goal start date
@@ -355,6 +357,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         selectedIcon = iconAdapter.getSelectedIcon();
         String iconName = selectedIcon.getIconName();
 
+        // Retrieve inputted memo
+        memo = editMemo.getText().toString();
+
         // Format calendar date
         SimpleDateFormat format1 = new SimpleDateFormat("MM/dd/yy", Locale.US);
 
@@ -365,13 +370,14 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + ", Reminders: " + reminderOn + " - " + reminderMessage + " - "
                     + String.format("%02d:%02d", reminderHour, reminderMinute) + ", "
                     + format1.format(startDate.getTime()) + " - "+ format1.format(endDate.getTime())
-                    + ", Priority: " + priority);
+                    + ", Priority: " + priority + ", Memo: " + memo);
         }
         else {
             // Reminders turned off
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
                     + ", Reminders: " + reminderOn + ", " + format1.format(startDate.getTime())
-                    + " - " + format1.format(endDate.getTime()) + ", Priority: " + priority);
+                    + " - " + format1.format(endDate.getTime()) + ", Priority: " + priority
+                    + ", Memo: " + memo);
         }
     }
 }
