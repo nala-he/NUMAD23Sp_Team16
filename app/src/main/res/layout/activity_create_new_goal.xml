@@ -280,12 +280,13 @@
                 app:layout_constraintTop_toTopOf="@+id/title_memo" />
 
             <Button
-                android:id="@+id/temp"
-                android:layout_width="wrap_content"
+                android:id="@+id/create_goal_save_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="saveNewGoal"
                 android:layout_marginTop="30dp"
-                android:text="Button"
+                android:text="@string/save_button_string"
+                android:background="@color/light_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
