@@ -24,4 +24,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     public void startShareActivity(View view) {
         startActivity(new Intent(ProjectEntryActivity.this, ShareActivity.class));
     }
+
+    public void startProgressActivity(View view) {
+        startActivity(new Intent(ProjectEntryActivity.this, ProgressActivity.class));
+    }
 }
