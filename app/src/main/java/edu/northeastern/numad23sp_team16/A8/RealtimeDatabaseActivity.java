@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.A8;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,7 +25,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import edu.northeastern.numad23sp_team16.models.Message;
+import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.A8.models.Message;
 
 // moved majority of codes to StickItToEmActivity. Do not need this activity anymore.
 public class RealtimeDatabaseActivity extends AppCompatActivity {
