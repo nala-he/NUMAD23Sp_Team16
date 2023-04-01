@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateNewGoalActivity">
+    tools:context=".Project.CreateNewGoalActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:id="@+id/create_goal_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_grey"
+            android:background="@color/grey"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:title="@string/create_new_goal_string"
@@ -296,7 +296,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="35dp"
-                android:background="@color/light_grey"
+                android:background="@color/grey"
                 android:onClick="saveNewGoal"
                 android:text="@string/save_button_string"
                 app:layout_constraintBottom_toBottomOf="parent"

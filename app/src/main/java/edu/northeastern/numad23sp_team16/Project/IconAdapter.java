@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.Project;
 
 import static android.view.View.VISIBLE;
 
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Icon;
 
 public class IconAdapter extends RecyclerView.Adapter<IconViewHolder> {

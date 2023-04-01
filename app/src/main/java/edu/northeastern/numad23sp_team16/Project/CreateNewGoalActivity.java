@@ -1,7 +1,6 @@
-package edu.northeastern.numad23sp_team16;
+package edu.northeastern.numad23sp_team16.Project;
 
 
-import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -11,14 +10,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -35,10 +32,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Icon;
 
 public class CreateNewGoalActivity extends AppCompatActivity {
@@ -493,7 +490,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // TODO: navigate to home screen created by Yuan
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
-        startActivity(new Intent(CreateNewGoalActivity.this, GoalForItActivity.class));
+        startActivity(new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class));
     }
 
     // Dismiss any dialogs to avoid leakage

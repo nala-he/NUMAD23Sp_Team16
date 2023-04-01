@@ -34,12 +34,4 @@ public class MainActivity extends AppCompatActivity {
     public void startProjectActivity(View view) {
         startActivity(new Intent(MainActivity.this, ProjectEntryActivity.class));
     }
-    public void startGoalForItActivity(View view) {
-        startActivity(new Intent(MainActivity.this, GoalForItActivity.class));
-    }
-
-//    // test the received notification feature, to be revised or deleted later
-//    public void startRealtimeDatabaseActivity(View view) {
-//        startActivity(new Intent(MainActivity.this, RealtimeDatabaseActivity.class));
-//    }
 }
