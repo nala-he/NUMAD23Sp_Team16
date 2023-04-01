@@ -97,6 +97,12 @@ public class SendStatusActivity extends AppCompatActivity {
                 // close all the activities in the call stack above ShareActivity and bring it to
                 // the top of the call stack
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                // pass the friendsList to the ShareActivity, need to be replaced with data from firebase later
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
+                intent.putExtras(bundle);
+
                 startActivity(intent);
             }
         });

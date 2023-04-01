@@ -99,14 +99,16 @@ public class AddFriendsActivity extends AppCompatActivity {
                 }
 
                 // TODO: save friends list for the user in the firebase database
-                // pass the friendsList to the ShareActivity, need to be replaced with data from firebase later
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
+
                 Intent intent = new Intent(AddFriendsActivity.this, ShareActivity.class);
-                intent.putExtras(bundle);
                 // close all the activities in the call stack above ShareActivity and bring it to
                 // the top of the call stack
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                // pass the friendsList to the ShareActivity, need to be replaced with data from firebase later
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
+                intent.putExtras(bundle);
+
                 startActivity(intent);
             }
         });
@@ -135,7 +137,9 @@ public class AddFriendsActivity extends AppCompatActivity {
                     && friendsList.stream().anyMatch(each -> each.getName().equals(name))) {
                 user.setSelected(true);
             }
-            usersList.add(user);
+            if (!user.isSelected()) {
+                usersList.add(user);
+            }
         }
     }
 }
