@@ -145,12 +145,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         setReminder();
 
         // Pick goal start date
-        selectStartDate(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH),
-                startDate.get(Calendar.DAY_OF_MONTH));
+        selectStartDate();
 
         // Pick goal end date
-        selectEndDate(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH),
-                endDate.get(Calendar.DAY_OF_MONTH));
+        selectEndDate();
     }
 
     // Show start date picker dialog
@@ -180,14 +178,15 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     }
 
     // Choose goal start date
-    private void selectStartDate(int selectedYear, int selectedMonth, int selectedDay) {
+    private void selectStartDate() {
         editStartDate = findViewById(R.id.text_start_date);
 
         // Display date picker when click on input for start date
         editStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showStartDatePickerDialog(selectedYear, selectedMonth, selectedDay);
+                showStartDatePickerDialog(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH),
+                        startDate.get(Calendar.DAY_OF_MONTH));
             }
         });
     }
@@ -222,14 +221,15 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
 
     // Choose goal end date
-    private void selectEndDate(int selectedYear, int selectedMonth, int selectedDay) {
+    private void selectEndDate() {
         editEndDate = findViewById(R.id.text_end_date);
 
         // Display date picker when click on input for end date
         editEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEndDatePickerDialog(selectedYear, selectedMonth, selectedDay);
+                showEndDatePickerDialog(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH),
+                        endDate.get(Calendar.DAY_OF_MONTH));
             }
         });
     }
@@ -494,8 +494,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // TODO: navigate to home screen created by Yuan
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
         startActivity(new Intent(CreateNewGoalActivity.this, GoalForItActivity.class));
-
-
     }
 
     // Dismiss any dialogs to avoid leakage
