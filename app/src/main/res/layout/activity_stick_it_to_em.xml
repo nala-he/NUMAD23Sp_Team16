@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp"
-        tools:context=".StickItToEmActivity">
+        tools:context=".A8.StickItToEmActivity">
 
         <TextView
             android:id="@+id/currentUserTitle"

@@ -1,4 +1,4 @@
-package edu.northeastern.numad23sp_team16.models;
+package edu.northeastern.numad23sp_team16.A8.models;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 

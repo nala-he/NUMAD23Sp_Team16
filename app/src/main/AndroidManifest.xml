@@ -29,16 +29,31 @@
             android:name=".GoalForItActivity"
             android:exported="false" />
         <activity
-            android:name=".RealtimeDatabaseActivity"
+            android:name="edu.northeastern.numad23sp_team16.Project.SendStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name="edu.northeastern.numad23sp_team16.Project.AddFriendsActivity"
+            android:exported="false" />
+        <activity
+            android:name="edu.northeastern.numad23sp_team16.Project.ShareActivity"
+            android:exported="false" />
+        <activity
+            android:name="edu.northeastern.numad23sp_team16.Project.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name="edu.northeastern.numad23sp_team16.Project.ProjectEntryActivity"
+            android:exported="false" />
+        <activity
+            android:name="edu.northeastern.numad23sp_team16.A8.RealtimeDatabaseActivity"
             android:exported="false" />
         <activity
             android:name=".AboutActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".A8.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".StickItToEmActivity"
+            android:name=".A8.StickItToEmActivity"
             android:configChanges="orientation"
             android:exported="false" />
         <activity

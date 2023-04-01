@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import edu.northeastern.numad23sp_team16.A6.WebServiceActivity;
+import edu.northeastern.numad23sp_team16.A8.LoginActivity;
+import edu.northeastern.numad23sp_team16.Project.ProjectEntryActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
+    public void startProjectActivity(View view) {
+        startActivity(new Intent(MainActivity.this, ProjectEntryActivity.class));
+    }
     public void startGoalForItActivity(View view) {
         startActivity(new Intent(MainActivity.this, GoalForItActivity.class));
     }
