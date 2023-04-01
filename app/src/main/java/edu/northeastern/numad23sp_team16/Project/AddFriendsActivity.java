@@ -1,5 +1,6 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -139,6 +140,30 @@ public class AddFriendsActivity extends AppCompatActivity {
             }
             if (!user.isSelected()) {
                 usersList.add(user);
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        // store usersList selected status
+        if (usersList.size() != 0) {
+            for (Username user : usersList) {
+                outState.putBoolean(user.getName(), user.isSelected());
+            }
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // restore usersList selected status
+        if (usersList.size() != 0) {
+            for (Username user: usersList) {
+                boolean isSelected = savedInstanceState.getBoolean(user.getName());
+                user.setSelected(isSelected);
             }
         }
     }

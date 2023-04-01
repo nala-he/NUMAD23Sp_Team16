@@ -1,5 +1,6 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -32,7 +33,6 @@ public class SendStatusActivity extends AppCompatActivity {
     private UsernameAdapter friendListAdapter;
 
 
-
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,7 @@ public class SendStatusActivity extends AppCompatActivity {
 
         // TODO: obtain friendsList from firebase database
         // obtain friendsList from ShareActivity, needs to be replaced with data from firebase later
-        Bundle bundle= getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             ArrayList<Username> preList = bundle.getParcelableArrayList(FRIENDS_LIST);
             for (Username each : preList) {
@@ -118,4 +118,27 @@ public class SendStatusActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        // store friendsList selected status
+        if (friendsList.size() != 0) {
+            for (Username friend : friendsList) {
+                outState.putBoolean(friend.getName(), friend.isSelected());
+            }
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // restore friendsList selected status
+        if (friendsList.size() != 0) {
+            for (Username friend: friendsList) {
+                boolean isSelected = savedInstanceState.getBoolean(friend.getName());
+                friend.setSelected(isSelected);
+            }
+        }
+    }
 }
