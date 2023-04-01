@@ -17,6 +17,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TimePicker;
@@ -65,6 +66,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private DatePickerDialog endDatePicker;
     private Boolean isStartDateCalendarOpen = false;
     private Boolean isEndDateCalendarOpen = false;
+    private Boolean isReminderInfoDialogOpen = false;
+    private Boolean isPriorityInfoDialogOp= false;
+    private AlertDialog reminderInfoDialog;
+    private ImageView reminderQuestionMark;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -90,6 +95,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String UNSAVED_END_YEAR = "UNSAVED_END_YEAR";
     private static final String UNSAVED_END_MONTH = "UNSAVED_END_MONTH";
     private static final String UNSAVED_END_DAY = "UNSAVED_END_DAY";
+    private static final String REMINDER_INFO_DIALOG_OPEN = "REMINDER_INFO_DIALOG_OPEN";
+    private static final String PRIORITY_INFO_DIALOG_OPEN = "PRIORITY_INFO_DIALOG_OPEN";
+
 
     // New goal values
     private String goalName;
@@ -110,6 +118,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         editGoalName = findViewById(R.id.text_goal_name);
         editMemo = findViewById(R.id.text_memo);
+        reminderQuestionMark = findViewById(R.id.reminder_question_mark);
 
         // Set custom action bar with back button
         toolbar = findViewById(R.id.create_goal_toolbar);
@@ -365,6 +374,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     }
 
     public void displayReminderInfo(View view) {
+        Log.d(TAG, "displayReminderInfo: " + view);
         // Create alert dialog with info regarding reminders
         AlertDialog.Builder reminderDialog = new AlertDialog.Builder(CreateNewGoalActivity.this);
 
@@ -378,11 +388,14 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                isReminderInfoDialogOpen = false;
             }
         });
 
         // Create and show dialog
-        reminderDialog.create().show();
+        reminderInfoDialog = reminderDialog.create();
+        reminderInfoDialog.show();
+        isReminderInfoDialogOpen = true;
     }
 
     public void displayPriorityInfo(View view) {
@@ -475,6 +488,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         if (startDatePicker != null && startDatePicker.isShowing()) {
             startDatePicker.dismiss();
         }
+        if (reminderInfoDialog != null && reminderInfoDialog.isShowing()) {
+            reminderInfoDialog.dismiss();
+        }
     }
 
     @Override
@@ -492,6 +508,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         outState.putInt(GOAL_REMINDER_MINUTE, reminderMinute);
         outState.putInt(UNSAVED_HOUR, selectedHour);
         outState.putInt(UNSAVED_MINUTE, selectedMinute);
+
+        // Store whether reminder info dialog is open
+        outState.putBoolean(REMINDER_INFO_DIALOG_OPEN, isReminderInfoDialogOpen);
 
         // Store whether reminder dialog is open
         outState.putBoolean(REMINDER_DIALOG_OPEN, isReminderDialogOpen);
@@ -551,6 +570,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         reminderMessage = savedInstanceState.getString(GOAL_REMINDER_MESSAGE);
         reminderHour = savedInstanceState.getInt(GOAL_REMINDER_HOUR);
         reminderMinute = savedInstanceState.getInt(GOAL_REMINDER_MINUTE);
+
+        // Restore reminder info dialog if it was open
+        isReminderInfoDialogOpen = savedInstanceState.getBoolean(REMINDER_INFO_DIALOG_OPEN);
+        if (isReminderInfoDialogOpen) {
+            displayReminderInfo(reminderQuestionMark);
+        }
 
         // Restore reminder dialog if it was open
         isReminderDialogOpen = savedInstanceState.getBoolean(REMINDER_DIALOG_OPEN);
