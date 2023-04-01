@@ -55,7 +55,12 @@ public class SendStatusActivity extends AppCompatActivity {
         // obtain friendsList from ShareActivity, needs to be replaced with data from firebase later
         Bundle bundle= getIntent().getExtras();
         if (bundle != null) {
-            friendsList.addAll(bundle.getParcelableArrayList(FRIENDS_LIST));
+            ArrayList<Username> preList = bundle.getParcelableArrayList(FRIENDS_LIST);
+            for (Username each : preList) {
+                if (friendsList.stream().noneMatch(e -> e.getName().equals(each.getName()))) {
+                    friendsList.add(each);
+                }
+            }
         }
 
         // initialize views
