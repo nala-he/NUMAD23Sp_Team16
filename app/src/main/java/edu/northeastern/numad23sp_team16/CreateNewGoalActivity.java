@@ -67,9 +67,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private Boolean isStartDateCalendarOpen = false;
     private Boolean isEndDateCalendarOpen = false;
     private Boolean isReminderInfoDialogOpen = false;
-    private Boolean isPriorityInfoDialogOp= false;
+    private Boolean isPriorityInfoDialogOpen= false;
     private AlertDialog reminderInfoDialog;
     private ImageView reminderQuestionMark;
+    private ImageView priorityQuestionMark;
+    private AlertDialog priorityInfoDialog;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -119,6 +121,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         editGoalName = findViewById(R.id.text_goal_name);
         editMemo = findViewById(R.id.text_memo);
         reminderQuestionMark = findViewById(R.id.reminder_question_mark);
+        priorityQuestionMark = findViewById(R.id.priority_question_mark);
 
         // Set custom action bar with back button
         toolbar = findViewById(R.id.create_goal_toolbar);
@@ -411,11 +414,14 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                isPriorityInfoDialogOpen = false;
             }
         });
 
-        // Create and show dialog
-        infoDialog.create().show();
+        // Create and show priority info dialog
+        priorityInfoDialog = infoDialog.create();
+        priorityInfoDialog.show();
+        isPriorityInfoDialogOpen = true;
     }
 
     // Determine which priority level is selected
@@ -481,15 +487,27 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         super.onDestroy();
         if (reminderDialog != null && reminderDialog.isShowing()) {
             reminderDialog.dismiss();
+            isReminderDialogOpen = false;
         }
         if (reminderTimeDialog != null && reminderTimeDialog.isShowing()) {
             reminderTimeDialog.dismiss();
+            isReminderTimeDialogOpen = false;
         }
         if (startDatePicker != null && startDatePicker.isShowing()) {
             startDatePicker.dismiss();
+            isStartDateCalendarOpen = false;
+        }
+        if (endDatePicker != null && endDatePicker.isShowing()) {
+            endDatePicker.dismiss();
+            isEndDateCalendarOpen = false;
         }
         if (reminderInfoDialog != null && reminderInfoDialog.isShowing()) {
             reminderInfoDialog.dismiss();
+            isReminderInfoDialogOpen = false;
+        }
+        if (priorityInfoDialog != null && priorityInfoDialog.isShowing()) {
+            priorityInfoDialog.dismiss();
+            isPriorityInfoDialogOpen = false;
         }
     }
 
@@ -545,6 +563,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             outState.putInt(UNSAVED_END_MONTH, datePicker.getMonth());
             outState.putInt(UNSAVED_END_DAY, datePicker.getDayOfMonth());
         }
+
+        // Store whether priority info dialog is open
+        outState.putBoolean(PRIORITY_INFO_DIALOG_OPEN, isPriorityInfoDialogOpen);
 
         // Store priority
         outState.putInt(GOAL_PRIORITY, priority);
@@ -631,6 +652,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             int month = savedInstanceState.getInt(UNSAVED_END_MONTH);
             int day = savedInstanceState.getInt(UNSAVED_END_DAY);
             showEndDatePickerDialog(year, month, day);
+        }
+
+        // Restore priority info dialog if it was open
+        isPriorityInfoDialogOpen = savedInstanceState.getBoolean(PRIORITY_INFO_DIALOG_OPEN);
+        if (isPriorityInfoDialogOpen) {
+            displayPriorityInfo(priorityQuestionMark);
         }
 
         // Restore priority
