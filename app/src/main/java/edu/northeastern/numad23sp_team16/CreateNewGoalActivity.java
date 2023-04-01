@@ -377,7 +377,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     }
 
     public void displayReminderInfo(View view) {
-        Log.d(TAG, "displayReminderInfo: " + view);
         // Create alert dialog with info regarding reminders
         AlertDialog.Builder reminderDialog = new AlertDialog.Builder(CreateNewGoalActivity.this);
 
@@ -460,6 +459,21 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Retrieve inputted memo
         memo = editMemo.getText().toString();
 
+        if (goalName.isEmpty() || goalName.trim().isEmpty()) {
+            // Do not allow user to save if goal name is empty
+            Toast.makeText(CreateNewGoalActivity.this, "Please provide a goal name before saving",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (endDate.getTime().before(startDate.getTime())) {
+            // Do not allow user to save if end date is before start date
+            Toast.makeText(CreateNewGoalActivity.this,
+                    "End date must be the same or after the start date", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // All requirements met - create new goal instance, save to database, and navigate back to home page
         // TODO: Create new goal instance from input values and save to database
         if (reminderOn) {
             // Reminders turned on
@@ -478,7 +492,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
 
         // TODO: navigate to home screen created by Yuan
+        Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
         startActivity(new Intent(CreateNewGoalActivity.this, GoalForItActivity.class));
+
+
     }
 
     // Dismiss any dialogs to avoid leakage
