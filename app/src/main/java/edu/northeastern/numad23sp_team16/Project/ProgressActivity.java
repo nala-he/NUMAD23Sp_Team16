@@ -1,5 +1,6 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,8 +33,9 @@ public class ProgressActivity extends AppCompatActivity {
     private List<Integer> listOfHearts;
     private int petHealth;
     private static final int DENOMINATOR = 10;
-    private CompactCalendarView compactCalendar;
+    private MaterialCalendarView calendarHistory;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());
+    private List<Long> completedGoalsDates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +73,60 @@ public class ProgressActivity extends AppCompatActivity {
 
         // Set layout of hearts in recycler view
         petHealthRecyclerView.setLayoutManager(new GridLayoutManager(ProgressActivity.this, 5));
+
+        // Set up calendar to view past history
+        calendarHistory = findViewById(R.id.completion_history_calendar);
+        setCalendar();
     }
 
     // Navigate to share pet status with friends screen
     public void onSharePetStatus(View view) {
         startActivity(new Intent(ProgressActivity.this, SendStatusActivity.class));
     }
+
+    public void setCalendar() {
+        // Set date selected to current date
+        calendarHistory.setDateSelected(CalendarDay.today(), true);
+
+        // TODO: get days of the month that the user completed all daily goals
+
+        calendarHistory.setOnDateChangedListener(new OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+
+                DayDecorator dayDecorator= new DayDecorator(date);
+                widget.addDecorator(dayDecorator);
+                widget.invalidateDecorators();
+
+            }
+        });
+    }
+
+//    public void setCalendar() {
+//        // Set first day of week to sunday
+//        calendarHistory.setFirstDayOfWeek(Calendar.SUNDAY);
+//
+//        completedGoalsDates = new ArrayList<>();
+//        completedGoalsDates.add(1680368815L); // 4/1/23
+//
+//        // Add all dates the user completed all daily goals to calendar
+//        for (int i = 0; i < completedGoalsDates.size(); i ++) {
+//            Event completedDay = new Event(R.color.pastel_pink, completedGoalsDates.get(i),
+//                    "Completed all daily goals");
+//            calendarHistory.addEvent(completedDay);
+//        }
+//
+//        // Set listener to handle click events
+//        calendarHistory.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+//            @Override
+//            public void onDayClick(Date dateClicked) {
+//
+//            }
+//
+//            @Override
+//            public void onMonthScroll(Date firstDayOfNewMonth) {
+//                Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth);
+//            }
+//        });
+//    }
 }

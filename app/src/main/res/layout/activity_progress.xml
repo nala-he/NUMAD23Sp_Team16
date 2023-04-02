@@ -46,7 +46,7 @@
                 android:id="@+id/progress_pet_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="15dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/progress_pet_image"
@@ -97,24 +97,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/progress_pet_health" />
 
-            <com.github.sundeepk.compactcalendarview.CompactCalendarView
-                android:id="@+id/compact_calendar_view"
-                android:layout_width="fill_parent"
-                android:paddingRight="10dp"
-                android:paddingLeft="10dp"
-                android:layout_margin="15dp"
-                android:layout_height="250dp"
-                app:compactCalendarTargetHeight="250dp"
-                app:compactCalendarTextSize="12sp"
-                app:compactCalendarTextColor="@color/black"
-                app:compactCalendarBackgroundColor="@color/light_grey"
-                app:compactCalendarCurrentSelectedDayBackgroundColor="@color/beige"
-                app:compactCalendarCurrentDayBackgroundColor="@color/beige"
-                app:compactCalendarMultiEventIndicatorColor="#fff"
-                app:layout_constraintTop_toBottomOf="@+id/progress_share_pet_status"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/completion_history_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                app:mcv_showOtherDates="all"
+                app:mcv_selectionColor="@color/beige"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/progress_share_pet_status"
+                app:layout_constraintBottom_toBottomOf="parent"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
