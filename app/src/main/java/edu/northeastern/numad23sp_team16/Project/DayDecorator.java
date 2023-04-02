@@ -12,19 +12,19 @@ import edu.northeastern.numad23sp_team16.R;
 public class DayDecorator extends AppCompatActivity implements DayViewDecorator {
 
     private int color = R.color.pastel_pink;
-    private final CalendarDay dates;
+    private final CalendarDay date;
 
-    public DayDecorator(CalendarDay dates) {
-        this.dates = dates;
+    public DayDecorator(CalendarDay date) {
+        this.date = date;
     }
 
     @Override
     public boolean shouldDecorate(CalendarDay day) {
-        return dates==day;
+        return day.equals(date);
     }
 
     @Override
     public void decorate(DayViewFacade view) {
-        view.addSpan(new DotSpan(5, color));
+        view.addSpan(new DotSpan(8, color));
     }
 }

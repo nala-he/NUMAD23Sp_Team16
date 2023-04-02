@@ -35,7 +35,7 @@ public class ProgressActivity extends AppCompatActivity {
     private static final int DENOMINATOR = 10;
     private MaterialCalendarView calendarHistory;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());
-    private List<Long> completedGoalsDates;
+    private List<CalendarDay> completedGoalsDates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,18 +89,30 @@ public class ProgressActivity extends AppCompatActivity {
         calendarHistory.setDateSelected(CalendarDay.today(), true);
 
         // TODO: get days of the month that the user completed all daily goals
+        completedGoalsDates = new ArrayList<>();
+        completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
+        completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 24, 2023
+        completedGoalsDates.add(CalendarDay.from(2023, 3, 8)); // March 8, 2023
 
-        calendarHistory.setOnDateChangedListener(new OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+        // Add dots to calendar on dates the user completed all daily goals
+        for (int i = 0; i < completedGoalsDates.size(); i++) {
+            DayDecorator dayDecorator= new DayDecorator(completedGoalsDates.get(i));
+            calendarHistory.addDecorator(dayDecorator);
+        }
 
-                DayDecorator dayDecorator= new DayDecorator(date);
-                widget.addDecorator(dayDecorator);
-                widget.invalidateDecorators();
 
-            }
-        });
+//        calendarHistory.setOnDateChangedListener(new OnDateSelectedListener() {
+//            @Override
+//            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+//
+//                DayDecorator eventDecorator= new DayDecorator(date);
+//                widget.addDecorator(eventDecorator);
+//                widget.invalidateDecorators();
+//
+//            }
+//        });
     }
+
 
 //    public void setCalendar() {
 //        // Set first day of week to sunday
