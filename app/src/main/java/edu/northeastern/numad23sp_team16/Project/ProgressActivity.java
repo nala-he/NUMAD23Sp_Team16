@@ -1,6 +1,5 @@
 package edu.northeastern.numad23sp_team16.Project;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +13,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,7 +86,7 @@ public class ProgressActivity extends AppCompatActivity {
         // Set date selected to current date
         calendarHistory.setDateSelected(CalendarDay.today(), true);
 
-        // TODO: get days of the month that the user completed all daily goals
+        // TODO: get the days that the user completed all daily goals from database
         completedGoalsDates = new ArrayList<>();
         completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
         completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 24, 2023
@@ -100,45 +98,5 @@ public class ProgressActivity extends AppCompatActivity {
             calendarHistory.addDecorator(dayDecorator);
         }
 
-
-//        calendarHistory.setOnDateChangedListener(new OnDateSelectedListener() {
-//            @Override
-//            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-//
-//                DayDecorator eventDecorator= new DayDecorator(date);
-//                widget.addDecorator(eventDecorator);
-//                widget.invalidateDecorators();
-//
-//            }
-//        });
     }
-
-
-//    public void setCalendar() {
-//        // Set first day of week to sunday
-//        calendarHistory.setFirstDayOfWeek(Calendar.SUNDAY);
-//
-//        completedGoalsDates = new ArrayList<>();
-//        completedGoalsDates.add(1680368815L); // 4/1/23
-//
-//        // Add all dates the user completed all daily goals to calendar
-//        for (int i = 0; i < completedGoalsDates.size(); i ++) {
-//            Event completedDay = new Event(R.color.pastel_pink, completedGoalsDates.get(i),
-//                    "Completed all daily goals");
-//            calendarHistory.addEvent(completedDay);
-//        }
-//
-//        // Set listener to handle click events
-//        calendarHistory.setListener(new CompactCalendarView.CompactCalendarViewListener() {
-//            @Override
-//            public void onDayClick(Date dateClicked) {
-//
-//            }
-//
-//            @Override
-//            public void onMonthScroll(Date firstDayOfNewMonth) {
-//                Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth);
-//            }
-//        });
-//    }
 }
