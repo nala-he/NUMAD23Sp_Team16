@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/grid_heart"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@drawable/heart"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
