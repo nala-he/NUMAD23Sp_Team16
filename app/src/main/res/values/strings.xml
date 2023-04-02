@@ -69,6 +69,20 @@
     <string name="list_of_users">List of Users</string>
     <string name="add_all_selected_users_as_friends">Add All Selected Users as Friends</string>
     <string name="send_my_pet_status_to_selected_friends">Send My Pet Status to Selected Friends</string>
+    <string name="project_app_name">GoalForIt!</string>
+    <string name="create_new_goal_string">Create a New Goal</string>
+    <string name="name_title_string">Name</string>
+    <string name="icon_title_string">Icon:</string>
+    <string name="reminder_string">Reminder:</string>
+    <string name="set_reminder_message_title">Set a reminder message:</string>
+    <string name="set_reminder_time_title">Set a reminder time:</string>
+    <string name="cancel_string">Cancel</string>
+    <string name="save_string">Save</string>
+    <string name="start_string">Start:</string>
+    <string name="end_string">End:</string>
+    <string name="priority_string">Priority:</string>
+    <string name="memo_title_string">Memo:</string>
+    <string name="save_button_string">Save</string>
     =======
 
 </resources>
