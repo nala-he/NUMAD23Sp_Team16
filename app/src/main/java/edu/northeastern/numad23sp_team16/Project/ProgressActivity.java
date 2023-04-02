@@ -1,16 +1,13 @@
 package edu.northeastern.numad23sp_team16.Project;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +16,7 @@ import edu.northeastern.numad23sp_team16.R;
 
 public class ProgressActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private TextView petName;
     private ImageView petImage;
     private RecyclerView petHealthRecyclerView;
@@ -31,6 +29,12 @@ public class ProgressActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress);
+
+        // Set custom action bar with back button
+        toolbar = findViewById(R.id.progress_page_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Get pet name and image from view
         petName = findViewById(R.id.progress_pet_name);
