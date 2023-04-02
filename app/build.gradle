@@ -44,7 +44,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        signingConfig signingConfigs.team16ReleaseByYutong
-         signingConfig signingConfigs.team16Release
+        signingConfig signingConfigs.team16Release
     }
 
     buildTypes {

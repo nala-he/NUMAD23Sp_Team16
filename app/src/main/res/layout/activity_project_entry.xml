@@ -8,6 +8,17 @@
 
 
     <Button
+        android:id="@+id/button_temp2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startCreateNewGoalActivity"
+        android:text="Create New Goal"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="25dp" />
+
+    <Button
         android:id="@+id/profile_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,6 +27,8 @@
         android:onClick="startProfileActivity"
         android:text="@string/profile"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_temp2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
