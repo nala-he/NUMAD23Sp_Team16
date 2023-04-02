@@ -11,8 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import edu.northeastern.numad23sp_team16.R;
 
@@ -26,6 +30,8 @@ public class ProgressActivity extends AppCompatActivity {
     private List<Integer> listOfHearts;
     private int petHealth;
     private static final int DENOMINATOR = 10;
+    private CompactCalendarView compactCalendar;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -97,6 +97,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/progress_pet_health" />
 
+            <com.github.sundeepk.compactcalendarview.CompactCalendarView
+                android:id="@+id/compact_calendar_view"
+                android:layout_width="fill_parent"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_margin="15dp"
+                android:layout_height="250dp"
+                app:compactCalendarTargetHeight="250dp"
+                app:compactCalendarTextSize="12sp"
+                app:compactCalendarTextColor="@color/black"
+                app:compactCalendarBackgroundColor="@color/light_grey"
+                app:compactCalendarCurrentSelectedDayBackgroundColor="@color/beige"
+                app:compactCalendarCurrentDayBackgroundColor="@color/beige"
+                app:compactCalendarMultiEventIndicatorColor="#fff"
+                app:layout_constraintTop_toBottomOf="@+id/progress_share_pet_status"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
