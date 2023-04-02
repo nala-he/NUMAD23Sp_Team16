@@ -99,9 +99,8 @@
 
             <com.prolificinteractive.materialcalendarview.MaterialCalendarView
                 android:id="@+id/completion_history_calendar"
-                android:layout_width="match_parent"
+                android:layout_width="325dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_max="325dp"
                 android:layout_margin="30dp"
                 app:mcv_showOtherDates="all"
                 app:mcv_selectionColor="@color/beige"
@@ -112,6 +111,8 @@
                 app:mcv_selectionMode="none"
                 android:background="@drawable/custom_calendar_border"
                 android:padding="10dp"
+                app:mcv_headerTextAppearance="@style/ProgressCalendarHeader"
+                app:mcv_weekDayTextAppearance="@style/ProgressCalendarWeekDay"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
