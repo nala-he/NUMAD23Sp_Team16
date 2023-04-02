@@ -70,6 +70,7 @@
     <string name="add_all_selected_users_as_friends">Add All Selected Users as Friends</string>
     <string name="send_my_pet_status_to_selected_friends">Send My Pet Status to Selected Friends</string>
     <string name="check_progress_button">Check Progress</string>
+    <string name="share_pet_status_string">Share Pet Status</string>
     =======
 
 </resources>

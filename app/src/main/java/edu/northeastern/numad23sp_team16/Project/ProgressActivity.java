@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
@@ -63,4 +65,8 @@ public class ProgressActivity extends AppCompatActivity {
         petHealthRecyclerView.setLayoutManager(new GridLayoutManager(ProgressActivity.this, 5));
     }
 
+    // Navigate to share pet status with friends screen
+    public void onSharePetStatus(View view) {
+        startActivity(new Intent(ProgressActivity.this, SendStatusActivity.class));
+    }
 }
