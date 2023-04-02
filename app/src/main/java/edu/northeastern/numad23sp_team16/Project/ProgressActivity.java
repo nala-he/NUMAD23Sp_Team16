@@ -56,7 +56,7 @@ public class ProgressActivity extends AppCompatActivity {
         petImage.setImageResource(R.drawable.dog_small);
 
         // TODO: get user's pet's overall health and replace number
-        petHealth = (int) Math.round(72.5 / DENOMINATOR);
+        petHealth = Math.round((float) 76 / DENOMINATOR);
 
         // Recycler view to show hearts (pet health)
         petHealthRecyclerView = findViewById(R.id.progress_pet_health);
