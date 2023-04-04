@@ -32,7 +32,8 @@
     <TextView
         android:id="@+id/textView_login"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="208dp"
         android:layout_marginBottom="28dp"
         android:text="Welcome back!"
@@ -41,8 +42,7 @@
         app:layout_constraintBottom_toTopOf="@+id/button2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/button2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/start_toolbar_layout" />
 
     <android.widget.Button
         android:id="@+id/button2"
