@@ -77,7 +77,7 @@ public class ProgressActivity extends AppCompatActivity {
 
     // Navigate to share pet status with friends screen
     public void onSharePetStatus(View view) {
-        startActivity(new Intent(ProgressActivity.this, SendStatusActivity.class));
+        startActivity(new Intent(ProgressActivity.this, ShareActivity.class));
     }
 
     public void setCalendar() {
@@ -92,7 +92,7 @@ public class ProgressActivity extends AppCompatActivity {
 
         // Add dots to calendar on dates the user completed all daily goals
         for (int i = 0; i < completedGoalsDates.size(); i++) {
-            DayDecorator dayDecorator= new DayDecorator(completedGoalsDates.get(i));
+            DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
             calendarHistory.addDecorator(dayDecorator);
         }
 
