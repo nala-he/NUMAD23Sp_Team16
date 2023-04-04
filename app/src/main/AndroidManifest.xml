@@ -20,25 +20,37 @@
         android:theme="@style/Theme.NUMAD23Sp_Team16"
         tools:targetApi="31">
         <activity
+            android:name=".Project.ProjectSignUpActivity"
+            android:theme="@style/Theme.No_Action_Bar"
+            android:exported="false" />
+        <activity
+            android:name=".Project.ProjectLoginActivity"
+            android:theme="@style/Theme.No_Action_Bar"
+            android:exported="false" />
+        <activity
+            android:name=".Project.ProjectStartActivity"
+            android:theme="@style/Theme.No_Action_Bar"
+            android:exported="false" />
+        <activity
             android:name=".Project.CreateNewGoalActivity"
             android:exported="false"
-            android:theme="@style/Theme.No_Action_Bar"
             android:parentActivityName=".Project.ProjectEntryActivity"
-            android:windowSoftInputMode="adjustPan"/>
+            android:theme="@style/Theme.No_Action_Bar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="edu.northeastern.numad23sp_team16.Project.SendStatusActivity"
+            android:name=".Project.SendStatusActivity"
             android:exported="false" />
         <activity
-            android:name="edu.northeastern.numad23sp_team16.Project.AddFriendsActivity"
+            android:name=".Project.AddFriendsActivity"
             android:exported="false" />
         <activity
-            android:name="edu.northeastern.numad23sp_team16.Project.ShareActivity"
+            android:name=".Project.ShareActivity"
             android:exported="false" />
         <activity
-            android:name="edu.northeastern.numad23sp_team16.Project.ProfileActivity"
+            android:name=".Project.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name="edu.northeastern.numad23sp_team16.Project.ProjectEntryActivity"
+            android:name=".Project.ProjectEntryActivity"
             android:exported="false" />
         <activity
             android:name="edu.northeastern.numad23sp_team16.A8.RealtimeDatabaseActivity"
