@@ -5,7 +5,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +37,7 @@ public class ProgressActivity extends AppCompatActivity {
     private static final int DENOMINATOR = 10;
     private MaterialCalendarView calendarHistory;
     private List<CalendarDay> completedGoalsDates;
+    private TextView calendarKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +102,5 @@ public class ProgressActivity extends AppCompatActivity {
             DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
             calendarHistory.addDecorator(dayDecorator);
         }
-
     }
 }

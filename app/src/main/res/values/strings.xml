@@ -86,6 +86,8 @@
     <string name="check_progress_button">Check Progress</string>
     <string name="share_pet_status_string">Share Pet Status</string>
     <string name="your_progress_title_string">Your Progress</string>
+    <string name="completed_goals_info_string">Days you completed all daily goals</string>
+    <string name="current_date_info_string">Today\'s date</string>
     =======
 
 </resources>
