@@ -14,10 +14,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import edu.northeastern.numad23sp_team16.R;
 
@@ -32,7 +30,6 @@ public class ProgressActivity extends AppCompatActivity {
     private int petHealth;
     private static final int DENOMINATOR = 10;
     private MaterialCalendarView calendarHistory;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());
     private List<CalendarDay> completedGoalsDates;
 
     @Override
@@ -45,6 +42,7 @@ public class ProgressActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Get pet name and image from view
         petName = findViewById(R.id.progress_pet_name);

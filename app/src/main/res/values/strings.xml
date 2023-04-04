@@ -85,6 +85,7 @@
     <string name="save_button_string">Save</string>
     <string name="check_progress_button">Check Progress</string>
     <string name="share_pet_status_string">Share Pet Status</string>
+    <string name="your_progress_title_string">Your Progress</string>
     =======
 
 </resources>
