@@ -2,10 +2,12 @@ package edu.northeastern.numad23sp_team16.Project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -23,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
-//This is the User model for final project
 import edu.northeastern.numad23sp_team16.models.User;
 
 public class ProjectSignUpActivity extends AppCompatActivity {
@@ -32,6 +33,8 @@ public class ProjectSignUpActivity extends AppCompatActivity {
     private EditText passwordInputText;
     private EditText petNameInputText;
     private RadioGroup radioGroup;
+    private RadioButton dog;
+    private RadioButton cat;
     private DatabaseReference usersRef;
 
     private Button buttonSave;
@@ -63,6 +66,8 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         petNameInputText = findViewById(R.id.petname_input_s);
         emailInputText = findViewById(R.id.email_input_s);
         radioGroup = findViewById(R.id.pet_radio_group2);
+        dog = findViewById(R.id.dog_radio_button2);
+        cat = findViewById(R.id.cat_radio_button2);
         buttonSave = findViewById(R.id.save_profile_btn);
         //deal with screen rotation
         if (savedInstanceState != null) {
@@ -75,35 +80,39 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                 radioGroup.check(checkedRadioButtonId);
             }
         }
-        //get all the info from the sign up activity, save them in firebase
-        username = Objects.requireNonNull(usernameInputText.getText()).toString();
-        password = Objects.requireNonNull(passwordInputText.getText()).toString();
-        email = Objects.requireNonNull(emailInputText.getText()).toString();
-        whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
-        petName = Objects.requireNonNull(petNameInputText.getText()).toString();
-        // Check if required fields are not empty
-        if(checkAllFieldsFilled(username,password,email,whichPet,petName)) {
-            //click save button, call saveSignUpInfo2Firebase()
-            buttonSave.setOnClickListener(v -> saveSignUpInfo2Firebase());
-        }
+        //check all fields filled and save into database
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkAllFieldsFilled()){
+                    saveSignUpInfo2Firebase();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
 
     }
     private void saveSignUpInfo2Firebase() {
+
         //get users reference, getReference("FinalProject") to distinguish from A8 data
         usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
-        //check if the email has been used in the database
-        Query query = usersRef.orderByChild("email").equalTo(email);
+        //check if the username has been used in the database
+        Query query = usersRef.orderByChild("username").equalTo(username);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Email is already in use, show error message
-                    Toast.makeText(getApplicationContext(), "This email has already been used.", Toast.LENGTH_SHORT).show();
+                    // Username is already in use, show error message
+                    Toast.makeText(getApplicationContext(), "This username has already been used.", Toast.LENGTH_SHORT).show();
                 } else {
-                    // email is not in use, save user to database
+                    // username is not in use, save user to database
                     User user = new User(email, username, password, whichPet, petName);
-                    //add a child node with email as a unique key
-                    usersRef.child(email).setValue(user);
+                    //add a child node with username as a unique key, can't use email as key because of "@"
+                    usersRef.child(username).setValue(user);
                     // show success message
                     Toast.makeText(getApplicationContext(), "Sign up successfully!", Toast.LENGTH_SHORT).show();
                     // go to login activity
@@ -114,25 +123,27 @@ public class ProjectSignUpActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle error
-                Toast.makeText(getApplicationContext(), "Error checking email.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error checking username.", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    private boolean checkAllFieldsFilled(String username,String password,String email,String whichPet,String petName) {
-        if (email.isEmpty() || username.isEmpty() || password.isEmpty() || petName.isEmpty()) {
+    private boolean checkAllFieldsFilled() {
+        //get all the info from the sign up activity, save them in firebase
+        username = Objects.requireNonNull(usernameInputText.getText()).toString();
+        password = Objects.requireNonNull(passwordInputText.getText()).toString();
+        email = Objects.requireNonNull(emailInputText.getText()).toString();
+        whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
+        Log.d("whichPet", whichPet);
+        petName = Objects.requireNonNull(petNameInputText.getText()).toString();
+        if (email.isEmpty() || username.isEmpty() || password.isEmpty() || petName.isEmpty() || whichPet.equals("-1")) {
             // Show error message
-            Toast.makeText(getApplicationContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Please fill in all fields!", Toast.LENGTH_SHORT).show();
             return false;
+        } else {
+            return true;
         }
-        if (whichPet.equals("-1")) {
-            // No radio button selected, show reminder message
-            Toast.makeText(getApplicationContext(), "Please select a pet.", Toast.LENGTH_SHORT).show();
-            return false;
-
-        }
-        return true;
     }
 
 
