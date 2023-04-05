@@ -22,7 +22,7 @@ public class ProjectStartActivity extends AppCompatActivity {
             //click to sign up
             btnSignUp = findViewById(R.id.button3);
             //customize tool bar
-            Toolbar toolbar = findViewById(R.id.start_act_toolbar);
+            Toolbar toolbar = findViewById(R.id.entry_act_toolbar);
             setSupportActionBar(toolbar);
 
             btnLogin.setOnClickListener(v -> startActivity(new Intent(this, ProjectLoginActivity.class)));

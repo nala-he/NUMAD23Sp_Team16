@@ -89,6 +89,7 @@
     <string name="your_progress_title_string">Your Progress</string>
     <string name="completed_goals_info_string">Days you completed all daily goals</string>
     <string name="current_date_info_string">Today\'s date</string>
+    <string name="goalforit">GoalForIt!</string>
     =======
 
 </resources>
