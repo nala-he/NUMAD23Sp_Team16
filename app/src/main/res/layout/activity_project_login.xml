@@ -6,4 +6,149 @@
     android:layout_height="match_parent"
     tools:context=".Project.ProjectLoginActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/signup_act_toolbar"
+        android:background="@color/grey"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/back_button_login"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:src="@drawable/back_button"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            <TextView
+                android:id="@+id/toolbar_title_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toStartOf="@+id/menu_button2"
+                android:layout_toEndOf="@id/back_button_login"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Login"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/menu_button2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/textView_l"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="128dp"
+            android:text="Welcome back!"
+            android:textColor="@color/black"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.01" />
+
+        <TextView
+            android:id="@+id/username_tv_l"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="36dp"
+            android:text="@string/username"
+            android:textColor="@color/black"
+            android:textSize="8pt"
+            app:layout_constraintBaseline_toBaselineOf="@id/username_input_l"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.104"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_l" />
+
+        <EditText
+            android:id="@+id/username_input_l"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="190dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/custom_input"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/username_tv_l"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/password_tv_l"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="24dp"
+            android:text="Password"
+            android:textColor="@color/black"
+            android:textSize="8pt"
+            app:layout_constraintBaseline_toBaselineOf="@id/password_input_l"
+            app:layout_constraintHorizontal_bias="0.108"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/username_tv_l" />
+
+        <EditText
+            android:id="@+id/password_input_l"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/custom_input"
+            android:ems="10"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toRightOf="@id/password_tv_l"
+            app:layout_constraintTop_toBottomOf="@id/username_input_l" />
+
+        <android.widget.Button
+            android:id="@+id/button_login"
+            android:layout_width="250dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/my_button_background_yellow"
+            android:text="Log in"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.523" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

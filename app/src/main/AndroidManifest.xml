@@ -51,6 +51,7 @@
             android:exported="false" />
         <activity
             android:name=".Project.ProjectEntryActivity"
+            android:theme="@style/Theme.No_Action_Bar"
             android:exported="false" />
         <activity
             android:name="edu.northeastern.numad23sp_team16.A8.RealtimeDatabaseActivity"
