@@ -7,7 +7,7 @@
     tools:context=".Project.ProjectLoginActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/signup_act_toolbar"
+        android:id="@+id/login_act_toolbar"
         android:background="@color/grey"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -87,17 +87,17 @@
 
         <EditText
             android:id="@+id/username_input_l"
-            android:layout_width="210dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="190dp"
+            android:layout_width="240dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="28dp"
             android:background="@drawable/custom_input"
             android:ems="10"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/username_tv_l"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/textView_l" />
 
         <TextView
             android:id="@+id/password_tv_l"
@@ -116,16 +116,15 @@
 
         <EditText
             android:id="@+id/password_input_l"
-            android:layout_width="210dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
+            android:layout_width="240dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="28dp"
             android:background="@drawable/custom_input"
             android:ems="10"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@id/password_tv_l"
             app:layout_constraintTop_toBottomOf="@id/username_input_l" />
 
@@ -133,7 +132,7 @@
             android:id="@+id/button_login"
             android:layout_width="250dp"
             android:layout_height="48dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="25dp"
             android:background="@drawable/my_button_background_yellow"
             android:text="Log in"
             android:textColor="@color/black"
@@ -141,10 +140,10 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintHorizontal_bias="0.552"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.523" />
+            app:layout_constraintTop_toBottomOf="@id/password_input_l"
+            app:layout_constraintVertical_bias="0.028" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

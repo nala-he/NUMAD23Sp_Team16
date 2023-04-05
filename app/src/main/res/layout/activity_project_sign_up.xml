@@ -19,7 +19,7 @@
                     android:layout_height="match_parent">
 
                         <ImageButton
-                            android:id="@+id/back_button"
+                            android:id="@+id/back_button_signup"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:padding="10dp"
@@ -32,7 +32,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:layout_toStartOf="@+id/menu_button"
-                            android:layout_toEndOf="@id/back_button"
+                            android:layout_toEndOf="@id/back_button_signup"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:text="Create a New Account"

@@ -2,7 +2,6 @@ package edu.northeastern.numad23sp_team16.Project;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,33 +52,32 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.signup_act_toolbar);
         setSupportActionBar(toolbar);
         //click back button
-        ImageView backButton = findViewById(R.id.back_button);
+        ImageView backButton = findViewById(R.id.back_button_signup);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-
         usernameInputText = findViewById(R.id.username_input_s);
-        passwordInputText = findViewById(R.id.password_input_s);
-        petNameInputText = findViewById(R.id.petname_input_s);
         emailInputText = findViewById(R.id.email_input_s);
+        passwordInputText= findViewById(R.id.password_input_s);
+        petNameInputText = findViewById(R.id.petname_input_s);
         radioGroup = findViewById(R.id.pet_radio_group2);
         dog = findViewById(R.id.dog_radio_button2);
         cat = findViewById(R.id.cat_radio_button2);
         buttonSave = findViewById(R.id.save_profile_btn);
-        //deal with screen rotation
-        if (savedInstanceState != null) {
-            usernameInputText.setText(savedInstanceState.getString("USERNAME"));
-            passwordInputText.setText(savedInstanceState.getString("PASSWORD"));
-            emailInputText.setText(savedInstanceState.getString("EMAIL"));
-            petNameInputText.setText(savedInstanceState.getString("PETNAME"));
-            int checkedRadioButtonId = savedInstanceState.getInt("checkedRadioButtonId");
-            if (checkedRadioButtonId != -1) {
-                radioGroup.check(checkedRadioButtonId);
-            }
-        }
+        //TODO:deal with screen rotation
+//        if (savedInstanceState != null) {
+//            usernameInputText.setText(savedInstanceState.getString("USERNAME"));
+//            passwordInputText.setText(savedInstanceState.getString("PASSWORD"));
+//            emailInputText.setText(savedInstanceState.getString("EMAIL"));
+//            petNameInputText.setText(savedInstanceState.getString("PETNAME"));
+//            int checkedRadioButtonId = savedInstanceState.getInt("checkedRadioButtonId");
+//            if (checkedRadioButtonId != -1) {
+//                radioGroup.check(checkedRadioButtonId);
+//            }
+//        }
         //check all fields filled and save into database
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,12 +129,14 @@ public class ProjectSignUpActivity extends AppCompatActivity {
 
     private boolean checkAllFieldsFilled() {
         //get all the info from the sign up activity, save them in firebase
-        username = Objects.requireNonNull(usernameInputText.getText()).toString();
-        password = Objects.requireNonNull(passwordInputText.getText()).toString();
-        email = Objects.requireNonNull(emailInputText.getText()).toString();
+//        username = Objects.requireNonNull(usernameInputText.getText()).toString();
+//        password = Objects.requireNonNull(passwordInputText.getText()).toString();
+//        email = Objects.requireNonNull(emailInputText.getText()).toString();
+        username = usernameInputText.getText().toString().trim();
+        password = passwordInputText.getText().toString().trim();
+        email = emailInputText.getText().toString().trim();
         whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
-        Log.d("whichPet", whichPet);
-        petName = Objects.requireNonNull(petNameInputText.getText()).toString();
+        petName = petNameInputText.getText().toString().trim();
         if (email.isEmpty() || username.isEmpty() || password.isEmpty() || petName.isEmpty() || whichPet.equals("-1")) {
             // Show error message
             Toast.makeText(getApplicationContext(), "Please fill in all fields!", Toast.LENGTH_SHORT).show();
