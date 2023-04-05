@@ -37,7 +37,7 @@ public class ProgressActivity extends AppCompatActivity {
     private static final int DENOMINATOR = 10;
     private MaterialCalendarView calendarHistory;
     private List<CalendarDay> completedGoalsDates;
-    private TextView calendarKey;
+    private TextView petHealthInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +61,36 @@ public class ProgressActivity extends AppCompatActivity {
         petImage.setImageResource(R.drawable.dog_small);
 
         // TODO: get user's pet's overall health and replace number
-        petHealth = Math.round((float) 76 / DENOMINATOR);
+        petHealth = Math.round((float) 5 / DENOMINATOR);
 
         // Recycler view to show hearts (pet health)
         petHealthRecyclerView = findViewById(R.id.progress_pet_health);
         listOfHearts = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             listOfHearts.add((Integer) R.drawable.heart);
+        }
+
+        // Set text below hearts to remind user what health condition their pet is in
+        petHealthInfo = findViewById(R.id.pet_health_info);
+        if (petHealth == 10) {
+            // 10 hearts
+            petHealthInfo.setText("Your pet is in the best health condition! Keep it up!") ;
+        } else if (petHealth >= 5 && petHealth < 10) {
+            // 5-9 hearts
+            petHealthInfo.setText("Keep up the good work! Try to bring your pet's health back up " +
+                    "to 10 hearts!");
+        } else if (petHealth >= 2 && petHealth < 5) {
+            // 2-4 hearts
+            petHealthInfo.setText("Uh oh...your pet's health is getting low. Remember to complete " +
+                    "all of your daily goals to bring it back up!");
+        } else if (petHealth == 1) {
+            // 1 heart
+            petHealthInfo.setText("Watch out! Your pet is in critical condition. Remember to complete " +
+                    "all of your daily goals!");
+        } else if (petHealth == 0) {
+            // 0 hearts
+            petHealthInfo.setText("Your pet has died. Complete your goals " +
+                    "everyday to bring it back to life.");
         }
 
         // Set adapter for pet health recycler view
