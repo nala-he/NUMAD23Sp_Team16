@@ -38,6 +38,11 @@
             android:theme="@style/Theme.No_Action_Bar"
             android:windowSoftInputMode="adjustPan" />
         <activity
+            android:name=".Project.ProgressActivity"
+            android:exported="false"
+            android:theme="@style/Theme.No_Action_Bar"
+            android:parentActivityName=".Project.ProjectEntryActivity"/>
+        <activity
             android:name=".Project.SendStatusActivity"
             android:exported="false" />
         <activity

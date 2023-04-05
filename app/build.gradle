@@ -24,6 +24,12 @@ android {
 //            keyAlias 'key0'
 //            keyPassword 'GoodluckNEU2023!'
 //        }
+//        team16ReleaseByYutong {
+//            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'key0'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
     }
 
     namespace 'edu.northeastern.numad23sp_team16'
@@ -85,5 +91,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     implementation 'androidx.core:core:1.9.0'
+
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+
 
 }

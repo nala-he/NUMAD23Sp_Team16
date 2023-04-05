@@ -29,4 +29,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     public void startCreateNewGoalActivity(View view) {
         startActivity(new Intent(ProjectEntryActivity.this, CreateNewGoalActivity.class));
     }
+
+    public void startProgressActivity(View view) {
+        startActivity(new Intent(ProjectEntryActivity.this, ProgressActivity.class));
+    }
 }
