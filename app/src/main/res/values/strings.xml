@@ -83,6 +83,7 @@
     <string name="priority_string">Priority:</string>
     <string name="memo_title_string">Memo:</string>
     <string name="save_button_string">Save</string>
+    <string name="add_a_habit">Add a Habit</string>
     =======
 
 </resources>
