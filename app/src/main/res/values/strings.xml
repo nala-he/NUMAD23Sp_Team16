@@ -90,6 +90,10 @@
     <string name="completed_goals_info_string">Days you completed all daily goals</string>
     <string name="current_date_info_string">Today\'s date</string>
     <string name="goalforit">GoalForIt!</string>
+    <string name="i_am_a_new_user">I am a new user ...</string>
+    <string name="welcome_back">Welcome back!</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">sign up</string>
     =======
 
 </resources>
