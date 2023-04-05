@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -97,7 +98,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String REMINDER_INFO_DIALOG_OPEN = "REMINDER_INFO_DIALOG_OPEN";
     private static final String PRIORITY_INFO_DIALOG_OPEN = "PRIORITY_INFO_DIALOG_OPEN";
 
-
     // New goal values
     private String goalName;
     private Icon selectedIcon;
@@ -124,7 +124,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.create_goal_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Add all icons to icons list for recycler view
         createListOfIcons();
