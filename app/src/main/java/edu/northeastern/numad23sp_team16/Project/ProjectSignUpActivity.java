@@ -1,7 +1,6 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -27,5 +26,6 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
     }
 }
