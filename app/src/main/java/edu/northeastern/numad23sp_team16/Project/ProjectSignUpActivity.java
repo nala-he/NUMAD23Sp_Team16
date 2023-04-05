@@ -75,11 +75,6 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                 radioGroup.check(checkedRadioButtonId);
             }
         }
-        //click save button, call saveSignUpInfo2Firebase()
-        buttonSave.setOnClickListener(v -> saveSignUpInfo2Firebase());
-
-    }
-    private void saveSignUpInfo2Firebase() {
         //get all the info from the sign up activity, save them in firebase
         username = Objects.requireNonNull(usernameInputText.getText()).toString();
         password = Objects.requireNonNull(passwordInputText.getText()).toString();
@@ -87,9 +82,15 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
         petName = Objects.requireNonNull(petNameInputText.getText()).toString();
         // Check if required fields are not empty
-        checkAllFieldsFilled(username,password,email,whichPet,petName);
-        //get users reference
-        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        if(checkAllFieldsFilled(username,password,email,whichPet,petName)) {
+            //click save button, call saveSignUpInfo2Firebase()
+            buttonSave.setOnClickListener(v -> saveSignUpInfo2Firebase());
+        }
+
+    }
+    private void saveSignUpInfo2Firebase() {
+        //get users reference, getReference("FinalProject") to distinguish from A8 data
+        usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
         //check if the email has been used in the database
         Query query = usersRef.orderByChild("email").equalTo(email);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -119,16 +120,19 @@ public class ProjectSignUpActivity extends AppCompatActivity {
 
     }
 
-    private void checkAllFieldsFilled(String username,String password,String email,String whichPet,String petName) {
+    private boolean checkAllFieldsFilled(String username,String password,String email,String whichPet,String petName) {
         if (email.isEmpty() || username.isEmpty() || password.isEmpty() || petName.isEmpty()) {
             // Show error message
             Toast.makeText(getApplicationContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         if (whichPet.equals("-1")) {
             // No radio button selected, show reminder message
             Toast.makeText(getApplicationContext(), "Please select a pet.", Toast.LENGTH_SHORT).show();
+            return false;
+
         }
+        return true;
     }
 
 
