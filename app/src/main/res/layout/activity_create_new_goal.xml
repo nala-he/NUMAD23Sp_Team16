@@ -308,6 +308,7 @@
                 android:background="@color/grey"
                 android:onClick="saveNewGoal"
                 android:text="@string/save_button_string"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

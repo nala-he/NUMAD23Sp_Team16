@@ -3,6 +3,7 @@ package edu.northeastern.numad23sp_team16.Project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,14 +41,10 @@ public class ProjectLoginActivity extends AppCompatActivity {
         //customize tool bar
         Toolbar toolbar = findViewById(R.id.login_act_toolbar);
         setSupportActionBar(toolbar);
-        //click back button
-        ImageView backButton = findViewById(R.id.back_button_login);
-            backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         usernameInput = findViewById(R.id.username_input_l);
         passwordInput = findViewById(R.id.password_input_l);
@@ -108,6 +105,17 @@ public class ProjectLoginActivity extends AppCompatActivity {
         });
 
     }
+
+    // this event will enable the back function to the back button on press in customized action bar
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

@@ -6,55 +6,37 @@
     android:layout_height="match_parent"
     tools:context=".Project.ProjectLoginActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/login_act_toolbar"
-        android:background="@color/grey"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        >
+        android:background="@color/grey">
 
-        <RelativeLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/login_act_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageButton
-                android:id="@+id/back_button_login"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="10dp"
-                android:src="@drawable/back_button"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:layout_height="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme">
 
             <TextView
-                android:id="@+id/toolbar_title_login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_toStartOf="@+id/menu_button2"
-                android:layout_toEndOf="@id/back_button_login"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Login"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-
-            <ImageButton
-                android:id="@+id/menu_button2"
+                android:id="@+id/create_goal_title"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="10dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_alignParentEnd="true" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/login"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-        </RelativeLayout>
-    </androidx.appcompat.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <TextView
             android:id="@+id/textView_l"
