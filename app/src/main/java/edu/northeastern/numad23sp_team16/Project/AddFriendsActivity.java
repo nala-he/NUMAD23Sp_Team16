@@ -82,7 +82,7 @@ public class AddFriendsActivity extends AppCompatActivity {
         Button addButton = findViewById(R.id.add_selected_friends_button);
         Button sendButton = findViewById(R.id.send_status_button);
         sendButton.setVisibility(View.INVISIBLE);
-        addButton.setText(R.string.add_all_selected_users_as_friends);
+        addButton.setText(R.string.add_friends);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

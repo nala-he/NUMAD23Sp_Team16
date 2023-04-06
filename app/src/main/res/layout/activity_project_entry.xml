@@ -53,6 +53,17 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <Button
+        android:id="@+id/button_check_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:onClick="startProgressActivity"
+        android:text="@string/check_progress_button"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/button_share"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -72,6 +83,7 @@
         android:layout_marginBottom="43dp"
         android:onClick="startShareActivity"
         android:text="@string/share"
+        android:textAllCaps="false"
         android:textStyle="bold"
         android:background="@drawable/my_button_background_yellow"
         app:layout_constraintBottom_toBottomOf="parent"

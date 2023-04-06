@@ -1,7 +1,11 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,7 +15,9 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.database.DataSnapshot;
@@ -44,21 +50,32 @@ public class ProjectSignUpActivity extends AppCompatActivity {
     String petName;
     String whichPet;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_sign_up);
-        //customize tool bar
-        Toolbar toolbar = findViewById(R.id.signup_act_toolbar);
-        setSupportActionBar(toolbar);
-        //click back button
-        ImageView backButton = findViewById(R.id.back_button_signup);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+
+        // customize action bar back button and title
+//        //customize tool bar
+//        Toolbar toolbar = findViewById(R.id.signup_act_toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.action_bar_layout);
+        actionBar.setHomeAsUpIndicator(R.drawable.back_button);
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#D9D9D9")));
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        // change action bar title
+        AppCompatTextView title = findViewById(R.id.navbar_title);
+        title.setText("Create a New Account");
+
         usernameInputText = findViewById(R.id.username_input_s);
         emailInputText = findViewById(R.id.email_input_s);
         passwordInputText= findViewById(R.id.password_input_s);
@@ -90,10 +107,19 @@ public class ProjectSignUpActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
+
+
+    // this event will enable the back function to the back button on press in customized action bar
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void saveSignUpInfo2Firebase() {
 
         //get users reference, getReference("FinalProject") to distinguish from A8 data

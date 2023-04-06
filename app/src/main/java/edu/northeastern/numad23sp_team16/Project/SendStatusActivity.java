@@ -69,13 +69,15 @@ public class SendStatusActivity extends AppCompatActivity {
         friendListRecyclerView.setAdapter(friendListAdapter);
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(SendStatusActivity.this));
 
+        TextView direction = findViewById(R.id.share_direction);
+        direction.setText(R.string.send_my_pet_status_to_selected_friends);
         TextView userListTitle = findViewById(R.id.user_list_title);
         userListTitle.setText("List of Friends");
 
         Button addButton = findViewById(R.id.add_selected_friends_button);
         addButton.setVisibility(View.INVISIBLE);
         Button sendButton = findViewById(R.id.send_status_button);
-        sendButton.setText(R.string.send_my_pet_status_to_selected_friends);
+        sendButton.setText(R.string.send_my_pet_status_to_friends);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
