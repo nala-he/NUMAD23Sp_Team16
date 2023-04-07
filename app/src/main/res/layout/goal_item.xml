@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="22dp"
+    android:layout_marginRight="22dp"
+    android:background="@drawable/goal_bg_unfinished"
+    app:circularflow_radiusInDP="10dp"
+    >
+
+    <ImageView
+        android:id="@+id/left_image_view"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/icon_health"/>
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_toEndOf="@+id/left_image_view"
+        android:layout_centerVertical="true"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_toStartOf="@+id/right_image_view"
+        android:text="Goal Text"/>
+
+    <ImageView
+        android:id="@+id/right_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/unchecked_high_priority"/>
+
+</RelativeLayout>
