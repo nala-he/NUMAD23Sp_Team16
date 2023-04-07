@@ -37,4 +37,19 @@ public class User {
     public String getPetName() {
         return petName;
     }
+
+    // added setters for profile updates-- Yutong
+    public void setUsername(String newUsername) { username = newUsername; }
+
+    public void setEmail(String newEmail) {
+        email = newEmail;
+    }
+
+    public void setPassword(String newPassword) { password = newPassword; }
+
+    public void setPetType(String newPetType) { petType = newPetType; }
+
+    public void setPetName(String newPetName) { petName = newPetName; }
+
+
 }

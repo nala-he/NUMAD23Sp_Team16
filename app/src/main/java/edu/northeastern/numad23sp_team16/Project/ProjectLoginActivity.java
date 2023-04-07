@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.User;
 
 public class ProjectLoginActivity extends AppCompatActivity {
     private EditText usernameInput;
@@ -33,6 +35,7 @@ public class ProjectLoginActivity extends AppCompatActivity {
     private DatabaseReference usersRef;
 
     private final String CURRENT_USER = "CURRENT_USER";
+    private String currentUser;
 
     public ProjectLoginActivity() {
     }
@@ -78,35 +81,60 @@ public class ProjectLoginActivity extends AppCompatActivity {
                 }
 
                 // Retrieve the user from the Firebase Realtime Database using the entered username
-                usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            // User exists, check if the password is correct
-                            String storedPassword = dataSnapshot.child("password").getValue(String.class);
-                            Log.d("password stored in database:",storedPassword);
-                            if (password.equals(storedPassword)) {
-                                Toast.makeText(ProjectLoginActivity.this, "Authentication successful.", Toast.LENGTH_SHORT).show();
+//                usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                usersRef.addChildEventListener(
+                    new ChildEventListener() {
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
+                            User user = dataSnapshot.getValue(User.class);
+                            if (user != null && user.getUsername().equals(username)) {
+                                // User exists, check if the password is correct
+//                                String storedPassword = dataSnapshot.child("password").getValue(String.class);
+                                String storedPassword = user.getPassword();
 
-                                // Save the currently logged in username and pass it across the app -- Yutong
-                                Intent intent = new Intent(ProjectLoginActivity.this, ProjectEntryActivity.class);
-                                intent.putExtra(CURRENT_USER, username);
-                                startActivity(intent);
+                                Log.d("password stored in database:",storedPassword);
+                                if (password.equals(storedPassword)) {
+                                    Toast.makeText(ProjectLoginActivity.this,
+                                            "Authentication successful.", Toast.LENGTH_SHORT).show();
 
+                                    // Save the currently logged in username and pass it across the app -- Yutong
+                                    Intent intent = new Intent(ProjectLoginActivity.this,
+                                            ProjectEntryActivity.class);
+                                    // pass the user id
+                                    currentUser = dataSnapshot.getKey();
+                                    intent.putExtra(CURRENT_USER, currentUser);
+                                    startActivity(intent);
+
+                                } else {
+                                    // Password incorrect
+                                    Toast.makeText(ProjectLoginActivity.this, "Incorrect password.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                // Password incorrect
-                                Toast.makeText(ProjectLoginActivity.this, "Incorrect password.", Toast.LENGTH_SHORT).show();
+                                // User does not exist
+                                Toast.makeText(ProjectLoginActivity.this, "User does not exist.",
+                                        Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            // User does not exist
-                            Toast.makeText(ProjectLoginActivity.this, "User does not exist.", Toast.LENGTH_SHORT).show();
                         }
-                    }
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle database error
-                    }
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle database error
+                        }
                 });
             }
         });

@@ -44,11 +44,14 @@ public class ProjectSignUpActivity extends AppCompatActivity {
 
     private Button buttonSave;
 
-    String username;
-    String password;
-    String email;
-    String petName;
-    String whichPet;
+    private String username;
+    private String password;
+    private String email;
+    private String petName;
+    private String whichPet;
+
+    private static int userIdCounter = 1;
+    private String userId;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -135,10 +138,18 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                 } else {
                     // username is not in use, save user to database
                     User user = new User(email, username, password, whichPet, petName);
-                    //add a child node with username as a unique key, can't use email as key because of "@"
-                    usersRef.child(username).setValue(user);
+
+//                    //add a child node with username as a unique key, can't use email as key because of "@"
+//                    usersRef.child(username).setValue(user);
+
+                    // add a child node to use the time as part of the unique user id, format "user16082271023" -- Yutong
+                    String time = String.valueOf(System.currentTimeMillis()/1000);
+                    userId = "user" + time + userIdCounter++;
+                    usersRef.child(userId).setValue(user);
+
                     // show success message
                     Toast.makeText(getApplicationContext(), "Sign up successfully!", Toast.LENGTH_SHORT).show();
+
                     // go to login activity
                     startActivity(new Intent(ProjectSignUpActivity.this, ProjectLoginActivity.class));
                 }
