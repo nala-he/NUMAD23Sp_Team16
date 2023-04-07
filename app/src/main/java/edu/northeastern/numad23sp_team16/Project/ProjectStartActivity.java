@@ -18,9 +18,9 @@ public class ProjectStartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_project_start);
 
             //click to log in
-            btnLogin = findViewById(R.id.button2);
+            btnLogin = findViewById(R.id.button_login);
             //click to sign up
-            btnSignUp = findViewById(R.id.button3);
+            btnSignUp = findViewById(R.id.button_signup);
             //customize tool bar
             Toolbar toolbar = findViewById(R.id.entry_act_toolbar);
             setSupportActionBar(toolbar);
