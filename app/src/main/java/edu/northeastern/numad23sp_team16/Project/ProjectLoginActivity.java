@@ -32,6 +32,8 @@ public class ProjectLoginActivity extends AppCompatActivity {
     private String username;
     private DatabaseReference usersRef;
 
+    private final String CURRENT_USER = "CURRENT_USER";
+
     public ProjectLoginActivity() {
     }
     @Override
@@ -85,7 +87,12 @@ public class ProjectLoginActivity extends AppCompatActivity {
                             Log.d("password stored in database:",storedPassword);
                             if (password.equals(storedPassword)) {
                                 Toast.makeText(ProjectLoginActivity.this, "Authentication successful.", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(ProjectLoginActivity.this, ProjectEntryActivity.class));
+
+                                // Save the currently logged in username and pass it across the app -- Yutong
+                                Intent intent = new Intent(ProjectLoginActivity.this, ProjectEntryActivity.class);
+                                intent.putExtra(CURRENT_USER, username);
+                                startActivity(intent);
+
                             } else {
                                 // Password incorrect
                                 Toast.makeText(ProjectLoginActivity.this, "Incorrect password.", Toast.LENGTH_SHORT).show();

@@ -161,7 +161,14 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         username = usernameInputText.getText().toString().trim();
         password = passwordInputText.getText().toString().trim();
         email = emailInputText.getText().toString().trim();
-        whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
+        // Revise whichPet or petType data from id into "dog" or "cat" string
+        if (radioGroup.getCheckedRadioButtonId() == -1) {
+            whichPet = "-1";
+        } else {
+            whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId())
+                    .equals(String.valueOf(dog)) ? "dog" : "cat";
+        }
+//        whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
         petName = petNameInputText.getText().toString().trim();
         if (email.isEmpty() || username.isEmpty() || password.isEmpty() || petName.isEmpty() || whichPet.equals("-1")) {
             // Show error message
