@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,8 +50,8 @@ public class ProjectLoginActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        usernameInput = findViewById(R.id.username_input_l);
-        passwordInput = findViewById(R.id.password_input_l);
+        usernameInput = findViewById(R.id.edittext_username);
+        passwordInput = findViewById(R.id.edittext_password);
         btnLogin = findViewById(R.id.button_login);
         // Initialize Firebase Database
         //mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject")
