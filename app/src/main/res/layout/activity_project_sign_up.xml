@@ -13,25 +13,52 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Project.ProfileActivity">
+        tools:context=".Project.ProjectSignUpActivity">
+
+<!--        <com.google.android.material.appbar.AppBarLayout-->
+<!--            android:id="@+id/appBarLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/grey"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent">-->
+
+<!--                <androidx.appcompat.widget.Toolbar-->
+<!--                    android:id="@+id/signup_act_toolbar"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="?attr/actionBarSize"-->
+<!--                    android:theme="?attr/actionBarTheme">-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/create_goal_title"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="@string/create_a_new_account"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="18sp"-->
+<!--                            android:textStyle="bold" />-->
+<!--                </androidx.appcompat.widget.Toolbar>-->
+<!--        </com.google.android.material.appbar.AppBarLayout>-->
 
         <TextView
-            android:id="@+id/username_title"
+            android:id="@+id/username_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="6dp"
             android:text="@string/username"
-            android:textSize="18sp"
             android:textColor="@color/black"
-            app:layout_constraintBaseline_toBaselineOf="@id/username_input_layout"
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/username_input_layout_s"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/username_input_layout"
+            app:layout_constraintEnd_toStartOf="@+id/username_input_layout_s"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/username_input_layout"
+            android:id="@+id/username_input_layout_s"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -40,14 +67,14 @@
             app:boxStrokeColor="@color/purple_700"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="1dp"
-            app:layout_constraintBottom_toTopOf="@id/password_input_layout"
+            app:layout_constraintBottom_toTopOf="@id/password_input_layout_s"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/username_title"
+            app:layout_constraintStart_toEndOf="@+id/username_tv"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearance="@style/Rounded">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/username_input"
+                android:id="@+id/username_input_s"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
@@ -55,7 +82,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/password_title"
+            android:id="@+id/password_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -64,13 +91,13 @@
             android:text="@string/password"
             android:textSize="18sp"
             android:textColor="@color/black"
-            app:layout_constraintBaseline_toBaselineOf="@id/password_input_layout"
+            app:layout_constraintBaseline_toBaselineOf="@id/password_input_layout_s"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/password_input_layout"
+            app:layout_constraintEnd_toStartOf="@+id/password_input_layout_s"
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/password_input_layout"
+            android:id="@+id/password_input_layout_s"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -79,15 +106,15 @@
             app:boxStrokeColor="@color/purple_700"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="1dp"
-            app:layout_constraintBottom_toTopOf="@id/email_input_layout"
+            app:layout_constraintBottom_toTopOf="@id/email_input_layout_s"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/password_title"
-            app:layout_constraintTop_toBottomOf="@id/username_input_layout"
+            app:layout_constraintStart_toEndOf="@+id/password_tv"
+            app:layout_constraintTop_toBottomOf="@id/username_input_layout_s"
             app:passwordToggleEnabled="true"
             app:shapeAppearance="@style/Rounded">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password_input"
+                android:id="@+id/password_input_s"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
@@ -95,7 +122,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/email_title"
+            android:id="@+id/email_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -103,13 +130,13 @@
             android:text="@string/email"
             android:textSize="18sp"
             android:textColor="@color/black"
-            app:layout_constraintBaseline_toBaselineOf="@id/email_input_layout"
+            app:layout_constraintBaseline_toBaselineOf="@id/email_input_layout_s"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/email_input_layout"
+            app:layout_constraintEnd_toStartOf="@+id/email_input_layout_s"
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/email_input_layout"
+            android:id="@+id/email_input_layout_s"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -119,14 +146,14 @@
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="1dp"
             android:text="@string/email"
-            app:layout_constraintBottom_toTopOf="@id/current_pet_title"
+            app:layout_constraintBottom_toTopOf="@id/choose_tv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/email_title"
-            app:layout_constraintTop_toBottomOf="@id/password_input_layout"
+            app:layout_constraintStart_toEndOf="@+id/email_tv"
+            app:layout_constraintTop_toBottomOf="@id/password_input_layout_s"
             app:shapeAppearance="@style/Rounded">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/email_input"
+                android:id="@+id/email_input_s"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
@@ -134,7 +161,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/current_pet_title"
+            android:id="@+id/choose_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -142,75 +169,52 @@
             android:text="@string/current_pet"
             android:textSize="18sp"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toTopOf="@+id/pet_radio_group"
+            app:layout_constraintBottom_toTopOf="@+id/pet_radio_group2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/email_input_layout" />
-
-<!--        <com.google.android.material.imageview.ShapeableImageView-->
-<!--            android:id="@+id/dog"-->
-<!--            android:layout_width="74dp"-->
-<!--            android:layout_height="84dp"-->
-<!--            app:layout_constraintBottom_toTopOf="@+id/pet_radio_group"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/cat"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/current_pet_title"-->
-<!--            app:shapeAppearance="@style/Rounded"-->
-<!--            app:srcCompat="@drawable/dog" />-->
-
-<!--        <com.google.android.material.imageview.ShapeableImageView-->
-<!--            android:id="@+id/cat"-->
-<!--            android:layout_width="74dp"-->
-<!--            android:layout_height="84dp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toEndOf="@id/dog"-->
-<!--            app:layout_constraintTop_toTopOf="@id/dog"-->
-<!--            app:shapeAppearance="@style/Rounded"-->
-<!--            app:srcCompat="@drawable/cat" />-->
+            app:layout_constraintTop_toBottomOf="@id/email_input_layout_s" />
 
         <RadioGroup
-            android:id="@+id/pet_radio_group"
+            android:id="@+id/pet_radio_group2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
-            app:layout_constraintBottom_toTopOf="@id/petname_input_layout"
+            app:layout_constraintBottom_toTopOf="@id/petname_input_layout_s"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/current_pet_title">
+            app:layout_constraintTop_toBottomOf="@id/choose_tv">
 
             <RadioButton
-                android:id="@+id/dog_radio_button"
+                android:id="@+id/dog_radio_button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
-                android:text="@string/dog"
                 android:layout_weight="1"
                 android:buttonTint="@color/orange"
                 android:drawableTop="@drawable/dog_small"
                 android:gravity="center"
-                android:textSize="18sp"
-                android:textColor="@color/black" />
+                android:text="@string/dog"
+                android:textSize="8pt" />
 
             <RadioButton
-                android:id="@+id/cat_radio_button"
+                android:id="@+id/cat_radio_button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
-                android:text="@string/cat"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:gravity="center"
-                android:checked="false"
+                android:layout_weight="1"
                 android:buttonTint="@color/orange"
-                android:drawableTop="@drawable/cat_small" />
+                android:checked="false"
+                android:drawableTop="@drawable/cat_small"
+                android:gravity="center"
+                android:text="@string/cat"
+                android:textSize="8pt" />
         </RadioGroup>
 
         <TextView
-            android:id="@+id/petname_title"
+            android:id="@+id/petname_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -218,14 +222,14 @@
             android:text="@string/pet_name"
             android:textSize="18sp"
             android:textColor="@color/black"
-            app:layout_constraintBaseline_toBaselineOf="@id/petname_input_layout"
+            app:layout_constraintBaseline_toBaselineOf="@id/petname_input_layout_s"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/petname_input_layout"
+            app:layout_constraintEnd_toStartOf="@+id/petname_input_layout_s"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pet_radio_group" />
+            app:layout_constraintTop_toBottomOf="@id/pet_radio_group2"  />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/petname_input_layout"
+            android:id="@+id/petname_input_layout_s"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -236,14 +240,14 @@
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="1dp"
             android:text="@string/pet_name"
-            app:layout_constraintBottom_toTopOf="@id/save_profile_button"
+            app:layout_constraintBottom_toTopOf="@id/save_profile_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/petname_title"
-            app:layout_constraintTop_toBottomOf="@id/pet_radio_group"
+            app:layout_constraintStart_toEndOf="@id/petname_tv"
+            app:layout_constraintTop_toBottomOf="@id/pet_radio_group2"
             app:shapeAppearance="@style/Rounded">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/petname_input"
+                android:id="@+id/petname_input_s"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
@@ -251,14 +255,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/save_profile_button"
+            android:id="@+id/save_profile_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
+            android:layout_marginTop="5dp"
             android:backgroundTint="@color/grey"
-            android:onClick="onClickSaveUpdates"
             android:padding="0dp"
-            android:text="@string/save_updates"
+            android:text="@string/save"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -268,3 +272,4 @@
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
+

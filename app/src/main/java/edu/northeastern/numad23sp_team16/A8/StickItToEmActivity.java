@@ -1,14 +1,5 @@
 package edu.northeastern.numad23sp_team16.A8;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -25,7 +16,15 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.Timestamp;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,10 +43,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-
-import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.A8.models.Message;
 import edu.northeastern.numad23sp_team16.A8.models.User;
+import edu.northeastern.numad23sp_team16.R;
 
 public class StickItToEmActivity extends AppCompatActivity {
     private static final String TAG = "StickItToEmActivity";
@@ -146,7 +145,7 @@ public class StickItToEmActivity extends AppCompatActivity {
         stickerCountRecyclerView.setLayoutManager(new LinearLayoutManager(StickItToEmActivity.this));
 
         // Connect with firebase
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference("A8");
         // initialize an empty userList to store our signup users from realtime database
         userList = new ArrayList<>();
 

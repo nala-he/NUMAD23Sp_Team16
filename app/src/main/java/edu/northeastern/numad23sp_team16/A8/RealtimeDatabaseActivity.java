@@ -1,18 +1,5 @@
 package edu.northeastern.numad23sp_team16.A8;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -28,14 +15,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.A8.models.Message;
+import edu.northeastern.numad23sp_team16.R;
 
 // moved majority of codes to StickItToEmActivity. Do not need this activity anymore.
 public class RealtimeDatabaseActivity extends AppCompatActivity {
@@ -93,7 +93,7 @@ public class RealtimeDatabaseActivity extends AppCompatActivity {
         createNotificationChannel();
 
         // Connect with firebase
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference("A8");
         // Update the sticker in realtime
         mDatabase.child("messages")
                 .addChildEventListener(

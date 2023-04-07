@@ -55,22 +55,24 @@
         android:layout_marginBottom="10dp"
         android:onClick="startStickItToEmActivity"
         android:text="@string/a8_stick_it_to_em_button"
-        app:layout_constraintBottom_toTopOf="@id/button_project"
+        app:layout_constraintBottom_toTopOf="@id/button_project2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_a6" />
 
+
+
     <Button
-        android:id="@+id/button_project"
+        android:id="@+id/button_project2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:onClick="startProjectActivity"
-        android:text="@string/project"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:onClick="startProjectStartActivity"
+        android:text="project entry"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_a8" />
 
