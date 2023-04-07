@@ -1,141 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:fillViewport="true"
-    android:scrollbars="vertical"
-    android:fadeScrollbars="false" >
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/grey">
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/login_act_toolbar"
+        <!-- Toolbar and other app bar content go here -->
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
-
-            <TextView
-                android:id="@+id/create_goal_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/login"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/textView_l"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
-            android:text="Welcome back!"
-            android:textColor="@color/black"
-            android:textSize="28sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.026" />
+            android:background="@color/grey">
 
-        <TextView
-            android:id="@+id/username_tv_l"
-            android:layout_width="wrap_content"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/login_act_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme">
+
+                <TextView
+                    android:id="@+id/create_goal_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/login"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="@string/username"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBaseline_toBaselineOf="@id/username_input_l"
-            app:layout_constraintRight_toLeftOf="@id/username_input_l"
-            app:layout_constraintTop_toBottomOf="@id/textView_l" />
+            android:padding="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/username_input_l"
-            android:layout_width="240dp"
-            android:layout_height="45dp"
-            android:padding="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/custom_input"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/username_tv_l"
-            app:layout_constraintTop_toBottomOf="@id/textView_l"
-            app:layout_constraintHorizontal_bias="0.5" />
-
-        <TextView
-            android:id="@+id/password_tv_l"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Password"
-            app:layout_constraintHorizontal_bias="0.5"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBaseline_toBaselineOf="@id/password_input_l"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/password_input_l"
-            app:layout_constraintTop_toBottomOf="@id/username_tv_l" />
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            >
+            <!-- Welcome Back TextView -->
+            <TextView
+                android:id="@+id/text_welcome_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome Back!"
+                android:layout_marginBottom="30dp"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/password_input_l"
-            android:layout_width="240dp"
-            android:layout_height="45dp"
-            android:padding="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/custom_input"
-            android:ems="10"
-            android:inputType="textPassword"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/password_tv_l"
-            app:layout_constraintTop_toBottomOf="@id/username_input_l"
-            app:layout_constraintHorizontal_bias="0.5" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
 
-        <android.widget.Button
-            android:id="@+id/button_login"
-            android:layout_width="250dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="29dp"
-            android:background="@drawable/my_button_background_yellow"
-            android:text="@string/log_in"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.552"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/password_input_l"
-            app:layout_constraintVertical_bias="0.028" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+                <!-- Username TextView -->
+                <TextView
+                    android:id="@+id/text_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+
+                <!-- Username EditText -->
+                <EditText
+                    android:id="@+id/edittext_username"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:background="@drawable/custom_input"
+                    android:inputType="text"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"/>
+
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="10dp">
+            <!-- Password TextView -->
+            <TextView
+                android:id="@+id/text_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="Password"
+                android:padding="10dp"
+                />
+
+            <!-- Password EditText -->
+            <EditText
+                android:id="@+id/edittext_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/custom_input"
+                android:inputType="textPassword"/>
+        </LinearLayout>
+
+            <!-- Login Button -->
+            <Button
+                android:id="@+id/button_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log In"
+                android:textAllCaps="false"
+                android:background="@drawable/my_button_background_yellow"
+                android:layout_marginTop="23dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
