@@ -88,8 +88,11 @@ public class ProfileActivity extends AppCompatActivity {
                         password_input.setText(password);
                         email_input.setText(email);
                         petname_input.setText(petName);
-                        dog_button.setChecked(Objects.equals(petType, "dog"));
-                        cat_button.setChecked(Objects.equals(petType, "cat"));
+                        if (Objects.equals(petType, "dog")) {
+                            dog_button.setChecked(true);
+                        } else {
+                            cat_button.setChecked(true);
+                        }
                     }
 
                     @Override

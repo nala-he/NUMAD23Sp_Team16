@@ -85,6 +85,8 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         petNameInputText = findViewById(R.id.petname_input_s);
         radioGroup = findViewById(R.id.pet_radio_group2);
         dog = findViewById(R.id.dog_radio_button2);
+        // select dog button as the default pet type
+        dog.setChecked(true);
         cat = findViewById(R.id.cat_radio_button2);
         buttonSave = findViewById(R.id.save_profile_btn);
         //TODO:deal with screen rotation
@@ -107,7 +109,6 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }
@@ -176,8 +177,7 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         if (radioGroup.getCheckedRadioButtonId() == -1) {
             whichPet = "-1";
         } else {
-            whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId())
-                    .equals(String.valueOf(dog)) ? "dog" : "cat";
+            whichPet = dog.isChecked() ? "dog" : "cat";
         }
 //        whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
         petName = petNameInputText.getText().toString().trim();
