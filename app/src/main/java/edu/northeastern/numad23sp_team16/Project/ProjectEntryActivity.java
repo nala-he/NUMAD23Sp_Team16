@@ -1,20 +1,40 @@
 package edu.northeastern.numad23sp_team16.Project;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import edu.northeastern.numad23sp_team16.R;
 
 // TODO: to be merged or replaced with the login/sign in page activity created by Yuan
 public class ProjectEntryActivity extends AppCompatActivity {
-
+    LinearProgressIndicator progressIndicator;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
+        progressIndicator = findViewById(R.id.progress_indicator);
+
+        // test:set the progress to 50%
+        progressIndicator.setProgress(50);
+
+        /**
+        // Define the current value and maximum value of the number
+        int currentValue = 5;
+        int maxValue = 10;
+
+        // Calculate the proportion of the progress
+        float proportion = (float) currentValue / (float) maxValue;
+
+        // Set the progress of the LinearProgressIndicator based on the proportion
+        progressIndicator.setProgress((int) (proportion * 100));
+         **/
+
+
     }
 
     public void startProfileActivity(View view) {

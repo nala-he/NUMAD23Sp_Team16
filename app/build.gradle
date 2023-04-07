@@ -94,6 +94,8 @@ dependencies {
     implementation 'androidx.core:core:1.9.0'
 
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+    // FirebaseUI for Firebase Realtime Database
+    implementation 'com.firebaseui:firebase-ui-database:8.0.2'
 
 
 }
