@@ -20,14 +20,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
         progressIndicator = findViewById(R.id.progress_indicator);
 
         // test:set the progress to 50%
+        //Todo:change the value to the proportion from progress page
         progressIndicator.setProgress(50);
 
         /**
         // Define the current value and maximum value of the number
         int currentValue = 5;
         int maxValue = 10;
-
-        // Calculate the proportion of the progress
         float proportion = (float) currentValue / (float) maxValue;
 
         // Set the progress of the LinearProgressIndicator based on the proportion
