@@ -30,6 +30,11 @@ import edu.northeastern.numad23sp_team16.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String USERNAME = "USERNAME";
+    private final String PASSWORD = "PASSWORD";
+    private final String EMAIL = "EMAIL";
+    private final String PET_TYPE = "PET_TYPE";
+    private final String PET_NAME = "PET_NAME";
     private String username;
     private DatabaseReference usersRef;
     private String email;
@@ -100,49 +105,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                     }
                 }
-//                new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                        User user = snapshot.getValue(User.class);
-//                        if (user != null && user.getUsername().equals(username)) {
-//                            email = user.getEmail();
-//                            petName = user.getPetName();
-//                            petType = user.getPetType();
-//                            password = user.getPassword();
-//
-//                            // Set the input field default data using the current user's info from the database -- Yutong
-//                            username_input.setText(username);
-//                            password_input.setText(password);
-//                            email_input.setText(email);
-//                            petname_input.setText(petName);
-//                            dog_button.setChecked(Objects.equals(petType, "dog"));
-//                            cat_button.setChecked(Objects.equals(petType, "cat"));
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                }
         );
-
-
     }
 
     // this event will enable the back function to the back button on press in customized action bar
@@ -159,7 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
         Toast.makeText(ProfileActivity.this, "Saved profile updates.",
                 Toast.LENGTH_LONG).show();
 
-        // TODO: save updates to database and then navigate back to home screen
+        // save updates to database and then navigate back to home screen
         if (!isAllFieldsFilled()) {
             Toast.makeText(getApplicationContext(), "Please fill in all fields!", Toast.LENGTH_SHORT).show();
         } else {
@@ -208,6 +171,36 @@ public class ProfileActivity extends AppCompatActivity {
         if (!petType.equals(petTypeOnSave)) {
             usersRef.child(currentUser).child("petType")
                     .setValue(petTypeOnSave);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(USERNAME, username);
+        outState.putString(PASSWORD, password);
+        outState.putString(EMAIL, email);
+        outState.putString(PET_TYPE, petType);
+        outState.putString(PET_NAME, petName);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // restore edited status
+        username = savedInstanceState.getString(USERNAME);
+        password = savedInstanceState.getString(PASSWORD);
+        email = savedInstanceState.getString(EMAIL);
+        petType = savedInstanceState.getString(PET_TYPE);
+        petName = savedInstanceState.getString(PET_NAME);
+        username_input.setText(username);
+        password_input.setText(password);
+        email_input.setText(email);
+        petname_input.setText(petName);
+        if (petType.equals("dog")) {
+            dog_button.setChecked(true);
+        } else {
+            cat_button.setChecked(true);
         }
     }
 

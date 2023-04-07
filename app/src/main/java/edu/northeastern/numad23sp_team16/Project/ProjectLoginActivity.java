@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.User;
 
@@ -80,19 +82,18 @@ public class ProjectLoginActivity extends AppCompatActivity {
                 }
 
                 // Retrieve the user from the Firebase Realtime Database using the entered username
-//                usersRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
-                usersRef.addChildEventListener(
-                    new ChildEventListener() {
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        @Override
-                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
-                            User user = dataSnapshot.getValue(User.class);
-                            if (user != null && user.getUsername().equals(username)) {
-                                // User exists, check if the password is correct
-//                                String storedPassword = dataSnapshot.child("password").getValue(String.class);
-                                String storedPassword = user.getPassword();
+                usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                Log.d("password stored in database:",storedPassword);
+                        boolean userExist = false;
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            if (Objects.requireNonNull(data.getValue(User.class)).getUsername().equals(username)) {
+                                // User exists, check if the password is correct
+                                String storedPassword = Objects.requireNonNull(data.getValue(User.class)).getPassword();
+
+                                Log.d("password stored in database:", storedPassword);
+                                userExist = true;
                                 if (password.equals(storedPassword)) {
                                     Toast.makeText(ProjectLoginActivity.this,
                                             "Authentication successful.", Toast.LENGTH_SHORT).show();
@@ -101,7 +102,7 @@ public class ProjectLoginActivity extends AppCompatActivity {
                                     Intent intent = new Intent(ProjectLoginActivity.this,
                                             ProjectEntryActivity.class);
                                     // pass the user id
-                                    currentUser = dataSnapshot.getKey();
+                                    currentUser = data.getKey();
                                     intent.putExtra(CURRENT_USER, currentUser);
                                     startActivity(intent);
 
@@ -110,30 +111,18 @@ public class ProjectLoginActivity extends AppCompatActivity {
                                     Toast.makeText(ProjectLoginActivity.this, "Incorrect password.",
                                             Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
-                                // User does not exist
-                                Toast.makeText(ProjectLoginActivity.this, "User does not exist.",
-                                        Toast.LENGTH_SHORT).show();
                             }
                         }
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        if (!userExist) {
+                            // User does not exist
+                            Toast.makeText(ProjectLoginActivity.this, "User does not exist.",
+                                    Toast.LENGTH_SHORT).show();
                         }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            // Handle database error
-                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle database error
+                    }
                 });
             }
         });
