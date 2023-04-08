@@ -51,10 +51,10 @@ public class Goal {
         this.memo = memo;
     }
 
-    // Create unique goal id: userId + goal + time
+    // Create unique goal id: goal + time + userId
     private String createUniqueGoalId() {
-        String time = String.valueOf(System.currentTimeMillis() / 1000);
-        return (this.userId + "goal" + time);
+        String time = String.valueOf(System.currentTimeMillis());
+        return ("goal" + time + this.userId);
     }
 
     public String getGoalId() {
