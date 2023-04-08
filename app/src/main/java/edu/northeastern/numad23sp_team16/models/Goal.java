@@ -20,8 +20,8 @@ public class Goal {
     public Goal(String user, String goalName, int icon, Boolean reminderOn, String reminderMessage,
                 int reminderHour, int reminderMinute, String startDate, String endDate,
                 int priority, String memo) {
-        this.goalId = createUniqueGoalId();
         this.userId = user;
+        this.goalId = createUniqueGoalId();
         this.goalName = goalName;
         this.icon = icon;
         this.reminderOn = reminderOn;
@@ -37,8 +37,8 @@ public class Goal {
     // Constructor for when reminder turned off
     public Goal(String user, String goalName, int icon, Boolean reminderOn,
                 String startDate, String endDate, int priority, String memo) {
-        this.goalId = createUniqueGoalId();
         this.userId = user;
+        this.goalId = createUniqueGoalId();
         this.goalName = goalName;
         this.icon = icon;
         this.reminderOn = reminderOn;
@@ -51,10 +51,10 @@ public class Goal {
         this.memo = memo;
     }
 
-    // Create unique goal id: goal + userId + time
+    // Create unique goal id: userId + goal + time
     private String createUniqueGoalId() {
         String time = String.valueOf(System.currentTimeMillis() / 1000);
-        return ("goal" + this.userId + time);
+        return (this.userId + "goal" + time);
     }
 
     public String getGoalId() {

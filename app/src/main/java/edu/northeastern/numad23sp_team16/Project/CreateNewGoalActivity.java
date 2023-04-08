@@ -501,7 +501,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
 
         // All requirements met - create new goal instance, save to database, and navigate back to home page
-        // TODO: Create new goal instance from input values and save to database
         Goal newGoal;
         if (reminderOn) {
             // Reminders turned on
@@ -533,7 +532,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Add new goal to database with goal id as unique identifier
         mDatabase.child("Goals").child(newGoal.getGoalId()).setValue(newGoal);
 
-        // TODO: navigate to home screen created by Yuan
+        // Navigate to home screen
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
         startActivity(new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class));
     }
