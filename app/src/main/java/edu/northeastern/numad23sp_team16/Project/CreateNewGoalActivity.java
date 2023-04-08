@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.Goal;
 import edu.northeastern.numad23sp_team16.models.Icon;
 
 public class CreateNewGoalActivity extends AppCompatActivity {
@@ -501,6 +502,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // All requirements met - create new goal instance, save to database, and navigate back to home page
         // TODO: Create new goal instance from input values and save to database
+        Goal newGoal;
         if (reminderOn) {
             // Reminders turned on
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
@@ -510,6 +512,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + ", Priority: " + priority + ", Memo: " + memo);
 
             // Create new goal instance
+            newGoal = new Goal(currentUser, goalName, selectedIcon.getIconId(), reminderOn,
+                    reminderMessage, reminderHour, reminderMinute,
+                    dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
+                    priority, memo);
         }
         else {
             // Reminders turned off
@@ -517,7 +523,15 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + ", Reminders: " + reminderOn + ", " + dateFormat.format(startDate.getTime())
                     + " - " + dateFormat.format(endDate.getTime()) + ", Priority: " + priority
                     + ", Memo: " + memo);
+
+            // Create new goal instance
+            newGoal = new Goal(currentUser, goalName, selectedIcon.getIconId(), reminderOn,
+                    dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
+                    priority, memo);
         }
+
+        // Add new goal to database with goal id as unique identifier
+        mDatabase.child("Goals").child(newGoal.getGoalId()).setValue(newGoal);
 
         // TODO: navigate to home screen created by Yuan
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
