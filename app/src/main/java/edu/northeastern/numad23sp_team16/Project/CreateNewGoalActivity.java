@@ -29,6 +29,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +76,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private ImageView reminderQuestionMark;
     private ImageView priorityQuestionMark;
     private AlertDialog priorityInfoDialog;
+
+    // Firebase database
+    private DatabaseReference mDatabase;
+    private DatabaseReference currentUser;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -148,6 +158,18 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Pick goal end date
         selectEndDate();
+
+        // Connect to firebase database
+        mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+
+        // TODO: get currently logged in user from login (currently hardcoded)
+        currentUser = mDatabase.child("FinalProjectUsers").child("user16808941941");
+        currentUser.child("username").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                Log.d(TAG, "onComplete: current user - " + String.valueOf(task.getResult().getValue()));
+            }
+        });
     }
 
     // Show start date picker dialog
