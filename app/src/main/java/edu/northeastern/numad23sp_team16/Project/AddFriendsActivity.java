@@ -9,36 +9,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
+
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
+
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.firebase.ui.firestore.paging.FirestorePagingOptions;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.database.ValueEventListener;
 
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,7 +39,7 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     private RecyclerView userListRecyclerView;
     private UsernameAdapter usernameAdapter;
-    private List<Username> usersList;
+    private List<Username> usersList = new ArrayList<>();;
     private List<String> newFriendIdsList = new ArrayList<>();
     private List<String> preFriendIdsList = new ArrayList<>();
 
@@ -87,7 +75,6 @@ public class AddFriendsActivity extends AppCompatActivity {
             currentUser = extras.getString(CURRENT_USER);
         }
 
-        // TODO: obtain friendsList from firebase database
         // initialize usersRef and friendsRef from firebase database
         usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
         friendsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectFriends");
@@ -109,8 +96,6 @@ public class AddFriendsActivity extends AppCompatActivity {
         // get usersList data and update the previously selected friends status
         getUsersListData();
 
-        usernameAdapter = new UsernameAdapter(usersList);
-        userListRecyclerView.setAdapter(usernameAdapter);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,74 +147,46 @@ public class AddFriendsActivity extends AppCompatActivity {
     // obtain preFriendIdsList from firebase database
     private void getFriendIdsListData() {
         // Connect with firebase
-        friendsRef.addChildEventListener(
-                new ChildEventListener() {
+        friendsRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        if (Objects.equals(snapshot.child("currentUserId")
-                                .getValue(String.class), currentUser)) {
-                            String friendId = snapshot.child("friendId").getValue(String.class);
-                            preFriendIdsList.add(friendId);
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            if (Objects.equals(data.child("currentUserId")
+                                    .getValue(String.class), currentUser)) {
+                                String friendId = Objects.requireNonNull(data.child("friendId")
+                                        .getValue(String.class));
+                                preFriendIdsList.add(friendId);
+                            }
                         }
                     }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
 
     private void getUsersListData() {
-        usersList = new ArrayList<>();
         // Connect with firebase
-        usersRef.addChildEventListener(
-                new ChildEventListener() {
+        usersRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                        String userId = Objects.requireNonNull(snapshot.getKey());
-                        String userName = Objects.requireNonNull(snapshot.getValue(User.class)).getUsername();
-                        Username nameItem = new Username(userName, userId);
-                        // check if the user is already a friend in the preFriendIdsList from database
-                        if (preFriendIdsList != null
-                                && preFriendIdsList.stream().anyMatch(each -> each.equals(userId))) {
-                            nameItem.setSelected(true);
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            String userId = Objects.requireNonNull(data.getKey());
+                            String userName = Objects.requireNonNull(data.getValue(User.class)).getUsername();
+                            Username nameItem = new Username(userName, userId);
+                            // check if the user is already a friend in the preFriendIdsList from database
+                            if (preFriendIdsList != null
+                                    && preFriendIdsList.stream().anyMatch(each -> each.equals(userId))) {
+                                nameItem.setSelected(true);
+                            }
+                            if (!nameItem.isSelected()) {
+                                usersList.add(nameItem);
+                            }
                         }
-                        if (!nameItem.isSelected()) {
-                            usersList.add(nameItem);
-                        }
-
+                        usernameAdapter = new UsernameAdapter(usersList);
+                        userListRecyclerView.setAdapter(usernameAdapter);
                     }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
