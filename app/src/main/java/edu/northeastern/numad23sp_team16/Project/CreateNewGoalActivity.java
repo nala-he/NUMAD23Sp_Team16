@@ -165,17 +165,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // TODO: get currently logged in user's id from login (currently hardcoded)
         currentUser = "user16808941941";
-
-        // TODO: DELETE
-        DatabaseReference hardcodedUser;
-        hardcodedUser = mDatabase.child("FinalProjectUsers").child(currentUser);
-        hardcodedUser.child("username").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                Log.d(TAG, "onComplete: current user - " + String.valueOf(task.getResult().getValue()));
-            }
-        });
-        Log.d(TAG, "onCreate: icon - " + R.drawable.icon_hydration);
     }
 
     // Show start date picker dialog
