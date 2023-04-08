@@ -508,6 +508,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + String.format("%02d:%02d", reminderHour, reminderMinute) + ", "
                     + dateFormat.format(startDate.getTime()) + " - "+ dateFormat.format(endDate.getTime())
                     + ", Priority: " + priority + ", Memo: " + memo);
+
+            // Create new goal instance
         }
         else {
             // Reminders turned off

@@ -16,6 +16,7 @@ public class Goal {
     private int priority;
     private String memo;
 
+    // Constructor for when reminder turned on
     public Goal(String user, String goalName, int icon, Boolean reminderOn, String reminderMessage,
                 int reminderHour, int reminderMinute, String startDate, String endDate,
                 int priority, String memo) {
@@ -27,6 +28,23 @@ public class Goal {
         this.reminderMessage = reminderMessage;
         this.reminderHour = reminderHour;
         this.reminderMinute = reminderMinute;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.priority = priority;
+        this.memo = memo;
+    }
+
+    // Constructor for when reminder turned off
+    public Goal(String user, String goalName, int icon, Boolean reminderOn,
+                String startDate, String endDate, int priority, String memo) {
+        this.goalId = createUniqueGoalId();
+        this.userId = user;
+        this.goalName = goalName;
+        this.icon = icon;
+        this.reminderOn = reminderOn;
+        this.reminderMessage = null;
+        this.reminderHour = -1;
+        this.reminderMinute = -1;
         this.startDate = startDate;
         this.endDate = endDate;
         this.priority = priority;
