@@ -464,6 +464,13 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
     }
 
+
+    // Create unique goal id: goal + time + userId
+    private String createUniqueGoalId() {
+        String time = String.valueOf(System.currentTimeMillis());
+        return ("goal" + time + currentUser);
+    }
+
     public void saveNewGoal(View view) {
         // Retrieve inputted goal name
         goalName = editGoalName.getText().toString();
@@ -519,7 +526,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
 
         // Add new goal to database with goal id as unique identifier
-        mDatabase.child("Goals").child(newGoal.getGoalId()).setValue(newGoal);
+        mDatabase.child("Goals").child(createUniqueGoalId()).setValue(newGoal);
 
         // Navigate to home screen
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();

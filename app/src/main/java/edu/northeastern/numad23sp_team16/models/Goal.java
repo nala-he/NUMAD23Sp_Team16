@@ -3,7 +3,6 @@ package edu.northeastern.numad23sp_team16.models;
 
 public class Goal {
 
-    private String goalId;
     private String userId;
     private String goalName;
     private int icon;
@@ -21,7 +20,6 @@ public class Goal {
                 int reminderHour, int reminderMinute, String startDate, String endDate,
                 int priority, String memo) {
         this.userId = user;
-        this.goalId = createUniqueGoalId();
         this.goalName = goalName;
         this.icon = icon;
         this.reminderOn = reminderOn;
@@ -38,7 +36,6 @@ public class Goal {
     public Goal(String user, String goalName, int icon, Boolean reminderOn,
                 String startDate, String endDate, int priority, String memo) {
         this.userId = user;
-        this.goalId = createUniqueGoalId();
         this.goalName = goalName;
         this.icon = icon;
         this.reminderOn = reminderOn;
@@ -49,16 +46,6 @@ public class Goal {
         this.endDate = endDate;
         this.priority = priority;
         this.memo = memo;
-    }
-
-    // Create unique goal id: goal + time + userId
-    private String createUniqueGoalId() {
-        String time = String.valueOf(System.currentTimeMillis());
-        return ("goal" + time + this.userId);
-    }
-
-    public String getGoalId() {
-        return goalId;
     }
 
     public String getUserId() {
