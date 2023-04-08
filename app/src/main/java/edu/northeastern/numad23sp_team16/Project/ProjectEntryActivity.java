@@ -17,7 +17,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
-        progressIndicator = findViewById(R.id.progress_indicator);
+        progressIndicator = findViewById(R.id.progress_bar);
 
         // test:set the progress to 50%
         //Todo:change the value to the proportion from progress page
