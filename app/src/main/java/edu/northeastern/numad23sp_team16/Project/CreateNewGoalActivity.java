@@ -79,7 +79,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
     // Firebase database
     private DatabaseReference mDatabase;
-    private DatabaseReference currentUser;
+    private String currentUser;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -162,14 +162,19 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
 
-        // TODO: get currently logged in user from login (currently hardcoded)
-        currentUser = mDatabase.child("FinalProjectUsers").child("user16808941941");
-        currentUser.child("username").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        // TODO: get currently logged in user's id from login (currently hardcoded)
+        currentUser = "user16808941941";
+
+        // TODO: DELETE
+        DatabaseReference hardcodedUser;
+        hardcodedUser = mDatabase.child("FinalProjectUsers").child(currentUser);
+        hardcodedUser.child("username").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 Log.d(TAG, "onComplete: current user - " + String.valueOf(task.getResult().getValue()));
             }
         });
+        Log.d(TAG, "onCreate: icon - " + R.drawable.icon_hydration);
     }
 
     // Show start date picker dialog
