@@ -123,7 +123,7 @@ public class AddFriendsActivity extends AppCompatActivity {
                 Intent intent = new Intent(AddFriendsActivity.this, ShareActivity.class);
                 // close all the activities in the call stack above ShareActivity and bring it to
                 // the top of the call stack
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //                // pass the friendsList to the ShareActivity, need to be replaced with data from firebase later
 //                Bundle bundle = new Bundle();
 //                bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
@@ -197,19 +197,6 @@ public class AddFriendsActivity extends AppCompatActivity {
                     }
                 }
         );
-//        String[] names = new String[] {"Jack", "Steve", "Jane", "Martha", "Ines", "Lindsey", "Ryan",
-//        "Brady"};
-//        for (String name : names) {
-//            Username user = new Username(name);
-//            if (friendsList != null
-//                    && friendsList.stream().anyMatch(each -> each.getName().equals(name))) {
-//                user.setSelected(true);
-//            }
-//            if (!user.isSelected()) {
-//                usersList.add(user);
-//            }
-//        }
-
     }
 
     @Override
