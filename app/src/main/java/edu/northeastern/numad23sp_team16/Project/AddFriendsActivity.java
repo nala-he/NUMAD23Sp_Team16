@@ -39,7 +39,7 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     private RecyclerView userListRecyclerView;
     private UsernameAdapter usernameAdapter;
-    private List<Username> usersList = new ArrayList<>();;
+    private List<Username> usersList;
     private List<String> newFriendIdsList = new ArrayList<>();
     private List<String> preFriendIdsList = new ArrayList<>();
 
@@ -168,6 +168,7 @@ public class AddFriendsActivity extends AppCompatActivity {
     }
 
     private void getUsersListData() {
+        usersList = new ArrayList<>();
         // Connect with firebase
         usersRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -206,7 +207,7 @@ public class AddFriendsActivity extends AppCompatActivity {
         // store usersList selected status
         if (usersList.size() != 0) {
             for (Username user : usersList) {
-                outState.putBoolean(user.getName(), user.isSelected());
+                outState.putBoolean(user.getUserId(), user.isSelected());
             }
         }
 
@@ -219,9 +220,11 @@ public class AddFriendsActivity extends AppCompatActivity {
         // restore usersList selected status
         if (usersList.size() != 0) {
             for (Username user: usersList) {
-                boolean isSelected = savedInstanceState.getBoolean(user.getName());
+                boolean isSelected = savedInstanceState.getBoolean(user.getUserId());
                 user.setSelected(isSelected);
             }
+            usernameAdapter = new UsernameAdapter(usersList);
+            userListRecyclerView.setAdapter(usernameAdapter);
         }
     }
 }
