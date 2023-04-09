@@ -34,7 +34,7 @@ import edu.northeastern.numad23sp_team16.models.Friend;
 import edu.northeastern.numad23sp_team16.models.User;
 
 public class SendStatusActivity extends AppCompatActivity {
-    private List<Username> friendsList = new ArrayList<>();
+    private ArrayList<Username> friendsList = new ArrayList<>();
     private List<String> friendIdsList = new ArrayList<>();
 
     private List<Username> receiverList = new ArrayList<>();
@@ -101,10 +101,13 @@ public class SendStatusActivity extends AppCompatActivity {
         Button sendButton = findViewById(R.id.send_status_button);
         sendButton.setText(R.string.send_my_pet_status_to_friends);
 
-        // get friends' ids from firebase
-        getFriendIdsListData();
-        // get friends' names based on ids from firebase
-        getFriendNameList();
+        // check if there is a previously saved instance
+        if (savedInstanceState == null) {
+            // get friends' ids from firebase
+            getFriendIdsListData();
+            // get friends' names based on ids from firebase
+            getFriendNameList();
+        }
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,7 +183,11 @@ public class SendStatusActivity extends AppCompatActivity {
                         for (String userId : friendIdsList) {
                             String name = snapshot.child(userId).child("username").getValue(String.class);
                             Username friend = new Username(name, userId);
-                            friendsList.add(friend);
+                            // check if the name is already in the friendsList
+                            if (friendsList.stream()
+                                    .noneMatch(each -> each.getName().equals(name))) {
+                                friendsList.add(friend);
+                            }
                         }
                         friendListAdapter = new UsernameAdapter(friendsList);
                         friendListRecyclerView.setAdapter(friendListAdapter);
@@ -194,25 +201,17 @@ public class SendStatusActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        // store friendsList selected status
-        if (friendsList.size() != 0) {
-            for (Username friend : friendsList) {
-                outState.putBoolean(friend.getName(), friend.isSelected());
-            }
-        }
-
         super.onSaveInstanceState(outState);
+        // store friendsList selected status
+        outState.putParcelableArrayList(FRIENDS_LIST, friendsList);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // restore friendsList selected status
-        if (friendsList.size() != 0) {
-            for (Username friend: friendsList) {
-                boolean isSelected = savedInstanceState.getBoolean(friend.getName());
-                friend.setSelected(isSelected);
-            }
-        }
+        friendsList = savedInstanceState.getParcelableArrayList(FRIENDS_LIST);
+        getFriendIdsListData();
+        getFriendNameList();
     }
 }

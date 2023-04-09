@@ -45,7 +45,7 @@ public class AddFriendsActivity extends AppCompatActivity {
     private List<String> newFriendIdsList = new ArrayList<>();
     private List<String> preFriendIdsList = new ArrayList<>();
 
-    private final String FRIENDS_LIST = "FRIENDS_LIST";
+    private final String USERS_LIST = "USERS_LIST";
     private final String CURRENT_USER = "CURRENT_USER";
     private String currentUser;
     private DatabaseReference usersRef;
@@ -82,10 +82,10 @@ public class AddFriendsActivity extends AppCompatActivity {
         usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
         friendsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectFriends");
 
+        // check if there is a previously saved instance
         if (savedInstanceState == null) {
             // get preFriendIdsList data from firebase
             getFriendIdsListData();
-
             // get usersList data and update the previously selected friends status
             getUsersListData();
         }
@@ -193,6 +193,7 @@ public class AddFriendsActivity extends AppCompatActivity {
                                     && preFriendIdsList.stream().anyMatch(each -> each.equals(userId))) {
                                 nameItem.setSelected(true);
                             }
+                            // check if the unselected name is already in the usersList
                             if (!nameItem.isSelected() && usersList.stream()
                                     .noneMatch(each -> each.getName().equals(nameItem.getName()))) {
                                 usersList.add(nameItem);
@@ -213,14 +214,14 @@ public class AddFriendsActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // store usersList selected status
-        outState.putParcelableArrayList("USERS_LIST", usersList);
+        outState.putParcelableArrayList(USERS_LIST, usersList);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // restore usersList selected status
-        usersList = savedInstanceState.getParcelableArrayList("USERS_LIST");
+        usersList = savedInstanceState.getParcelableArrayList(USERS_LIST);
         getFriendIdsListData();
         getUsersListData();
     }
