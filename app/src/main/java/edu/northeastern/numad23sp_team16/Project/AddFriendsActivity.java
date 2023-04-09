@@ -129,6 +129,8 @@ public class AddFriendsActivity extends AppCompatActivity {
 //                bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
 //                intent.putExtras(bundle);
 
+                // pass the current user id back to share activity
+                intent.putExtra(CURRENT_USER, currentUser);
                 startActivity(intent);
             }
         });
