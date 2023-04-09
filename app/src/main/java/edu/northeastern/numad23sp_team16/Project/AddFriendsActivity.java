@@ -175,6 +175,10 @@ public class AddFriendsActivity extends AppCompatActivity {
                             String userId = Objects.requireNonNull(data.getKey());
                             String userName = Objects.requireNonNull(data.getValue(User.class)).getUsername();
                             Username nameItem = new Username(userName, userId);
+                            // check if the user is the currentUser
+                            if (userId.equals(currentUser)) {
+                                continue;
+                            }
                             // check if the user is already a friend in the preFriendIdsList from database
                             if (preFriendIdsList != null
                                     && preFriendIdsList.stream().anyMatch(each -> each.equals(userId))) {
