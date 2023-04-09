@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +41,7 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     private RecyclerView userListRecyclerView;
     private UsernameAdapter usernameAdapter;
-    private List<Username> usersList;
+    private ArrayList<Username> usersList = new ArrayList<>();
     private List<String> newFriendIdsList = new ArrayList<>();
     private List<String> preFriendIdsList = new ArrayList<>();
 
@@ -75,13 +77,24 @@ public class AddFriendsActivity extends AppCompatActivity {
             currentUser = extras.getString(CURRENT_USER);
         }
 
+
         // initialize usersRef and friendsRef from firebase database
         usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
         friendsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectFriends");
 
+        if (savedInstanceState == null) {
+            // get preFriendIdsList data from firebase
+            getFriendIdsListData();
+
+            // get usersList data and update the previously selected friends status
+            getUsersListData();
+        }
+
         // initialize views
         userListRecyclerView = findViewById(R.id.userlist_recyclerview);
         userListRecyclerView.setLayoutManager(new LinearLayoutManager(AddFriendsActivity.this));
+
+
         TextView userListTitle = findViewById(R.id.user_list_title);
         userListTitle.setText(R.string.list_of_users);
 
@@ -89,12 +102,6 @@ public class AddFriendsActivity extends AppCompatActivity {
         Button sendButton = findViewById(R.id.send_status_button);
         sendButton.setVisibility(View.INVISIBLE);
         addButton.setText(R.string.add_friends);
-
-        // get preFriendIdsList data from firebase
-        getFriendIdsListData();
-
-        // get usersList data and update the previously selected friends status
-        getUsersListData();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,7 +175,6 @@ public class AddFriendsActivity extends AppCompatActivity {
     }
 
     private void getUsersListData() {
-        usersList = new ArrayList<>();
         // Connect with firebase
         usersRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -187,7 +193,8 @@ public class AddFriendsActivity extends AppCompatActivity {
                                     && preFriendIdsList.stream().anyMatch(each -> each.equals(userId))) {
                                 nameItem.setSelected(true);
                             }
-                            if (!nameItem.isSelected()) {
+                            if (!nameItem.isSelected() && usersList.stream()
+                                    .noneMatch(each -> each.getName().equals(nameItem.getName()))) {
                                 usersList.add(nameItem);
                             }
                         }
@@ -204,27 +211,17 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        // store usersList selected status
-        if (usersList.size() != 0) {
-            for (Username user : usersList) {
-                outState.putBoolean(user.getUserId(), user.isSelected());
-            }
-        }
-
         super.onSaveInstanceState(outState);
+        // store usersList selected status
+        outState.putParcelableArrayList("USERS_LIST", usersList);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // restore usersList selected status
-        if (usersList.size() != 0) {
-            for (Username user: usersList) {
-                boolean isSelected = savedInstanceState.getBoolean(user.getUserId());
-                user.setSelected(isSelected);
-            }
-            usernameAdapter = new UsernameAdapter(usersList);
-            userListRecyclerView.setAdapter(usernameAdapter);
-        }
+        usersList = savedInstanceState.getParcelableArrayList("USERS_LIST");
+        getFriendIdsListData();
+        getUsersListData();
     }
 }
