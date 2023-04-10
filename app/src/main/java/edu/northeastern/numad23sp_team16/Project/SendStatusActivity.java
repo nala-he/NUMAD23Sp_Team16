@@ -1,18 +1,30 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +35,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -30,10 +44,14 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
-import edu.northeastern.numad23sp_team16.models.Friend;
-import edu.northeastern.numad23sp_team16.models.User;
+import edu.northeastern.numad23sp_team16.models.Message;
+
 
 public class SendStatusActivity extends AppCompatActivity {
+    private static final String TAG = "SendStatusActivity";
+    private String channelId = "notification_channel_1";
+    private int notificationId = 0;
+    private static int messageId = 1;
     private ArrayList<Username> friendsList = new ArrayList<>();
     private List<String> friendIdsList = new ArrayList<>();
 
@@ -42,10 +60,10 @@ public class SendStatusActivity extends AppCompatActivity {
     private final String FRIENDS_LIST = "FRIENDS_LIST";
     private final String CURRENT_USER = "CURRENT_USER";
     private String currentUser;
+    private String currentUserName;
     private RecyclerView friendListRecyclerView;
     private UsernameAdapter friendListAdapter;
     private DatabaseReference usersRef;
-
     private DatabaseReference friendsRef;
 
     @SuppressLint("SetTextI18n")
@@ -109,6 +127,7 @@ public class SendStatusActivity extends AppCompatActivity {
             getFriendNameList();
         }
 
+        createNotificationChannel();
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,6 +199,9 @@ public class SendStatusActivity extends AppCompatActivity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (Objects.equals(snapshot.getKey(), currentUser)) {
+                            currentUserName = snapshot.child(currentUser).child("username").getValue(String.class);
+                        }
                         for (String userId : friendIdsList) {
                             String name = snapshot.child(userId).child("username").getValue(String.class);
                             Username friend = new Username(name, userId);
@@ -213,5 +235,131 @@ public class SendStatusActivity extends AppCompatActivity {
         friendsList = savedInstanceState.getParcelableArrayList(FRIENDS_LIST);
         getFriendIdsListData();
         getFriendNameList();
+    }
+
+    private void onSendStatus(DatabaseReference postRef,
+                               String receiver, String sender, int heartCount, String petType) {
+
+        // add the time as part of the message id to avoid new message overwriting the previous message
+        // with the same id
+        String time = String.valueOf(System.currentTimeMillis()/1000);
+        postRef.child("FinalProjectMessages")
+                .child("message" + time + messageId++)
+                .setValue(new Message(receiver, sender, heartCount, petType));
+        postRef
+                .child("FinalProjectMessages")
+                .child("message" + time + messageId)
+                .runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+
+                        Message message = mutableData.getValue(Message.class);
+
+                        if (receiver == null || message == null) {
+                            return Transaction.success(mutableData);
+                        }
+
+                        if (message.receiverName.equals(receiver)) {
+//                            message.stickerId = String.valueOf(sticker);
+                            mutableData.setValue(message);
+                        }
+
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b,
+                                           DataSnapshot dataSnapshot) {
+                        Toast.makeText(getApplicationContext(), "Pet status sent to " + receiver,
+                                Toast.LENGTH_LONG).show();
+                        // Transaction completed
+                        Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+                    }
+                });
+    }
+
+    public void createNotificationChannel() {
+        // This must be called early because it must be called before a notification is sent.
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Notification Name";
+            String description = "Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public void sendStatusMessage(String sender, String petType, String petName, String heartCount) {
+
+        // Build notification
+        // Need to define a channel ID after Android Oreo
+        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
+//        int id = Integer.parseInt(petIconId);
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+//        // check if the perIconId is an unknown id, if yes, set a default unknown_sticker image
+//        // as an image placeholder
+//        if (id != R.drawable.dog_small && id != R.drawable.cat_small) {
+//            Toast.makeText(SendStatusActivity.this, "Received an unknown pet icon id.",
+//                    Toast.LENGTH_LONG).show();
+//            myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unknown_sticker);
+//        }
+
+        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+                //"Notification icons must be entirely white."
+                .setSmallIcon(R.drawable.heart)
+                .setContentTitle("You received a GoalForIt pet status from " + sender)
+                .setContentText(sender + "'s " + petType + " " + petName + " has " + heartCount
+                        + "/10 hearts.")
+                .setLargeIcon(myBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(myBitmap)
+                        .bigLargeIcon(null))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // hide the notification after its selected
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+        }
+
+        notificationManager.notify(notificationId++, notifyBuild.build());
+
+        // if only want to let the notification panel show the latest one notification, use this below
+        //        notificationManager.notify(notificationId, notifyBuild.build());
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            Log.v(TAG, "The user gave access.");
+            Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Log.e(TAG, "User denied permission.");
+            // permission denied
+            Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
