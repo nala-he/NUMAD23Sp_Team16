@@ -45,6 +45,7 @@ import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Message;
+import edu.northeastern.numad23sp_team16.models.User;
 
 
 public class SendStatusActivity extends AppCompatActivity {
@@ -60,11 +61,13 @@ public class SendStatusActivity extends AppCompatActivity {
     private final String FRIENDS_LIST = "FRIENDS_LIST";
     private final String CURRENT_USER = "CURRENT_USER";
     private String currentUser;
-    private String currentUserName;
+    private User currentUserDetail;
     private RecyclerView friendListRecyclerView;
     private UsernameAdapter friendListAdapter;
+    private DatabaseReference projectDatabase;
     private DatabaseReference usersRef;
     private DatabaseReference friendsRef;
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -90,21 +93,10 @@ public class SendStatusActivity extends AppCompatActivity {
             currentUser = extras.getString(CURRENT_USER);
         }
 
-        // TODO: obtain friendsList from firebase database
         // initialize usersRef and friendsRef from firebase database
-        usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
-        friendsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectFriends");
-
-//        // obtain friendsList from ShareActivity, needs to be replaced with data from firebase later
-//        Bundle bundle = getIntent().getExtras();
-//        if (bundle != null) {
-//            ArrayList<Username> preList = bundle.getParcelableArrayList(FRIENDS_LIST);
-//            for (Username each : preList) {
-//                if (friendsList.stream().noneMatch(e -> e.getName().equals(each.getName()))) {
-//                    friendsList.add(each);
-//                }
-//            }
-//        }
+        projectDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+        usersRef = projectDatabase.child("FinalProjectUsers");
+        friendsRef = projectDatabase.child("FinalProjectFriends");
 
         // initialize views
         friendListRecyclerView = findViewById(R.id.userlist_recyclerview);
@@ -137,13 +129,46 @@ public class SendStatusActivity extends AppCompatActivity {
                     }
                 }
                 // TODO: send user's pet status to selected friends from friendsList
-                if (receiverList.size() != 0) {
-                    Toast.makeText(SendStatusActivity.this, "Sent pet status to selected friends.",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(SendStatusActivity.this, "Did not select any friends.",
-                            Toast.LENGTH_LONG).show();
-                }
+                usersRef.addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                // store the currentUser's detail info in User class from the database
+                                for (DataSnapshot data : snapshot.getChildren()) {
+                                    if (Objects.equals(data.getKey(), currentUser)) {
+                                        currentUserDetail = snapshot.child(currentUser).getValue(User.class);
+                                        if (receiverList.size() != 0) {
+                                            for (Username each : receiverList) {
+                                                // TODO: change the hardcoded heartCount to user's pet heartCount from databse
+                                                int heartCount = 8;
+                                                if (currentUserDetail != null) {
+                                                    // send the status message record to database
+                                                    onSendStatus(projectDatabase, each.getUserId(), currentUser, heartCount,
+                                                            currentUserDetail.getPetType(), currentUserDetail.getPetName());
+                                                    // send the status notification to the specific receiver
+                                                    sendStatusMessage(currentUserDetail.getUsername(),
+                                                            currentUserDetail.getPetType(), currentUserDetail.getPetName(),
+                                                            heartCount);
+                                                }
+
+                                            }
+//                    Toast.makeText(SendStatusActivity.this, "Sent pet status to selected friends.",
+//                            Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(SendStatusActivity.this, "Did not select any friends.",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        }
+                );
+
 
                 Intent intent = new Intent(SendStatusActivity.this, ShareActivity.class);
                 // close all the activities in the call stack above ShareActivity and bring it to
@@ -199,9 +224,6 @@ public class SendStatusActivity extends AppCompatActivity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (Objects.equals(snapshot.getKey(), currentUser)) {
-                            currentUserName = snapshot.child(currentUser).child("username").getValue(String.class);
-                        }
                         for (String userId : friendIdsList) {
                             String name = snapshot.child(userId).child("username").getValue(String.class);
                             Username friend = new Username(name, userId);
@@ -237,17 +259,17 @@ public class SendStatusActivity extends AppCompatActivity {
         getFriendNameList();
     }
 
-    private void onSendStatus(DatabaseReference postRef,
-                               String receiver, String sender, int heartCount, String petType) {
+    // create and send the status message to database
+    private void onSendStatus(DatabaseReference postRef, String receiver, String sender,
+                              int heartCount, String petType, String petName) {
 
         // add the time as part of the message id to avoid new message overwriting the previous message
         // with the same id
         String time = String.valueOf(System.currentTimeMillis()/1000);
         postRef.child("FinalProjectMessages")
                 .child("message" + time + messageId++)
-                .setValue(new Message(receiver, sender, heartCount, petType));
-        postRef
-                .child("FinalProjectMessages")
+                .setValue(new Message(receiver, sender, heartCount, petType, petName));
+        postRef.child("FinalProjectMessages")
                 .child("message" + time + messageId)
                 .runTransaction(new Transaction.Handler() {
                     @Override
@@ -259,7 +281,7 @@ public class SendStatusActivity extends AppCompatActivity {
                             return Transaction.success(mutableData);
                         }
 
-                        if (message.receiverName.equals(receiver)) {
+                        if (message.receiverId.equals(receiver)) {
 //                            message.stickerId = String.valueOf(sticker);
                             mutableData.setValue(message);
                         }
@@ -270,7 +292,7 @@ public class SendStatusActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b,
                                            DataSnapshot dataSnapshot) {
-                        Toast.makeText(getApplicationContext(), "Pet status sent to " + receiver,
+                        Toast.makeText(getApplicationContext(), "Pet status sent to selected friends",
                                 Toast.LENGTH_LONG).show();
                         // Transaction completed
                         Log.d(TAG, "postTransaction:onComplete:" + databaseError);
@@ -296,7 +318,8 @@ public class SendStatusActivity extends AppCompatActivity {
         }
     }
 
-    public void sendStatusMessage(String sender, String petType, String petName, String heartCount) {
+    // send status message to the receiver
+    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
 
         // Build notification
         // Need to define a channel ID after Android Oreo
@@ -315,8 +338,8 @@ public class SendStatusActivity extends AppCompatActivity {
         NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
                 //"Notification icons must be entirely white."
                 .setSmallIcon(R.drawable.heart)
-                .setContentTitle("You received a GoalForIt pet status from " + sender)
-                .setContentText(sender + "'s " + petType + " " + petName + " has " + heartCount
+                .setContentTitle("You received a GoalForIt pet status from " + senderName)
+                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
                         + "/10 hearts.")
                 .setLargeIcon(myBitmap)
                 .setStyle(new NotificationCompat.BigPictureStyle()
@@ -330,10 +353,12 @@ public class SendStatusActivity extends AppCompatActivity {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+            }
         }
 
         notificationManager.notify(notificationId++, notifyBuild.build());
