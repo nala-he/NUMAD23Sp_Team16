@@ -8,6 +8,7 @@ import java.util.Locale;
 public class Message {
     public String receiverId;
     public String senderId;
+    public String senderName;
     public int heartCount;
     public String petType;
     public String petName;
@@ -18,9 +19,10 @@ public class Message {
         // Default constructor required for calls to DataSnapshot.getValue(Message.class)
     }
 
-    public Message(String receiverId, String senderId, int heartCount, String petType, String petName) {
+    public Message(String receiverId, String senderId, String senderName, int heartCount, String petType, String petName) {
         this.receiverId = receiverId;
         this.senderId = senderId;
+        this.senderName = senderName;
         this.heartCount = heartCount;
         this.petType = petType;
         this.petName = petName;

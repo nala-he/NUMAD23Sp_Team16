@@ -30,7 +30,10 @@ import edu.northeastern.numad23sp_team16.R;
 
 public class ShareActivity extends AppCompatActivity {
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
     private String currentUser;
+    private String loginTime;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -54,6 +57,7 @@ public class ShareActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
         }
 //        if (bundle != null) {
 //            ArrayList<Username> preList = new ArrayList<>(bundle.getParcelableArrayList(FRIENDS_LIST));
@@ -84,6 +88,7 @@ public class ShareActivity extends AppCompatActivity {
         Intent intent = new Intent(ShareActivity.this, AddFriendsActivity.class);
         // pass the current user id
         intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
     }
 
@@ -94,6 +99,7 @@ public class ShareActivity extends AppCompatActivity {
         Intent intent = new Intent(ShareActivity.this, SendStatusActivity.class);
         // pass the current user id
         intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
     }
 }

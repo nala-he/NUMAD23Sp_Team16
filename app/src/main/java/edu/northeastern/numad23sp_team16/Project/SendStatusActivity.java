@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,8 +41,12 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
@@ -53,6 +59,7 @@ public class SendStatusActivity extends AppCompatActivity {
     private String channelId = "notification_channel_1";
     private int notificationId = 0;
     private static int messageId = 1;
+
     private ArrayList<Username> friendsList = new ArrayList<>();
     private List<String> friendIdsList = new ArrayList<>();
 
@@ -60,13 +67,19 @@ public class SendStatusActivity extends AppCompatActivity {
 
     private final String FRIENDS_LIST = "FRIENDS_LIST";
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
     private String currentUser;
+    private Timestamp loginTime;
+
     private User currentUserDetail;
     private RecyclerView friendListRecyclerView;
     private UsernameAdapter friendListAdapter;
     private DatabaseReference projectDatabase;
     private DatabaseReference usersRef;
     private DatabaseReference friendsRef;
+    private DatabaseReference messagesRef;
+
 
 
     @SuppressLint("SetTextI18n")
@@ -91,12 +104,16 @@ public class SendStatusActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            loginTime = Timestamp.valueOf(extras.getString(LOGIN_TIME));
         }
+
+
 
         // initialize usersRef and friendsRef from firebase database
         projectDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
         usersRef = projectDatabase.child("FinalProjectUsers");
         friendsRef = projectDatabase.child("FinalProjectFriends");
+        messagesRef = projectDatabase.child("FinalProjectMessages");
 
         // initialize views
         friendListRecyclerView = findViewById(R.id.userlist_recyclerview);
@@ -120,6 +137,9 @@ public class SendStatusActivity extends AppCompatActivity {
         }
 
         createNotificationChannel();
+
+        // TODO: change the hardcoded heartCount to user's pet heartCount from database
+        int heartCount = 8;
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,27 +159,59 @@ public class SendStatusActivity extends AppCompatActivity {
                                         currentUserDetail = snapshot.child(currentUser).getValue(User.class);
                                         if (receiverList.size() != 0) {
                                             for (Username each : receiverList) {
-                                                // TODO: change the hardcoded heartCount to user's pet heartCount from databse
-                                                int heartCount = 8;
                                                 if (currentUserDetail != null) {
                                                     // send the status message record to database
-                                                    onSendStatus(projectDatabase, each.getUserId(), currentUser, heartCount,
-                                                            currentUserDetail.getPetType(), currentUserDetail.getPetName());
-                                                    // send the status notification to the specific receiver
-                                                    sendStatusMessage(currentUserDetail.getUsername(),
-                                                            currentUserDetail.getPetType(), currentUserDetail.getPetName(),
-                                                            heartCount);
+                                                    onSendStatus(each.getUserId(), currentUser,
+                                                            currentUserDetail.getUsername(),
+                                                            heartCount,
+                                                            currentUserDetail.getPetType(),
+                                                            currentUserDetail.getPetName());
                                                 }
-
                                             }
-//                    Toast.makeText(SendStatusActivity.this, "Sent pet status to selected friends.",
-//                            Toast.LENGTH_LONG).show();
                                         } else {
                                             Toast.makeText(SendStatusActivity.this, "Did not select any friends.",
                                                     Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        }
+                );
+
+                // receive the status notification if happen to be the currently logged in user
+                messagesRef.addChildEventListener(
+                        new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                                Message message = snapshot.getValue(Message.class);
+                                if (message != null) {
+                                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                                    if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
+                                        // send and receive status message
+                                        sendStatusMessage(message.senderName, message.petType,
+                                                message.petName, heartCount);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
                             }
 
                             @Override
@@ -260,17 +312,15 @@ public class SendStatusActivity extends AppCompatActivity {
     }
 
     // create and send the status message to database
-    private void onSendStatus(DatabaseReference postRef, String receiver, String sender,
-                              int heartCount, String petType, String petName) {
+    private void onSendStatus(String receiver, String senderId, String senderName, int heartCount,
+                              String petType, String petName) {
 
         // add the time as part of the message id to avoid new message overwriting the previous message
         // with the same id
         String time = String.valueOf(System.currentTimeMillis()/1000);
-        postRef.child("FinalProjectMessages")
-                .child("message" + time + messageId++)
-                .setValue(new Message(receiver, sender, heartCount, petType, petName));
-        postRef.child("FinalProjectMessages")
-                .child("message" + time + messageId)
+        messagesRef.child("message" + time + messageId++)
+                .setValue(new Message(receiver, senderId, senderName, heartCount, petType, petName));
+        messagesRef.child("message" + time + messageId)
                 .runTransaction(new Transaction.Handler() {
                     @Override
                     public Transaction.Result doTransaction(MutableData mutableData) {
@@ -282,7 +332,6 @@ public class SendStatusActivity extends AppCompatActivity {
                         }
 
                         if (message.receiverId.equals(receiver)) {
-//                            message.stickerId = String.valueOf(sticker);
                             mutableData.setValue(message);
                         }
 

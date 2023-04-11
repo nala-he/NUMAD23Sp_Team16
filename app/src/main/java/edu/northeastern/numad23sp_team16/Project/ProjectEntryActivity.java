@@ -6,12 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import java.sql.Timestamp;
+
 import edu.northeastern.numad23sp_team16.R;
 
 // TODO: to be merged or replaced with the login/sign in page activity created by Yuan
 public class ProjectEntryActivity extends AppCompatActivity {
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
     private String currentUser;
+    private String loginTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +27,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
         }
     }
 
@@ -36,6 +42,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // Pass the current user info to Share activity -- Yutong
         Intent intent = new Intent(ProjectEntryActivity.this, ShareActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
     }
 

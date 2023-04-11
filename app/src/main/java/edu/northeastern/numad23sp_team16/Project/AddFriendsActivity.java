@@ -47,7 +47,11 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     private final String USERS_LIST = "USERS_LIST";
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
     private String currentUser;
+    private String loginTime;
+
     private DatabaseReference usersRef;
     private DatabaseReference friendsRef;
     private static int friendIdCounter = 1;
@@ -75,6 +79,7 @@ public class AddFriendsActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
         }
 
 
@@ -138,6 +143,8 @@ public class AddFriendsActivity extends AppCompatActivity {
 
                 // pass the current user id back to share activity
                 intent.putExtra(CURRENT_USER, currentUser);
+                intent.putExtra(LOGIN_TIME, loginTime);
+
                 startActivity(intent);
             }
         });

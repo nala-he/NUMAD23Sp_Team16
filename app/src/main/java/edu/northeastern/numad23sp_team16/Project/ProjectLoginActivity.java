@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
@@ -36,7 +38,11 @@ public class ProjectLoginActivity extends AppCompatActivity {
     private DatabaseReference usersRef;
 
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
     private String currentUser;
+    private Timestamp loginTime;
+
 
     public ProjectLoginActivity() {
     }
@@ -55,6 +61,11 @@ public class ProjectLoginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.edittext_username);
         passwordInput = findViewById(R.id.edittext_password);
         btnLogin = findViewById(R.id.button_login);
+
+        // get the login time
+        Date date = new Date();
+        loginTime = new Timestamp(date.getTime());
+
         // Initialize Firebase Database
         //mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject")
         usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
@@ -104,6 +115,7 @@ public class ProjectLoginActivity extends AppCompatActivity {
                                     // pass the user id
                                     currentUser = data.getKey();
                                     intent.putExtra(CURRENT_USER, currentUser);
+                                    intent.putExtra(LOGIN_TIME, loginTime.toString());
                                     startActivity(intent);
 
                                 } else {
