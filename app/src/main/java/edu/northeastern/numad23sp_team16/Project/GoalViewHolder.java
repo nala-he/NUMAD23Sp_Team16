@@ -25,7 +25,6 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
     public void bind(Goal goal) {
         goalNameTextView.setText(goal.getGoalName());
         iconImageView.setImageResource(goal.getIcon());
-//        priorityImageView.setImageResource(goal.getPriority());//1,2,3
         switch (goal.getPriority()) {
             case 1:
                 priorityImageView.setImageResource(R.drawable.checked_low_priority);

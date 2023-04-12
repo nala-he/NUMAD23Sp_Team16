@@ -15,7 +15,6 @@ import edu.northeastern.numad23sp_team16.models.Goal;
 
 public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
 
-
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
@@ -25,6 +24,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     public GoalAdapter(@NonNull FirebaseRecyclerOptions<Goal> options) {
         super(options);
     }
+
 
     @Override
     protected void onBindViewHolder(@NonNull GoalViewHolder holder, int position, @NonNull Goal model) {
@@ -38,7 +38,6 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goal_item, parent, false);
         return new GoalViewHolder(view);
     }
-
 
 
 }

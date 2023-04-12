@@ -84,7 +84,10 @@ public class ProjectLoginActivity extends AppCompatActivity {
                             Log.d("password stored in database:",storedPassword);
                             if (password.equals(storedPassword)) {
                                 Toast.makeText(ProjectLoginActivity.this, "Authentication successful.", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(ProjectLoginActivity.this, ProjectEntryActivity.class));
+                                String userId = "user16808941941";
+                                Intent intent = new Intent(ProjectLoginActivity.this, ProjectEntryActivity.class);
+                                intent.putExtra("UserId",userId);
+                                startActivity(intent);
                             } else {
                                 // Password incorrect
                                 Toast.makeText(ProjectLoginActivity.this, "Incorrect password.", Toast.LENGTH_SHORT).show();

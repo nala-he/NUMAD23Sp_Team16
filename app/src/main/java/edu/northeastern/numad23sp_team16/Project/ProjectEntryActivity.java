@@ -19,6 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 
@@ -38,45 +41,61 @@ public class ProjectEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
-//        Intent intent = getIntent();
-//        //TODO:get current userId from Intent
-//        String userId = intent.getStringExtra("UserId");
-        userId = "user16808941941";
+        Intent intent = getIntent();
+        userId = intent.getStringExtra("UserId");
+        recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.progress_bar);
-
-        // test:set the progress to 50%
         //Todo:change the value to the proportion from progress page
         progressIndicator.setProgress(50);
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
+        // Show the progress bar
         Query query = goalsRef.orderByChild("userId").equalTo(userId);
-        // Add a ValueEventListener to the query, can get the query successfully from db
+        // Add a ValueEventListener to the query
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Iterate through the data and log each goal to the console
+                //filter goals for current user
+                List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Goal goal = snapshot.getValue(Goal.class);
-                    assert goal != null;
-                    Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
+                    if (goal != null) {
+                        Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
+                        filteredGoals.add(goal);
+                    }
                 }
+                //initialize goal options
+                options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
+                //instantiate adapter
+                adapter = new GoalAdapter(options);
+                //this is the key to solving the problem-2hs
+                adapter.startListening();
+                //initialize recyclerview
+                recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
+                recyclerView.setAdapter(adapter);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors here
+                Log.e("ProjectEntryActivity", "Error retrieving goals: " + databaseError.getMessage());
             }
         });
-        //initialize goal options
-        options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
-        //instantiate adapter
-        adapter = new GoalAdapter(options);
-        //initialize recyclerview
-        recyclerView = findViewById(R.id.goal_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
 
 
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     public void startProfileActivity(View view) {
@@ -95,5 +114,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     public void startProgressActivity(View view) {
         startActivity(new Intent(ProjectEntryActivity.this, ProgressActivity.class));
     }
+
+
 
 }
