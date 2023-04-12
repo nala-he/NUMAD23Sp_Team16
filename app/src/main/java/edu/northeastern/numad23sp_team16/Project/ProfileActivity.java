@@ -66,6 +66,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         // set user profile values to textInputEditText
         username_input = findViewById(R.id.username_input);
+        // make username unchangeable per Yuan's suggestion
+        username_input.setEnabled(false);
         password_input = findViewById(R.id.password_input);
         email_input = findViewById(R.id.email_input);
         petname_input = findViewById(R.id.petname_input);

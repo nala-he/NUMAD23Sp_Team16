@@ -108,7 +108,6 @@ public class SendStatusActivity extends AppCompatActivity {
         }
 
 
-
         // initialize usersRef and friendsRef from firebase database
         projectDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
         usersRef = projectDatabase.child("FinalProjectUsers");
