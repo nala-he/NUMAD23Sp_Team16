@@ -14,6 +14,7 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
     public ImageView iconImageView;
     public ImageView priorityImageView;
 
+
     public GoalViewHolder(View itemView) {
         super(itemView);
         goalNameTextView = itemView.findViewById(R.id.goal_textview);
@@ -22,9 +23,23 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Goal goal) {
-        goalNameTextView.setText(goal.goalName);
-        iconImageView.setImageResource(goal.icon);
-        priorityImageView.setImageResource(goal.priority);//1,2,3
+        goalNameTextView.setText(goal.getGoalName());
+        iconImageView.setImageResource(goal.getIcon());
+//        priorityImageView.setImageResource(goal.getPriority());//1,2,3
+        switch (goal.getPriority()) {
+            case 1:
+                priorityImageView.setImageResource(R.drawable.checked_low_priority);
+                break;
+            case 2:
+                priorityImageView.setImageResource(R.drawable.checked_medium_priority);
+                break;
+            case 3:
+                priorityImageView.setImageResource(R.drawable.checked_high_priority);
+                break;
+            default:
+                priorityImageView.setImageResource(R.drawable.flag);
+                break;
+        }
 
     }
 }

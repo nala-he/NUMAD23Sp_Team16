@@ -14,7 +14,6 @@ import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 
 public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
-    FirebaseRecyclerOptions<Goal> options;
 
 
     /**

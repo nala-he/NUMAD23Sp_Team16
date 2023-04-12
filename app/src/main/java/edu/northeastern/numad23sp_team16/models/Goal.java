@@ -14,6 +14,10 @@ public class Goal {
     private String endDate;
     private int priority;
     private String memo;
+    //default constructor
+    public Goal(){
+
+    }
 
     // Constructor for when reminder turned on
     public Goal(String user, String goalName, int icon, Boolean reminderOn, String reminderMessage,
