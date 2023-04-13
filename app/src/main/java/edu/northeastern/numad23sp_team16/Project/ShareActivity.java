@@ -85,6 +85,7 @@ public class ShareActivity extends AppCompatActivity {
         // TODO: for demo now, need to be revised once implementing firebase database
 //        Bundle bundle = new Bundle();
 //        bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
+
         Intent intent = new Intent(ShareActivity.this, AddFriendsActivity.class);
         // pass the current user id
         intent.putExtra(CURRENT_USER, currentUser);

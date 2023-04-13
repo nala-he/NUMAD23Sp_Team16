@@ -56,7 +56,7 @@ import edu.northeastern.numad23sp_team16.models.User;
 
 public class SendStatusActivity extends AppCompatActivity {
     private static final String TAG = "SendStatusActivity";
-    private String channelId = "notification_channel_1";
+    private String channelId = "notification_channel_0";
     private int notificationId = 0;
     private static int messageId = 1;
 
@@ -64,6 +64,7 @@ public class SendStatusActivity extends AppCompatActivity {
     private List<String> friendIdsList = new ArrayList<>();
 
     private List<Username> receiverList = new ArrayList<>();
+    private final int PERMISSION_REQUEST_CODE = 0;
 
     private final String FRIENDS_LIST = "FRIENDS_LIST";
     private final String CURRENT_USER = "CURRENT_USER";
@@ -104,7 +105,13 @@ public class SendStatusActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
-            loginTime = Timestamp.valueOf(extras.getString(LOGIN_TIME));
+            if (extras.getString(LOGIN_TIME) == null) {
+                // get the login time
+                Date date = new Date();
+                loginTime = new Timestamp(date.getTime());
+            } else {
+                loginTime = Timestamp.valueOf(extras.getString(LOGIN_TIME));
+            }
         }
 
 
@@ -127,6 +134,8 @@ public class SendStatusActivity extends AppCompatActivity {
         Button sendButton = findViewById(R.id.send_status_button);
         sendButton.setText(R.string.send_my_pet_status_to_friends);
 
+        createNotificationChannel();
+
         // check if there is a previously saved instance
         if (savedInstanceState == null) {
             // get friends' ids from firebase
@@ -134,8 +143,6 @@ public class SendStatusActivity extends AppCompatActivity {
             // get friends' names based on ids from firebase
             getFriendNameList();
         }
-
-        createNotificationChannel();
 
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
         int heartCount = 8;
@@ -403,10 +410,9 @@ public class SendStatusActivity extends AppCompatActivity {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
-            }
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+
         }
 
         notificationManager.notify(notificationId++, notifyBuild.build());
@@ -421,18 +427,22 @@ public class SendStatusActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-        // If request is cancelled, the result arrays are empty.
-        if (grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(TAG, "The user gave access.");
+                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
 
-            Log.v(TAG, "The user gave access.");
-            Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
-
-        } else {
-            Log.e(TAG, "User denied permission.");
-            // permission denied
-            Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "User denied permission.");
+                    // permission denied
+                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+                }
+                return;
         }
+
     }
 }
