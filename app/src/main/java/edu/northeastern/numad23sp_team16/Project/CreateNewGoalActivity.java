@@ -80,6 +80,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
     // Firebase database
     private DatabaseReference mDatabase;
+    private static final String CURRENT_USER = "CURRENT_USER";
     private String currentUser;
 
     // For orientation changes
@@ -126,6 +127,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_goal);
 
+        // Get currently logged in user
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            currentUser = extras.getString(CURRENT_USER);
+        }
+
         editGoalName = findViewById(R.id.text_goal_name);
         editMemo = findViewById(R.id.text_memo);
         reminderQuestionMark = findViewById(R.id.reminder_question_mark);
@@ -162,9 +169,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
-
-        // TODO: get currently logged in user's id from login (currently hardcoded)
-        currentUser = "user16808941941";
     }
 
     // Show start date picker dialog
