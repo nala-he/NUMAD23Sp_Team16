@@ -534,7 +534,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Navigate to home screen
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
-        startActivity(new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class));
+
+        // Pass currently logged in user back
+        Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+        homeIntent.putExtra(CURRENT_USER, currentUser);
+        startActivity(homeIntent);
     }
 
     // Dismiss any dialogs to avoid leakage
