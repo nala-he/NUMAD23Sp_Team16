@@ -80,9 +80,15 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 Log.e("ProjectEntryActivity", "Error retrieving goals: " + databaseError.getMessage());
             }
         });
+        tapGoalToClockIn();
 
 
 
+    }
+    //tap any goal item in recylerview to show a customized dialog(dialog.xml) to clock in for today's goal
+    //if finished, the background color turns green with a strike through line
+    //the dialog should display like on 5/100 day
+    private void tapGoalToClockIn() {
 
     }
 

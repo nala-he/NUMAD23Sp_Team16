@@ -1,10 +1,17 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import android.app.AlertDialog;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -30,6 +37,43 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     protected void onBindViewHolder(@NonNull GoalViewHolder holder, int position, @NonNull Goal model) {
         // Bind the goal data to the view holder
         holder.bind(model);
+        //click the item view, a popup dialog should display
+        holder.itemView.setOnClickListener(v -> {
+            showClockInDialog(holder);
+        });
+    }
+
+    private void showClockInDialog(GoalViewHolder holder) {
+        // Inflate dialog view
+        View dialogView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.finish_goal_dialog, null);
+        //build a dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        RelativeLayout relativeLayout = (RelativeLayout)dialogView;
+        Button yesButton =relativeLayout.findViewById(R.id.yes_button);
+        Button noButton =relativeLayout.findViewById(R.id.no_button);
+        ImageView closeImageView =relativeLayout.findViewById(R.id.close_button);
+        //clock in for today, background turns to green with a strike-through line
+        yesButton.setOnClickListener(v -> {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
+            RelativeLayout layout = (RelativeLayout)holder.itemView;
+            TextView textView = layout.findViewById(R.id.goal_textview);
+            textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            dialog.dismiss();
+        });
+        //cancel the record
+        noButton.setOnClickListener(v -> {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.light_pink));
+            RelativeLayout layout = (RelativeLayout)holder.itemView;
+            TextView textView = layout.findViewById(R.id.goal_textview);
+            textView.setPaintFlags(textView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+
+        });
+        //dismiss the dialog
+        closeImageView.setOnClickListener(v -> dialog.dismiss());
     }
 
     @NonNull
