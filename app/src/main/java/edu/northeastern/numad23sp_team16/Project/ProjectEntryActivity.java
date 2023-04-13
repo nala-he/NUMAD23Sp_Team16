@@ -47,7 +47,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         startActivity(new Intent(ProjectEntryActivity.this, ProgressActivity.class));
     }
 
-    // Receive currently logged in user from create new goal click triangle back button
+    // Receive currently logged in user from child activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
