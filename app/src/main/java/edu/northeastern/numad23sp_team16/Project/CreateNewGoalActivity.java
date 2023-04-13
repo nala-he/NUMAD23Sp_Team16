@@ -477,7 +477,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Retrieve selected icon
         selectedIcon = iconAdapter.getSelectedIcon();
-        String iconName = selectedIcon.getIconName();
+        String iconName = getResources().getResourceEntryName(selectedIcon.getIconId());
 
         // Retrieve inputted memo
         memo = editMemo.getText().toString();
@@ -507,7 +507,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + ", Priority: " + priority + ", Memo: " + memo);
 
             // Create new goal instance
-            newGoal = new Goal(currentUser, goalName, selectedIcon.getIconId(), reminderOn,
+            newGoal = new Goal(currentUser, goalName, iconName, reminderOn,
                     reminderMessage, reminderHour, reminderMinute,
                     dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
                     priority, memo);
@@ -520,7 +520,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + ", Memo: " + memo);
 
             // Create new goal instance
-            newGoal = new Goal(currentUser, goalName, selectedIcon.getIconId(), reminderOn,
+            newGoal = new Goal(currentUser, goalName, iconName, reminderOn,
                     dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
                     priority, memo);
         }
