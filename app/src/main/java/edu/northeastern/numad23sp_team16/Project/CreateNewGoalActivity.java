@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -542,6 +543,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         startActivity(homeIntent);
     }
 
+    // Pass currently logged in user back when swipe back
     @Override
     public void onBackPressed() {
         Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
@@ -549,6 +551,22 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         homeIntent.putExtra(CURRENT_USER, currentUser);
         setResult(Activity.RESULT_OK, homeIntent);
         super.onBackPressed();
+    }
+
+    // Pass currently logged in user back when click on triangle back
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the custom action bar's back button
+            case android.R.id.home:
+                Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+                // Add currently logged in user to intent
+                homeIntent.putExtra(CURRENT_USER, currentUser);
+                setResult(Activity.RESULT_OK, homeIntent);
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Dismiss any dialogs to avoid leakage
