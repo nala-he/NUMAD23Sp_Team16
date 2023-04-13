@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -539,6 +540,15 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
         homeIntent.putExtra(CURRENT_USER, currentUser);
         startActivity(homeIntent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+        // Add currently logged in user to intent
+        homeIntent.putExtra(CURRENT_USER, currentUser);
+        setResult(Activity.RESULT_OK, homeIntent);
+        super.onBackPressed();
     }
 
     // Dismiss any dialogs to avoid leakage
