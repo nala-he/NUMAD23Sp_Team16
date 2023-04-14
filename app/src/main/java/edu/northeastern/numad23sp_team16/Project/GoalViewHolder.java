@@ -25,45 +25,36 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Goal goal) {
         goalNameTextView.setText(goal.getGoalName());
-//        HashMap<String, Integer> iconMap = new HashMap<>();
-//        iconMap.put("Self-Care", R.drawable.icon_self_care);
-//        iconMap.put("Social", R.drawable.icon_social);
-//        iconMap.put("Productivity", R.drawable.icon_productivity);
-//        iconMap.put("Health", R.drawable.icon_health);
-//        iconMap.put("Hydration", R.drawable.icon_hydration);
-//        iconMap.put("Language", R.drawable.icon_language);
-//        iconMap.put("Growth", R.drawable.icon_growth);
-//        iconMap.put("Finances", R.drawable.icon_finances);
-//        iconMap.put("Reading", R.drawable.icon_reading);
-//        //get the int id of icons
-//        iconImageView.setImageResource(iconMap.get(goal.getIcon()));
         switch (goal.getIcon()){
-            case "Self-Care" :
+            case "icon_self_care" :
                 iconImageView.setImageResource(R.drawable.icon_self_care);
                 break;
-            case "Social" :
+            case "icon_social" :
                 iconImageView.setImageResource(R.drawable.icon_social);
                 break;
-            case "Productivity" :
+            case "icon_productivity" :
                 iconImageView.setImageResource(R.drawable.icon_productivity);
                 break;
-            case "Health" :
+            case "icon_health" :
                 iconImageView.setImageResource(R.drawable.icon_health);
                 break;
-            case "Hydration" :
+            case "icon_hydration" :
                 iconImageView.setImageResource(R.drawable.icon_hydration);
                 break;
-            case "Language" :
+            case "icon_language" :
                 iconImageView.setImageResource(R.drawable.icon_language);
                 break;
-            case "Growth" :
+            case "icon_growth" :
                 iconImageView.setImageResource(R.drawable.icon_growth);
                 break;
-            case "Finances" :
+            case "icon_finances" :
                 iconImageView.setImageResource(R.drawable.icon_finances);
                 break;
-            case "Reading" :
+            case "icon_reading" :
                 iconImageView.setImageResource(R.drawable.icon_reading);
+                break;
+            default:
+                priorityImageView.setImageResource(R.drawable.flag);
                 break;
 
         }
