@@ -19,8 +19,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private String currentUser;
     private String loginTime;
 
-    private static final String CURRENT_USER = "CURRENT_USER";
-    private String currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

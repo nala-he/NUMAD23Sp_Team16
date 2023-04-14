@@ -112,10 +112,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String REMINDER_INFO_DIALOG_OPEN = "REMINDER_INFO_DIALOG_OPEN";
     private static final String PRIORITY_INFO_DIALOG_OPEN = "PRIORITY_INFO_DIALOG_OPEN";
 
-    private final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
 
-    private String currentUser;
     private String loginTime;
 
     // New goal values

@@ -55,9 +55,6 @@ public class ProjectSignUpActivity extends AppCompatActivity {
     private static int userIdCounter = 1;
     private String userId;
 
-    private static int userIdCounter = 1;
-    private String userId;
-
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
