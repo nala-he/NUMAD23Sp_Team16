@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -59,6 +60,8 @@ public class ShareActivity extends AppCompatActivity {
             currentUser = extras.getString(CURRENT_USER);
             loginTime = extras.getString(LOGIN_TIME);
         }
+        Log.i("ShareActivity", "currentUser: " + currentUser);
+
 //        if (bundle != null) {
 //            ArrayList<Username> preList = new ArrayList<>(bundle.getParcelableArrayList(FRIENDS_LIST));
 //            if (preList.size() != 0) {

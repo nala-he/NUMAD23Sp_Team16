@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import java.sql.Timestamp;
@@ -23,18 +24,20 @@ public class ProjectEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
 
-        // Retrieve currently logged in user -- Yutong
+        // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
             loginTime = extras.getString(LOGIN_TIME);
         }
+        Log.i("ProjectEntry", "currentUser: " + currentUser);
     }
 
     public void startProfileActivity(View view) {
         // Pass the current user info to Profile activity -- Yutong
         Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
     }
 
@@ -51,6 +54,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // Pass the current user info to Create New Goal activity -- Yutong
         Intent intent = new Intent(ProjectEntryActivity.this, CreateNewGoalActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
     }
 
@@ -58,6 +62,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // Pass the current user info to Progress activity -- Yutong
         Intent intent = new Intent(ProjectEntryActivity.this, ProgressActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
     }
 }

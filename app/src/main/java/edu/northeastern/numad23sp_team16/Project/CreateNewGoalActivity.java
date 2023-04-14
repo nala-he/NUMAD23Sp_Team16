@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -98,6 +99,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String REMINDER_INFO_DIALOG_OPEN = "REMINDER_INFO_DIALOG_OPEN";
     private static final String PRIORITY_INFO_DIALOG_OPEN = "PRIORITY_INFO_DIALOG_OPEN";
 
+    private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
+    private String currentUser;
+    private String loginTime;
+
     // New goal values
     private String goalName;
     private Icon selectedIcon;
@@ -148,6 +155,24 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Pick goal end date
         selectEndDate();
+
+        // Retrieve currently logged in user -- Yutong
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
+        }
+    }
+
+    // Use this function to enable the currentUser and loginTime data to be passed to the
+    // previous activity when the back button is clicked -- Yutong
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Show start date picker dialog
@@ -492,7 +517,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // TODO: navigate to home screen created by Yuan
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
-        startActivity(new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class));
+
+        // pass the current user id and login time
+        Intent intent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
     // Dismiss any dialogs to avoid leakage
