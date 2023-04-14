@@ -415,10 +415,10 @@ public class SendStatusActivity extends AppCompatActivity {
 
         }
 
-        notificationManager.notify(notificationId++, notifyBuild.build());
+//        notificationManager.notify(notificationId++, notifyBuild.build());
 
         // if only want to let the notification panel show the latest one notification, use this below
-        //        notificationManager.notify(notificationId, notifyBuild.build());
+        notificationManager.notify(notificationId, notifyBuild.build());
 
     }
 
