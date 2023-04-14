@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.PetHealth;
 import edu.northeastern.numad23sp_team16.models.User;
 
 public class ProjectSignUpActivity extends AppCompatActivity {
@@ -41,6 +42,7 @@ public class ProjectSignUpActivity extends AppCompatActivity {
     private RadioButton dog;
     private RadioButton cat;
     private DatabaseReference usersRef;
+    private DatabaseReference mDatabase;
 
     private Button buttonSave;
 
@@ -49,6 +51,9 @@ public class ProjectSignUpActivity extends AppCompatActivity {
     String email;
     String petName;
     String whichPet;
+
+    private static int userIdCounter = 1;
+    private String userId;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -135,8 +140,17 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                 } else {
                     // username is not in use, save user to database
                     User user = new User(email, username, password, whichPet, petName);
+
                     //add a child node with username as a unique key, can't use email as key because of "@"
                     usersRef.child(username).setValue(user);
+
+
+                    // Create new pet health object in database to keep track of newly created pet's health
+                    // TODO: RELATED TO PROGRESS -- MACEE
+//                    mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+//                    PetHealth petHealth = new PetHealth(userId);
+//                    mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
+
                     // show success message
                     Toast.makeText(getApplicationContext(), "Sign up successfully!", Toast.LENGTH_SHORT).show();
                     // go to login activity
