@@ -6,18 +6,18 @@ plugins {
 
 android {
         signingConfigs {
-        debug {
-            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
-            storePassword 'GoodluckNEU2023!'
-            keyAlias 'groupKey'
-            keyPassword 'GoodluckNEU2023!'
-        }
-        team16Release {
-            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
-            storePassword 'GoodluckNEU2023!'
-            keyAlias 'groupKey'
-            keyPassword 'GoodluckNEU2023!'
-        }
+//        debug {
+//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'groupKey'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
+//        team16Release {
+//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'groupKey'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
 //        team16DebugByYutong {
 //            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
 //            storePassword 'GoodluckNEU2023!'
@@ -44,7 +44,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        signingConfig signingConfigs.team16ReleaseByYutong
-        signingConfig signingConfigs.team16Release
+//        signingConfig signingConfigs.team16Release
     }
 
     buildTypes {

@@ -25,7 +25,6 @@ import java.util.List;
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 
-// TODO: to be merged or replaced with the login/sign in page activity created by Yuan
 public class ProjectEntryActivity extends AppCompatActivity {
     LinearProgressIndicator progressIndicator;
     //FirebaseRecyclerAdapter adapter
@@ -35,11 +34,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //display goals
     RecyclerView recyclerView;
     DatabaseReference goalsRef;
-    //TODO:For test
-    String userId;
 
     private static final String CURRENT_USER = "CURRENT_USER";
-    private String currentUser;
+    //get userId of currentUser
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // Get currently logged in user
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            currentUser = extras.getString(CURRENT_USER);
+            userId = extras.getString(CURRENT_USER);
         }
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.progress_bar);
@@ -88,15 +86,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 Log.e("ProjectEntryActivity", "Error retrieving goals: " + databaseError.getMessage());
             }
         });
-        tapGoalToClockIn();
 
-
-
-    }
-    //tap any goal item in recylerview to show a customized dialog(dialog.xml) to clock in for today's goal
-    //if finished, the background color turns green with a strike through line
-    //the dialog should display like on 5/100 day
-    private void tapGoalToClockIn() {
 
     }
 
@@ -126,7 +116,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // Pass currently logged in user to create new goal
         Intent createGoalIntent = new Intent(ProjectEntryActivity.this,
                 CreateNewGoalActivity.class);
-        createGoalIntent.putExtra(CURRENT_USER, currentUser);
+        createGoalIntent.putExtra(CURRENT_USER, userId);
         startActivity(createGoalIntent);
     }
 
@@ -142,7 +132,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (data != null) {
-                currentUser = data.getStringExtra(CURRENT_USER);
+                userId = data.getStringExtra(CURRENT_USER);
             }
         }
     }
