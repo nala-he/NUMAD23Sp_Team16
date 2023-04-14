@@ -96,6 +96,7 @@ public class ProjectLoginActivity extends AppCompatActivity {
                 usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//<<<<<<< HEAD
 
                         boolean userExist = false;
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -123,6 +124,26 @@ public class ProjectLoginActivity extends AppCompatActivity {
                                     Toast.makeText(ProjectLoginActivity.this, "Incorrect password.",
                                             Toast.LENGTH_SHORT).show();
                                 }
+//=======
+//                        if (dataSnapshot.exists()) {
+//                            // User exists, check if the password is correct
+//                            String storedPassword = dataSnapshot.child("password").getValue(String.class);
+//                            Log.d("password stored in database:",storedPassword);
+//                            if (password.equals(storedPassword)) {
+//                                Toast.makeText(ProjectLoginActivity.this, "Authentication successful.", Toast.LENGTH_SHORT).show();
+//
+//                                Intent intent = new Intent(ProjectLoginActivity.this,
+//                                        ProjectEntryActivity.class);
+//
+//                                // Save the currently logged in user and pass to app
+//                                intent.putExtra(CURRENT_USER, dataSnapshot.getKey());
+//                                startActivity(intent);
+//
+//                                //startActivity(new Intent(ProjectLoginActivity.this, ProjectEntryActivity.class));
+//                            } else {
+//                                // Password incorrect
+//                                Toast.makeText(ProjectLoginActivity.this, "Incorrect password.", Toast.LENGTH_SHORT).show();
+//>>>>>>> Project
                             }
                         }
                         if (!userExist) {

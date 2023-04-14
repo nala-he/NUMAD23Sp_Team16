@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -30,6 +31,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.Goal;
 import edu.northeastern.numad23sp_team16.models.Icon;
 
 public class CreateNewGoalActivity extends AppCompatActivity {
@@ -71,6 +79,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private ImageView reminderQuestionMark;
     private ImageView priorityQuestionMark;
     private AlertDialog priorityInfoDialog;
+
+    // Firebase database
+    private DatabaseReference mDatabase;
+    private static final String CURRENT_USER = "CURRENT_USER";
+    private String currentUser;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -122,6 +135,13 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_goal);
 
+        // Get currently logged in user and login time
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
+        }
+
         editGoalName = findViewById(R.id.text_goal_name);
         editMemo = findViewById(R.id.text_memo);
         reminderQuestionMark = findViewById(R.id.reminder_question_mark);
@@ -156,24 +176,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Pick goal end date
         selectEndDate();
 
-        // Retrieve currently logged in user -- Yutong
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            currentUser = extras.getString(CURRENT_USER);
-            loginTime = extras.getString(LOGIN_TIME);
-        }
+
+        // Connect to firebase database
+        mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
     }
 
-    // Use this function to enable the currentUser and loginTime data to be passed to the
-    // previous activity when the back button is clicked -- Yutong
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     // Show start date picker dialog
     private void showStartDatePickerDialog(int selectedYear, int selectedMonth, int selectedDay) {
@@ -472,13 +479,20 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
     }
 
+
+    // Create unique goal id: goal + time + userId
+    private String createUniqueGoalId() {
+        String time = String.valueOf(System.currentTimeMillis());
+        return ("goal" + time + currentUser);
+    }
+
     public void saveNewGoal(View view) {
         // Retrieve inputted goal name
         goalName = editGoalName.getText().toString();
 
         // Retrieve selected icon
         selectedIcon = iconAdapter.getSelectedIcon();
-        String iconName = selectedIcon.getIconName();
+        String iconName = getResources().getResourceEntryName(selectedIcon.getIconId());
 
         // Retrieve inputted memo
         memo = editMemo.getText().toString();
@@ -498,7 +512,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
 
         // All requirements met - create new goal instance, save to database, and navigate back to home page
-        // TODO: Create new goal instance from input values and save to database
+        Goal newGoal;
         if (reminderOn) {
             // Reminders turned on
             Log.d(TAG, "saveNewGoal: Goal Name: " + goalName + ", Icon: " + iconName
@@ -506,6 +520,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + String.format("%02d:%02d", reminderHour, reminderMinute) + ", "
                     + dateFormat.format(startDate.getTime()) + " - "+ dateFormat.format(endDate.getTime())
                     + ", Priority: " + priority + ", Memo: " + memo);
+
+            // Create new goal instance
+            newGoal = new Goal(currentUser, goalName, iconName, reminderOn,
+                    reminderMessage, reminderHour, reminderMinute,
+                    dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
+                    priority, memo);
         }
         else {
             // Reminders turned off
@@ -513,9 +533,17 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     + ", Reminders: " + reminderOn + ", " + dateFormat.format(startDate.getTime())
                     + " - " + dateFormat.format(endDate.getTime()) + ", Priority: " + priority
                     + ", Memo: " + memo);
+
+            // Create new goal instance
+            newGoal = new Goal(currentUser, goalName, iconName, reminderOn,
+                    dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
+                    priority, memo);
         }
 
-        // TODO: navigate to home screen created by Yuan
+        // Add new goal to database with goal id as unique identifier
+        mDatabase.child("Goals").child(createUniqueGoalId()).setValue(newGoal);
+
+        // Navigate to home screen
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
 
         // pass the current user id and login time
@@ -524,6 +552,44 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
     }
+
+    // Pass currently logged in user back when swipe back
+    @Override
+    public void onBackPressed() {
+        Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+        // Add currently logged in user to intent
+        homeIntent.putExtra(CURRENT_USER, currentUser);
+        setResult(Activity.RESULT_OK, homeIntent);
+        super.onBackPressed();
+    }
+
+    // Pass currently logged in user back when click on triangle back
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the custom action bar's back button
+            case android.R.id.home:
+                Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+                // Add currently logged in user to intent
+                homeIntent.putExtra(CURRENT_USER, currentUser);
+                setResult(Activity.RESULT_OK, homeIntent);
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+//    // Use this function to enable the currentUser and loginTime data to be passed to the
+//    // previous activity when the back button is clicked -- Yutong
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//
+//    }
 
     // Dismiss any dialogs to avoid leakage
     @Override

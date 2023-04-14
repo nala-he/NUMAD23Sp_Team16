@@ -19,6 +19,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private String currentUser;
     private String loginTime;
 
+    private static final String CURRENT_USER = "CURRENT_USER";
+    private String currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,5 +67,16 @@ public class ProjectEntryActivity extends AppCompatActivity {
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
         startActivity(intent);
+    }
+
+    // Receive currently logged in user from child activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (data != null) {
+                currentUser = data.getStringExtra(CURRENT_USER);
+            }
+        }
     }
 }
