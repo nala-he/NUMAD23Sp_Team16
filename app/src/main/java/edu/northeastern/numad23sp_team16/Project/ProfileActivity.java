@@ -84,21 +84,23 @@ public class ProfileActivity extends AppCompatActivity {
         usersRef.child(currentUser).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        username = dataSnapshot.child("username").getValue(String.class);
-                        email = dataSnapshot.child("email").getValue(String.class);
-                        petName = dataSnapshot.child("petName").getValue(String.class);
-                        petType = dataSnapshot.child("petType").getValue(String.class);
-                        password = dataSnapshot.child("password").getValue(String.class);
+                        if (savedInstanceState == null) {
+                            username = dataSnapshot.child("username").getValue(String.class);
+                            email = dataSnapshot.child("email").getValue(String.class);
+                            petName = dataSnapshot.child("petName").getValue(String.class);
+                            petType = dataSnapshot.child("petType").getValue(String.class);
+                            password = dataSnapshot.child("password").getValue(String.class);
 
-                        // Set the input field default data using the current user's info from the database -- Yutong
-                        username_input.setText(username);
-                        password_input.setText(password);
-                        email_input.setText(email);
-                        petname_input.setText(petName);
-                        if (Objects.equals(petType, "dog")) {
-                            dog_button.setChecked(true);
-                        } else {
-                            cat_button.setChecked(true);
+                            // Set the input field default data using the current user's info from the database -- Yutong
+                            username_input.setText(username);
+                            password_input.setText(password);
+                            email_input.setText(email);
+                            petname_input.setText(petName);
+                            if (Objects.equals(petType, "dog")) {
+                                dog_button.setChecked(true);
+                            } else {
+                                cat_button.setChecked(true);
+                            }
                         }
                     }
 
@@ -121,8 +123,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void onClickSaveUpdates(View view) {
-        Toast.makeText(ProfileActivity.this, "Saved profile updates.",
-                Toast.LENGTH_LONG).show();
 
         // save updates to database and then navigate back to home screen
         if (!isAllFieldsFilled()) {
@@ -130,7 +130,8 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             // save the updates to database
             updateChangedFields();
-
+            Toast.makeText(ProfileActivity.this, "Saved profile updates.",
+                    Toast.LENGTH_LONG).show();
             // pass the current user's username to entry activity, in case it's getting updated
             Intent intent = new Intent(ProfileActivity.this, ProjectEntryActivity.class);
             intent.putExtra(CURRENT_USER, currentUser);
@@ -154,35 +155,30 @@ public class ProfileActivity extends AppCompatActivity {
         String passwordOnSave = Objects.requireNonNull(password_input.getText()).toString().trim();
         String emailOnSave = Objects.requireNonNull(email_input.getText()).toString().trim();
         String petTypeOnSave = dog_button.isChecked() ? "dog" : "cat";
-        if (!username.equals(usernameOnSave)) {
-            usersRef.child(currentUser).child("username")
-                    .setValue(usernameOnSave);
-        }
-        if (!petName.equals(petNameOnSave)) {
-            usersRef.child(currentUser).child("petName")
-                    .setValue(petNameOnSave);
-        }
-        if (!password.equals(passwordOnSave)) {
-            usersRef.child(currentUser).child("password")
-                    .setValue(passwordOnSave);
-        }
-        if (!email.equals(emailOnSave)) {
-            usersRef.child(currentUser).child("email")
-                    .setValue(emailOnSave);
-        }
-        if (!petType.equals(petTypeOnSave)) {
-            usersRef.child(currentUser).child("petType")
-                    .setValue(petTypeOnSave);
-        }
+        usersRef.child(currentUser).child("username")
+                .setValue(usernameOnSave);
+
+        usersRef.child(currentUser).child("petName")
+                .setValue(petNameOnSave);
+
+        usersRef.child(currentUser).child("password")
+                .setValue(passwordOnSave);
+
+        usersRef.child(currentUser).child("email")
+                .setValue(emailOnSave);
+
+        usersRef.child(currentUser).child("petType")
+                .setValue(petTypeOnSave);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(USERNAME, username);
-        outState.putString(PASSWORD, password);
-        outState.putString(EMAIL, email);
-        outState.putString(PET_TYPE, petType);
-        outState.putString(PET_NAME, petName);
+        outState.putString(USERNAME, String.valueOf(username_input.getText()));
+        outState.putString(PASSWORD, String.valueOf(password_input.getText()));
+        outState.putString(EMAIL, String.valueOf(email_input.getText()));
+        String petType_input = dog_button.isChecked() ? "dog" : "cat";
+        outState.putString(PET_TYPE, petType_input);
+        outState.putString(PET_NAME, String.valueOf(petname_input.getText()));
         super.onSaveInstanceState(outState);
     }
 
