@@ -37,22 +37,28 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     protected void onBindViewHolder(@NonNull GoalViewHolder holder, int position, @NonNull Goal model) {
         // Bind the goal data to the view holder
         holder.bind(model);
+        //get goal to display name and calculate days for popup dialog
+        Goal goal = getItem(position);
         //click the item view, a popup dialog should display
         holder.itemView.setOnClickListener(v -> {
-            showClockInDialog(holder);
+            showClockInDialog(holder,goal);
         });
     }
-
-    private void showClockInDialog(GoalViewHolder holder) {
-        // Inflate dialog view
+    //show a dialog to let the user clock in
+    //click yes,progress bar would be affected
+    //click no(in case the user clicked yes by mistake and want to withdraw), cancel the record,progress bar gets updated
+    //The name of the goal+ day would be displayed as well.
+    private void showClockInDialog(GoalViewHolder holder, Goal goal) {
+        // Inflate dialog view using finish_goal_dialog.xml
         View dialogView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.finish_goal_dialog, null);
         //build a dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
         dialog.show();
-
+        //get views in this dialogView
         RelativeLayout relativeLayout = (RelativeLayout)dialogView;
+        TextView goalNameAndDay = relativeLayout.findViewById(R.id.description_textview);
         Button yesButton =relativeLayout.findViewById(R.id.yes_button);
         Button noButton =relativeLayout.findViewById(R.id.no_button);
         ImageView closeImageView =relativeLayout.findViewById(R.id.close_button);
@@ -74,6 +80,9 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         });
         //dismiss the dialog
         closeImageView.setOnClickListener(v -> dialog.dismiss());
+        // display goal+ day
+        goalNameAndDay.setText(""+ goal.getGoalName());
+
     }
 
     @NonNull
