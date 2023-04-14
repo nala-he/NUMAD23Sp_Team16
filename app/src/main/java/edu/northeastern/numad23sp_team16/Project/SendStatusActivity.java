@@ -197,8 +197,11 @@ public class SendStatusActivity extends AppCompatActivity {
                                 Message message = snapshot.getValue(Message.class);
                                 if (message != null) {
                                     Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                                    Log.i("SendStatusActivity",
+                                            "message time: " + messageTime + " login time: " + loginTime);
                                     if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
                                         // send and receive status message
+                                        Log.i("SendStatusActivity", "send status");
                                         sendStatusMessage(message.senderName, message.petType,
                                                 message.petName, heartCount);
                                     }
@@ -419,6 +422,8 @@ public class SendStatusActivity extends AppCompatActivity {
 
         // if only want to let the notification panel show the latest one notification, use this below
         notificationManager.notify(notificationId, notifyBuild.build());
+        Log.i("SendStatusActivity", "receive notification");
+
 
     }
 
