@@ -5,7 +5,7 @@ public class Goal {
 
     private String userId;
     private String goalName;
-    private int icon;
+    private String icon;
     private Boolean reminderOn;
     private String reminderMessage;
     private int reminderHour;
@@ -14,13 +14,9 @@ public class Goal {
     private String endDate;
     private int priority;
     private String memo;
-    //default constructor
-    public Goal(){
-
-    }
 
     // Constructor for when reminder turned on
-    public Goal(String user, String goalName, int icon, Boolean reminderOn, String reminderMessage,
+    public Goal(String user, String goalName, String icon, Boolean reminderOn, String reminderMessage,
                 int reminderHour, int reminderMinute, String startDate, String endDate,
                 int priority, String memo) {
         this.userId = user;
@@ -37,7 +33,7 @@ public class Goal {
     }
 
     // Constructor for when reminder turned off
-    public Goal(String user, String goalName, int icon, Boolean reminderOn,
+    public Goal(String user, String goalName, String icon, Boolean reminderOn,
                 String startDate, String endDate, int priority, String memo) {
         this.userId = user;
         this.goalName = goalName;
@@ -60,7 +56,7 @@ public class Goal {
         return goalName;
     }
 
-    public int getIcon() {
+    public String getIcon() {
         return icon;
     }
 

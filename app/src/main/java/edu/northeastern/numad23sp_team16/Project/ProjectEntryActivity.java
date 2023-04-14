@@ -37,12 +37,20 @@ public class ProjectEntryActivity extends AppCompatActivity {
     DatabaseReference goalsRef;
     //TODO:For test
     String userId;
+
+    private static final String CURRENT_USER = "CURRENT_USER";
+    private String currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
-        Intent intent = getIntent();
-        userId = intent.getStringExtra("UserId");
+        
+        // Get currently logged in user
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            currentUser = extras.getString(CURRENT_USER);
+        }
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.progress_bar);
         //Todo:change the value to the proportion from progress page
@@ -102,6 +110,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+
     }
 
     public void startProfileActivity(View view) {
@@ -112,9 +121,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
         startActivity(new Intent(ProjectEntryActivity.this, ShareActivity.class));
     }
 
-    // TODO: associate method to onClick for creating new goal button in home screen by Yuan
+    
     public void startCreateNewGoalActivity(View view) {
-        startActivity(new Intent(ProjectEntryActivity.this, CreateNewGoalActivity.class));
+        // Pass currently logged in user to create new goal
+        Intent createGoalIntent = new Intent(ProjectEntryActivity.this,
+                CreateNewGoalActivity.class);
+        createGoalIntent.putExtra(CURRENT_USER, currentUser);
+        startActivity(createGoalIntent);
     }
 
     public void startProgressActivity(View view) {
@@ -123,4 +136,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
 
 
+    // Receive currently logged in user from child activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (data != null) {
+                currentUser = data.getStringExtra(CURRENT_USER);
+            }
+        }
+    }
 }
