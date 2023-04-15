@@ -287,15 +287,18 @@ public class SendStatusActivity extends AppCompatActivity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (String userId : friendIdsList) {
-                            String name = snapshot.child(userId).child("username").getValue(String.class);
-                            Username friend = new Username(name, userId);
-                            // check if the name is already in the friendsList
-                            if (friendsList.stream()
-                                    .noneMatch(each -> each.getName().equals(name))) {
-                                friendsList.add(friend);
+                        if (!friendIdsList.isEmpty()) {
+                            for (String userId : friendIdsList) {
+                                String name = snapshot.child(userId).child("username").getValue(String.class);
+                                Log.i(TAG, "name " + name);
+                                // check if the name is already in the friendsList
+                                if (name != null && friendsList.stream().noneMatch(each -> each.getName().equals(name))) {
+                                    Username friend = new Username(name, userId);
+                                    friendsList.add(friend);
+                                }
                             }
                         }
+
                         friendListAdapter = new UsernameAdapter(friendsList);
                         friendListRecyclerView.setAdapter(friendListAdapter);
                     }

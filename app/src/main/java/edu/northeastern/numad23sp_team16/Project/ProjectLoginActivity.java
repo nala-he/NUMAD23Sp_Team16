@@ -65,6 +65,7 @@ public class ProjectLoginActivity extends AppCompatActivity {
         // get the login time
         Date date = new Date();
         loginTime = new Timestamp(date.getTime());
+        Log.i("LoginActivity", "loginTime: " + loginTime);
 
         // Initialize Firebase Database
         //mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject")
@@ -118,7 +119,7 @@ public class ProjectLoginActivity extends AppCompatActivity {
                                     intent.putExtra(CURRENT_USER, currentUser);
                                     intent.putExtra(LOGIN_TIME, loginTime.toString());
                                     Log.i("LoginActivity", "currentUser: " + currentUser);
-                                    Log.i("LoginActivity", "loginTime: " + loginTime);
+//                                    Log.i("LoginActivity", "loginTime: " + loginTime);
                                     startActivity(intent);
 
                                 } else {
