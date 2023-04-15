@@ -117,6 +117,8 @@ public class ProjectLoginActivity extends AppCompatActivity {
                                     currentUser = data.getKey();
                                     intent.putExtra(CURRENT_USER, currentUser);
                                     intent.putExtra(LOGIN_TIME, loginTime.toString());
+                                    Log.i("LoginActivity", "currentUser: " + currentUser);
+                                    Log.i("LoginActivity", "loginTime: " + loginTime);
                                     startActivity(intent);
 
                                 } else {

@@ -1,18 +1,41 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.sql.Timestamp;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.Message;
 
 // TODO: to be merged or replaced with the login/sign in page activity created by Yuan
 public class ProjectEntryActivity extends AppCompatActivity {
+    private static final String TAG = "SendStatusActivity";
+    private String channelId = "notification_channel_0";
+    private int notificationId = 0;
+    private final int PERMISSION_REQUEST_CODE = 0;
+    private DatabaseReference messagesRef;
+
     private final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
 
@@ -32,6 +55,53 @@ public class ProjectEntryActivity extends AppCompatActivity {
             loginTime = extras.getString(LOGIN_TIME);
         }
         Log.i("ProjectEntry", "currentUser: " + currentUser);
+        Log.i("ProjectEntry", "loginTime: " + loginTime);
+
+        // TODO: change the hardcoded heartCount to user's pet heartCount from database
+        int heartCount = 8;
+        // receive the status notification if happen to be the currently logged in user
+        // initialize messagesRef from firebase database
+        messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
+        messagesRef.addChildEventListener(
+                new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                        Message message = snapshot.getValue(Message.class);
+                        if (message != null) {
+                            Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                            Log.i("SendStatusActivity",
+                                    "message time: " + messageTime + " login time: " + loginTime);
+                            if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
+                                // send and receive status message
+                                Log.i("SendStatusActivity", "send status");
+                                sendStatusMessage(message.senderName, message.petType,
+                                        message.petName, heartCount);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
+
     }
 
     public void startProfileActivity(View view) {
@@ -67,14 +137,81 @@ public class ProjectEntryActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // Receive currently logged in user from child activity
+    // Receive currently logged in user and login time from child activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (data != null) {
                 currentUser = data.getStringExtra(CURRENT_USER);
+                loginTime = data.getStringExtra(LOGIN_TIME);
             }
         }
+    }
+
+    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
+
+        // Build notification
+        // Need to define a channel ID after Android Oreo
+        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
+//        int id = Integer.parseInt(petIconId);
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+                //"Notification icons must be entirely white."
+                .setSmallIcon(R.drawable.heart)
+                .setContentTitle("You received a GoalForIt pet status from " + senderName)
+                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
+                        + "/10 hearts.")
+                .setLargeIcon(myBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(myBitmap)
+                        .bigLargeIcon(null))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // hide the notification after its selected
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+
+        }
+
+        notificationManager.notify(notificationId++, notifyBuild.build());
+
+        // if only want to let the notification panel show the latest one notification, use this below
+//        notificationManager.notify(notificationId, notifyBuild.build());
+        Log.i("SendStatusActivity", "receive notification");
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.v(TAG, "The user gave access.");
+                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Log.e(TAG, "User denied permission.");
+                    // permission denied
+                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+        }
+
     }
 }
