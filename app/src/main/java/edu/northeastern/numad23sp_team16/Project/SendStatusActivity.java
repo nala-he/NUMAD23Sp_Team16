@@ -189,57 +189,10 @@ public class SendStatusActivity extends AppCompatActivity {
                         }
                 );
 
-//                // receive the status notification if happen to be the currently logged in user
-//                messagesRef.addChildEventListener(
-//                        new ChildEventListener() {
-//                            @Override
-//                            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-//                                Message message = snapshot.getValue(Message.class);
-//                                if (message != null) {
-//                                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-//                                    Log.i("SendStatusActivity",
-//                                            "message time: " + messageTime + " login time: " + loginTime);
-//                                    if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
-//                                        // send and receive status message
-//                                        Log.i("SendStatusActivity", "send status");
-//                                        sendStatusMessage(message.senderName, message.petType,
-//                                                message.petName, heartCount);
-//                                    }
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError error) {
-//
-//                            }
-//                        }
-//                );
-
-
                 Intent intent = new Intent(SendStatusActivity.this, ShareActivity.class);
                 // close all the activities in the call stack above ShareActivity and bring it to
                 // the top of the call stack
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-//                // pass the friendsList to the ShareActivity, need to be replaced with data from firebase later
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
-//                intent.putExtras(bundle);
 
                 // pass the current user id back to share activity
                 intent.putExtra(CURRENT_USER, currentUser);
@@ -459,10 +412,10 @@ public class SendStatusActivity extends AppCompatActivity {
 
         }
 
-//        notificationManager.notify(notificationId++, notifyBuild.build());
+        notificationManager.notify(notificationId++, notifyBuild.build());
 
         // if only want to let the notification panel show the latest one notification, use this below
-        notificationManager.notify(notificationId, notifyBuild.build());
+//        notificationManager.notify(notificationId, notifyBuild.build());
         Log.i("SendStatusActivity", "receive notification");
 
 
