@@ -144,7 +144,7 @@ public class SendStatusActivity extends AppCompatActivity {
             getFriendNameList();
         }
 
-        // TODO: change the hardcoded heartCount to user's pet heartCount from database
+        // change the hardcoded heartCount to user's pet heartCount from database
         int heartCount = 8;
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +154,7 @@ public class SendStatusActivity extends AppCompatActivity {
                         receiverList.add(username);
                     }
                 }
-                // TODO: send user's pet status to selected friends from friendsList
+                // send user's pet status to selected friends from friendsList
                 usersRef.addListenerForSingleValueEvent(
                         new ValueEventListener() {
                             @Override
@@ -189,46 +189,46 @@ public class SendStatusActivity extends AppCompatActivity {
                         }
                 );
 
-                // receive the status notification if happen to be the currently logged in user
-                messagesRef.addChildEventListener(
-                        new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-                                Message message = snapshot.getValue(Message.class);
-                                if (message != null) {
-                                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-                                    Log.i("SendStatusActivity",
-                                            "message time: " + messageTime + " login time: " + loginTime);
-                                    if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
-                                        // send and receive status message
-                                        Log.i("SendStatusActivity", "send status");
-                                        sendStatusMessage(message.senderName, message.petType,
-                                                message.petName, heartCount);
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                            }
-
-                            @Override
-                            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                            }
-
-                            @Override
-                            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        }
-                );
+//                // receive the status notification if happen to be the currently logged in user
+//                messagesRef.addChildEventListener(
+//                        new ChildEventListener() {
+//                            @Override
+//                            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+//                                Message message = snapshot.getValue(Message.class);
+//                                if (message != null) {
+//                                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+//                                    Log.i("SendStatusActivity",
+//                                            "message time: " + messageTime + " login time: " + loginTime);
+//                                    if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
+//                                        // send and receive status message
+//                                        Log.i("SendStatusActivity", "send status");
+//                                        sendStatusMessage(message.senderName, message.petType,
+//                                                message.petName, heartCount);
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError error) {
+//
+//                            }
+//                        }
+//                );
 
 
                 Intent intent = new Intent(SendStatusActivity.this, ShareActivity.class);
@@ -246,6 +246,47 @@ public class SendStatusActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // receive the status notification if happen to be the currently logged in user
+        messagesRef.addChildEventListener(
+                new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                        Message message = snapshot.getValue(Message.class);
+                        if (message != null) {
+                            Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                            Log.i("SendStatusActivity",
+                                    "message time: " + messageTime + " login time: " + loginTime);
+                            if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
+                                // send and receive status message
+                                Log.i("SendStatusActivity", "send status");
+                                sendStatusMessage(message.senderName, message.petType,
+                                        message.petName, heartCount);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
     }
 
     // this event will enable the back function to the back button on press in customized action bar
