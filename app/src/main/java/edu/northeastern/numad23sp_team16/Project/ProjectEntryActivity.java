@@ -44,7 +44,11 @@ public class ProjectEntryActivity extends AppCompatActivity {
     }
 
     public void startProgressActivity(View view) {
-        startActivity(new Intent(ProjectEntryActivity.this, ProgressActivity.class));
+        // Pass currently logged in user to progress page
+        Intent progressIntent = new Intent(ProjectEntryActivity.this,
+                ProgressActivity.class);
+        progressIntent.putExtra(CURRENT_USER, currentUser);
+        startActivity(progressIntent);
     }
 
     // Receive currently logged in user from child activity

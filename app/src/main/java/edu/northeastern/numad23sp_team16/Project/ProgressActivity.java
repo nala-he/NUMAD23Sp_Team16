@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
@@ -39,10 +41,21 @@ public class ProgressActivity extends AppCompatActivity {
     private List<CalendarDay> completedGoalsDates;
     private TextView petHealthInfo;
 
+    // Firebase database
+    private DatabaseReference mDatabase;
+    private static final String CURRENT_USER = "CURRENT_USER";
+    private String currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress);
+
+        // Get currently logged in user
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            currentUser = extras.getString(CURRENT_USER);
+        }
 
         // Set custom action bar with back button
         toolbar = findViewById(R.id.progress_page_toolbar);
@@ -55,6 +68,9 @@ public class ProgressActivity extends AppCompatActivity {
         // Get pet name and image from view
         petName = findViewById(R.id.progress_pet_name);
         petImage = findViewById(R.id.progress_pet_image);
+
+        // Connect to firebase database
+        mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
 
         // TODO: replace with pet name and image from database
         // Set pet name and image for current user

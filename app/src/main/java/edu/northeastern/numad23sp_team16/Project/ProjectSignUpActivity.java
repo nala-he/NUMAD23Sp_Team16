@@ -142,14 +142,19 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                     User user = new User(email, username, password, whichPet, petName);
 
                     //add a child node with username as a unique key, can't use email as key because of "@"
-                    usersRef.child(username).setValue(user);
+//                    usersRef.child(username).setValue(user);
 
+                    // Create unique user id
+                    String time = String.valueOf(System.currentTimeMillis()/1000);
+                    userId = "user" + time + userIdCounter++;
+
+                    // Add new user node
+                    usersRef.child(userId).setValue(user);
 
                     // Create new pet health object in database to keep track of newly created pet's health
-                    // TODO: RELATED TO PROGRESS -- MACEE
-//                    mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
-//                    PetHealth petHealth = new PetHealth(userId);
-//                    mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
+                    mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+                    PetHealth petHealth = new PetHealth(userId);
+                    mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
 
                     // show success message
                     Toast.makeText(getApplicationContext(), "Sign up successfully!", Toast.LENGTH_SHORT).show();
