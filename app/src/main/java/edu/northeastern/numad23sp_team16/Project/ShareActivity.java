@@ -95,11 +95,14 @@ public class ShareActivity extends AppCompatActivity {
 //                        Message message = snapshot.getValue(Message.class);
 //                        if (message != null) {
 //                            Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-//                            Log.i("SendStatusActivity",
-//                                    "message time: " + messageTime + " login time: " + loginTime);
+//                            Log.i("ShareActivity", " currentUser: " + currentUser +
+//                                    " message time: " + messageTime + " login time: " + loginTime);
 //                            if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
 //                                // send and receive status message
-//                                Log.i("SendStatusActivity", "send status");
+//                                Log.i("ShareActivity",
+//                                        "receiverId: " + message.receiverId
+//                                                + " currentUser: " + currentUser
+//                                                + " sender: " + message.senderName);
 //                                sendStatusMessage(message.senderName, message.petType,
 //                                        message.petName, heartCount);
 //                            }
@@ -162,70 +165,70 @@ public class ShareActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
-
-        // Build notification
-        // Need to define a channel ID after Android Oreo
-        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
-//        int id = Integer.parseInt(petIconId);
-        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
-
-        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
-                //"Notification icons must be entirely white."
-                .setSmallIcon(R.drawable.heart)
-                .setContentTitle("You received a GoalForIt pet status from " + senderName)
-                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
-                        + "/10 hearts.")
-                .setLargeIcon(myBitmap)
-                .setStyle(new NotificationCompat.BigPictureStyle()
-                        .bigPicture(myBitmap)
-                        .bigLargeIcon(null))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                // hide the notification after its selected
-                .setAutoCancel(true)
-                .setWhen(System.currentTimeMillis())
-                .setShowWhen(true)
-                .setSilent(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
-
-        }
-
-        notificationManager.notify(notificationId++, notifyBuild.build());
-
-        // if only want to let the notification panel show the latest one notification, use this below
-//        notificationManager.notify(notificationId, notifyBuild.build());
-        Log.i("SendStatusActivity", "receive notification");
-
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    Log.v(TAG, "The user gave access.");
-                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Log.e(TAG, "User denied permission.");
-                    // permission denied
-                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
-                }
-                return;
-        }
-
-    }
+//    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
+//
+//        // Build notification
+//        // Need to define a channel ID after Android Oreo
+//        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
+////        int id = Integer.parseInt(petIconId);
+//        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+//
+//        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+//                //"Notification icons must be entirely white."
+//                .setSmallIcon(R.drawable.heart)
+//                .setContentTitle("You received a GoalForIt pet status from " + senderName)
+//                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
+//                        + "/10 hearts.")
+//                .setLargeIcon(myBitmap)
+//                .setStyle(new NotificationCompat.BigPictureStyle()
+//                        .bigPicture(myBitmap)
+//                        .bigLargeIcon(null))
+//                .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                // hide the notification after its selected
+//                .setAutoCancel(true)
+//                .setWhen(System.currentTimeMillis())
+//                .setShowWhen(true)
+//                .setSilent(true);
+//
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+//
+//        }
+//
+//        notificationManager.notify(notificationId++, notifyBuild.build());
+//
+//        // if only want to let the notification panel show the latest one notification, use this below
+////        notificationManager.notify(notificationId, notifyBuild.build());
+//        Log.i("ShareActivity", "receive notification");
+//
+//
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case PERMISSION_REQUEST_CODE:
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    Log.v(TAG, "The user gave access.");
+//                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
+//
+//                } else {
+//                    Log.e(TAG, "User denied permission.");
+//                    // permission denied
+//                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+//                }
+//                return;
+//        }
+//
+//    }
 }

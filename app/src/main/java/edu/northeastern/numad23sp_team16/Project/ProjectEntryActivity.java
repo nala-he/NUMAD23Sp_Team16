@@ -69,11 +69,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         Message message = snapshot.getValue(Message.class);
                         if (message != null) {
                             Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-                            Log.i("SendStatusActivity",
-                                    "message time: " + messageTime + " login time: " + loginTime);
+                            Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
+                                    " message time: " + messageTime + " login time: " + loginTime);
                             if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
                                 // send and receive status message
-                                Log.i("SendStatusActivity", "send status");
+                                Log.i("ProjectEntryActivity",
+                                        "receiverId: " + message.receiverId
+                                                + " currentUser: " + currentUser
+                                                + " sender: " + message.senderName);
                                 sendStatusMessage(message.senderName, message.petType,
                                         message.petName, heartCount);
                             }

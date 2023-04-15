@@ -113,7 +113,8 @@ public class SendStatusActivity extends AppCompatActivity {
                 loginTime = Timestamp.valueOf(extras.getString(LOGIN_TIME));
             }
         }
-
+        Log.i("SendStatusActivity onCreate", "currentUser: " + currentUser);
+        Log.i("SendStatusActivity onCreate", "loginTime: " + loginTime);
 
         // initialize usersRef and friendsRef from firebase database
         projectDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
@@ -212,10 +213,14 @@ public class SendStatusActivity extends AppCompatActivity {
 //                        if (message != null) {
 //                            Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
 //                            Log.i("SendStatusActivity",
-//                                    "message time: " + messageTime + " login time: " + loginTime);
+//                                   " currentUser: " + currentUser +
+//                                    " message time: " + messageTime + " login time: " + loginTime);
 //                            if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
 //                                // send and receive status message
-//                                Log.i("SendStatusActivity", "send status");
+//                                Log.i("SendStatusActivity",
+//                                        "receiverId: " + message.receiverId
+//                                                + " currentUser: " + currentUser
+//                                                + " sender: " + message.senderName);
 //                                sendStatusMessage(message.senderName, message.petType,
 //                                        message.petName, heartCount);
 //                            }
@@ -373,79 +378,71 @@ public class SendStatusActivity extends AppCompatActivity {
         }
     }
 
-    // send status message to the receiver
-    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
-
-        // Build notification
-        // Need to define a channel ID after Android Oreo
-        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
-//        int id = Integer.parseInt(petIconId);
-        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
-
-//        // check if the perIconId is an unknown id, if yes, set a default unknown_sticker image
-//        // as an image placeholder
-//        if (id != R.drawable.dog_small && id != R.drawable.cat_small) {
-//            Toast.makeText(SendStatusActivity.this, "Received an unknown pet icon id.",
-//                    Toast.LENGTH_LONG).show();
-//            myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unknown_sticker);
+//    // send status message to the receiver
+//    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
+//
+//        // Build notification
+//        // Need to define a channel ID after Android Oreo
+//        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
+////        int id = Integer.parseInt(petIconId);
+//        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+//
+//        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+//                //"Notification icons must be entirely white."
+//                .setSmallIcon(R.drawable.heart)
+//                .setContentTitle("You received a GoalForIt pet status from " + senderName)
+//                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
+//                        + "/10 hearts.")
+//                .setLargeIcon(myBitmap)
+//                .setStyle(new NotificationCompat.BigPictureStyle()
+//                        .bigPicture(myBitmap)
+//                        .bigLargeIcon(null))
+//                .setPriority(NotificationCompat.PRIORITY_LOW)
+//                // hide the notification after its selected
+//                .setAutoCancel(true)
+//                .setWhen(System.currentTimeMillis())
+//                .setShowWhen(true)
+//                .setSilent(true);
+//
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+//
 //        }
-
-        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
-                //"Notification icons must be entirely white."
-                .setSmallIcon(R.drawable.heart)
-                .setContentTitle("You received a GoalForIt pet status from " + senderName)
-                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
-                        + "/10 hearts.")
-                .setLargeIcon(myBitmap)
-                .setStyle(new NotificationCompat.BigPictureStyle()
-                        .bigPicture(myBitmap)
-                        .bigLargeIcon(null))
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                // hide the notification after its selected
-                .setAutoCancel(true)
-                .setWhen(System.currentTimeMillis())
-                .setShowWhen(true)
-                .setSilent(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
-
-        }
-
-        notificationManager.notify(notificationId++, notifyBuild.build());
-
-        // if only want to let the notification panel show the latest one notification, use this below
-//        notificationManager.notify(notificationId, notifyBuild.build());
-        Log.i("SendStatusActivity", "receive notification");
-
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    Log.v(TAG, "The user gave access.");
-                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Log.e(TAG, "User denied permission.");
-                    // permission denied
-                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
-                }
-                return;
-        }
-
-    }
+//
+//        notificationManager.notify(notificationId++, notifyBuild.build());
+//
+//        // if only want to let the notification panel show the latest one notification, use this below
+////        notificationManager.notify(notificationId, notifyBuild.build());
+//        Log.i("SendStatusActivity", "receive notification");
+//
+//
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case PERMISSION_REQUEST_CODE:
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    Log.v(TAG, "The user gave access.");
+//                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
+//
+//                } else {
+//                    Log.e(TAG, "User denied permission.");
+//                    // permission denied
+//                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+//                }
+//                return;
+//        }
+//
+//    }
 }
