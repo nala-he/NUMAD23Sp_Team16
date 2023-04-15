@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -124,6 +126,7 @@ public class ProgressActivity extends AppCompatActivity {
 
     // Navigate to share pet status with friends screen
     public void onSharePetStatus(View view) {
+        // TODO: pass currently logged in user to Share activity
         startActivity(new Intent(ProgressActivity.this, ShareActivity.class));
     }
 
@@ -142,5 +145,31 @@ public class ProgressActivity extends AppCompatActivity {
             DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
             calendarHistory.addDecorator(dayDecorator);
         }
+    }
+
+    // Pass currently logged in user back when swipe back
+    @Override
+    public void onBackPressed() {
+        Intent homeIntent = new Intent(ProgressActivity.this, ProjectEntryActivity.class);
+        // Add currently logged in user to intent
+        homeIntent.putExtra(CURRENT_USER, currentUser);
+        setResult(Activity.RESULT_OK, homeIntent);
+        super.onBackPressed();
+    }
+
+    // Pass currently logged in user back when click on triangle back
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the custom action bar's back button
+            case android.R.id.home:
+                Intent homeIntent = new Intent(ProgressActivity.this, ProjectEntryActivity.class);
+                // Add currently logged in user to intent
+                homeIntent.putExtra(CURRENT_USER, currentUser);
+                setResult(Activity.RESULT_OK, homeIntent);
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
