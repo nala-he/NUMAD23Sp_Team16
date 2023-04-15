@@ -1,33 +1,37 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import static android.content.ContentValues.TAG;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.User;
 
 public class ProgressActivity extends AppCompatActivity {
 
@@ -47,6 +51,7 @@ public class ProgressActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private static final String CURRENT_USER = "CURRENT_USER";
     private String currentUser;
+    private User currentUserObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +79,32 @@ public class ProgressActivity extends AppCompatActivity {
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
 
-        // TODO: replace with pet name and image from database
-        // Set pet name and image for current user
-        petName.setText("Juni");
-        petImage.setImageResource(R.drawable.dog_small);
+        // Get user's attributes from database and create listener
+        DatabaseReference userRef = mDatabase.child("FinalProjectUsers").child(currentUser);
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Get User object and use the values to update the UI
+                currentUserObject = snapshot.getValue(User.class);
+
+                // Set pet name and image for current user
+                petName.setText(currentUserObject.getPetName());
+
+                if (Objects.equals(currentUserObject.getPetType(), "dog")) {
+                    petImage.setImageResource(R.drawable.dog_small);
+                }
+                else if (Objects.equals(currentUserObject.getPetType(), "cat")) {
+                    petImage.setImageResource(R.drawable.cat_small);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Getting User failed, log a message
+                Log.w(TAG, "Error getting user from database");
+            }
+        };
+        userRef.addValueEventListener(postListener);
 
         // TODO: get user's pet's overall health and replace number
         petHealth = Math.round((float) 5 / DENOMINATOR);
