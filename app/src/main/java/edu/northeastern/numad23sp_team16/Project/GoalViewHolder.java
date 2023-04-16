@@ -24,7 +24,9 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Goal goal) {
+        //bind goal name textview
         goalNameTextView.setText(goal.getGoalName());
+        //bind icon imageview
         switch (goal.getIcon()){
             case "icon_self_care" :
                 iconImageView.setImageResource(R.drawable.icon_self_care);
@@ -58,6 +60,7 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
                 break;
 
         }
+        //bind priority imageview
         switch (goal.getPriority()) {
             case 1:
                 priorityImageView.setImageResource(R.drawable.checked_low_priority);

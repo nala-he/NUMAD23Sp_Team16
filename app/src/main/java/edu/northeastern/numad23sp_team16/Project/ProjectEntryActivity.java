@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +26,7 @@ import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 
 public class ProjectEntryActivity extends AppCompatActivity {
-    LinearProgressIndicator progressIndicator;
+    TextView progressIndicator;
     //FirebaseRecyclerAdapter adapter
     FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter;
     //data
@@ -34,6 +34,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //display goals
     RecyclerView recyclerView;
     DatabaseReference goalsRef;
+    float percentageOfProgress;
+    int completedGoals;
+    int totalGoals;
 
     private static final String CURRENT_USER = "CURRENT_USER";
     //get userId of currentUser
@@ -50,9 +53,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             userId = extras.getString(CURRENT_USER);
         }
         recyclerView = findViewById(R.id.goal_recycler_view);
-        progressIndicator = findViewById(R.id.progress_bar);
-        //Todo:change the value to the proportion from progress page
-        progressIndicator.setProgress(50);
+        progressIndicator = findViewById(R.id.goal_finish_text_view);
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
         // Show the progress bar
@@ -74,12 +75,52 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
                 //instantiate adapter
                 adapter = new GoalAdapter(options);
+
+                //Todo:change the value to the proportion from progress page,(GoalAdapter)adapter).getItemCount() returns all the goals for today
+                // Register a listener on the adapter to calculate percentage when data is loaded, otherwise it's always NaN
+                adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                    @Override
+                    public void onChanged() {
+                        updateProgressPercentage();
+                    }
+
+                    @Override
+                    public void onItemRangeChanged(int positionStart, int itemCount) {
+                        updateProgressPercentage();
+                    }
+
+                    @Override
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+                        updateProgressPercentage();
+                    }
+
+                    @Override
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {
+                        updateProgressPercentage();
+                    }
+                });
                 //this is the key to solving the problem-2hs
                 adapter.startListening();
                 //initialize recyclerview
                 recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
                 recyclerView.setAdapter(adapter);
+                //update percentage of progress
+                updateProgressPercentage();
+
+
+
             }
+            //update percentage of progress
+            public void updateProgressPercentage() {
+                completedGoals = ((GoalAdapter) adapter).getCountOfGoalsCompletedToday();
+                totalGoals = ((GoalAdapter) adapter).getItemCount();
+                Log.d("completedGoals", String.valueOf(completedGoals));
+                Log.d("totalGoals", String.valueOf(totalGoals));
+                percentageOfProgress = (totalGoals > 0) ? ((float) completedGoals / totalGoals * 100) : 0;
+                progressIndicator.setText("Today's goal completion " + String.valueOf(percentageOfProgress));
+
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors here
