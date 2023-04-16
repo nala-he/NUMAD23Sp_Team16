@@ -124,6 +124,8 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 RelativeLayout layout = (RelativeLayout) holder.itemView;
                 TextView textView = layout.findViewById(R.id.goal_textview);
                 textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                //TODO:force the view to redraw and refresh itself
+                notifyDataSetChanged();
                 //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
                 isCheckedForToday = 1;
                 lastCheckedInDate = dateFormat.format(currentDate);
@@ -163,11 +165,11 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     }
     //for the update of progressIndicator
 
-    @Override
-    public void onDataChanged() {
-        super.onDataChanged();
-        // store the countOfGoals in the database and update it whenever there is a change
-    }
+//    @Override
+//    public void onDataChanged() {
+//        super.onDataChanged();
+//        // store the countOfGoals in the database and update it whenever there is a change
+//    }
 
 
 }

@@ -61,6 +61,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
+                checkedCount = 0;
                 //filter goals for current user
                 List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -110,7 +112,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
                 recyclerView.setAdapter(adapter);
                 //update percentage of progress
-                //updateProgressPercentage();
+                updateProgressPercentage();
 
 
 
