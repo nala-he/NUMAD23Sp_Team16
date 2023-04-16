@@ -2,6 +2,7 @@ package edu.northeastern.numad23sp_team16.Project;
 
 import android.app.AlertDialog;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
+
 
 public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
 
@@ -59,10 +61,17 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         Goal goal = getItem(position);
         layoutForItemView = (RelativeLayout) holder.itemView;
         textViewForGoal = layoutForItemView.findViewById(R.id.goal_textview);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        String currentDateStr = dateFormat.format(new Date());
+        if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
+            Log.d("Test","this has been executed.");
+            textViewForGoal.setPaintFlags(textViewForGoal.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
         //click the item view, a popup dialog should display
         holder.itemView.setOnClickListener(v -> {
             try {
-                showClockInDialog(holder,goal,goalId);
+                showClockInDialog(holder,goal,goalId, position);
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
@@ -71,11 +80,10 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     //show a dialog to let the user clock in
     //click yes,progress bar would be affected
     //click no(in case the user clicked yes by mistake and want to withdraw), cancel the record,progress bar gets updated
-    //The name of the goal+ day would be displayed as well.
-    private void showClockInDialog(GoalViewHolder holder, Goal goal, String goalId ) throws ParseException {
+    //The name of the goal and day would be displayed in the dialog as well.
+    private void showClockInDialog(GoalViewHolder holder, Goal goal, String goalId,int position ) throws ParseException {
         // Inflate dialog view using finish_goal_dialog.xml
         View dialogView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.finish_goal_dialog, null);
-
         //build a dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
         builder.setView(dialogView);
@@ -127,19 +135,20 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         if(diffInDaysFromStartToNow >= 0) {
             //clock in for today, background turns to green with a strike-through line
             yesButton.setOnClickListener(v -> {
-
+                        String currentDateStr = dateFormat.format(currentDate);;
+                        lastCheckedInDate = dateFormat.format(currentDate);
                         //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
-                        if (isCheckedForToday == 0) {
+                        if (isCheckedForToday == 0 || (isCheckedForToday == 1 && !lastCheckedInDate.equals(currentDateStr))) {
                             isCheckedForToday = 1;
-                            lastCheckedInDate = dateFormat.format(currentDate);
+                            lastCheckedInDate = currentDateStr;
                             goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
                             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
                             textViewForGoal.setPaintFlags(textViewForGoal.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                            //update this goal as not checked
+                            //update this goal as checked in db
                             goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                             goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
                             // Notify the adapter that the data has changed
-                            notifyDataSetChanged();
+                            notifyItemChanged(position);
                         }
 
                         dialog.dismiss();
@@ -159,7 +168,6 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     @Override
     public void onDataChanged() {
         super.onDataChanged();
-        // store the countOfGoals in the database and update it whenever there is a change
     }
 
 

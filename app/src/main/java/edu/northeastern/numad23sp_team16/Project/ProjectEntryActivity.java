@@ -125,6 +125,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 percentageOfProgress = (adapter.getItemCount() > 0) ? ( (float)checkedCount / adapter.getItemCount() * 100) : 0;
                 bar.setProgress((int) percentageOfProgress);
                 progressIndicator.setText("Today's goal completion "+ (int)percentageOfProgress +"%");
+                //this function is called ten times if there're then item views in rc
                 Log.d("progress", "Today's goal completion " + checkedCount + " / "+ adapter.getItemCount());
 
             }
