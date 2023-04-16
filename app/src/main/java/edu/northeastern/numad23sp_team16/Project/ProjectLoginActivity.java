@@ -118,6 +118,10 @@ public class ProjectLoginActivity extends AppCompatActivity {
                                     currentUser = data.getKey();
                                     intent.putExtra(CURRENT_USER, currentUser);
                                     intent.putExtra(LOGIN_TIME, loginTime.toString());
+                                    // close all the activities in the call stack above and bring it to
+                                    // the top of the call stack
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                                     Log.i("LoginActivity", "currentUser: " + currentUser);
 //                                    Log.i("LoginActivity", "loginTime: " + loginTime);
                                     startActivity(intent);
@@ -181,4 +185,11 @@ public class ProjectLoginActivity extends AppCompatActivity {
         outState.putString("USERNAME",username);
         outState.putString("PASSWORD", password);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
 }

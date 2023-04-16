@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -54,8 +55,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
             currentUser = extras.getString(CURRENT_USER);
             loginTime = extras.getString(LOGIN_TIME);
         }
-        Log.i("ProjectEntry", "currentUser: " + currentUser);
-        Log.i("ProjectEntry", "loginTime: " + loginTime);
+        Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
+        Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
 
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
         int heartCount = 8;
@@ -63,9 +64,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // initialize messagesRef from firebase database
         messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
         messagesRef.addChildEventListener(
+
                 new ChildEventListener() {
+
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                        Log.i("ProjectEntry", "currentUser in line 71: " + currentUser);
+                        Log.i("ProjectEntry", "loginTime in line 72: " + loginTime);
+
                         Message message = snapshot.getValue(Message.class);
                         if (message != null) {
                             Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
@@ -216,5 +222,20 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 return;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
