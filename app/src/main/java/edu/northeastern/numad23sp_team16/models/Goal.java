@@ -15,6 +15,9 @@ public class Goal {
     private String endDate;
     private int priority;
     private String memo;
+    private int isCheckedForToday;
+    //if lastCheckedInDate!=currentDate,isCheckedForToday=0
+    private String lastCheckedInDate;
     //default constructor for firebase
     public Goal(){}
     // Constructor for when reminder turned on
@@ -92,4 +95,12 @@ public class Goal {
     public String getMemo() {
         return memo;
     }
+    public int getIsCheckedForToday() {
+        return isCheckedForToday;
+    }
+
+    public String getLastCheckedInDate() {
+        return lastCheckedInDate;
+    }
+
 }

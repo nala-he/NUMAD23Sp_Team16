@@ -30,8 +30,11 @@ import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 
 public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
-        private int countOfGoalsCompletedToday = 0;
-        private int countOfAllGoalsToday = 0;
+
+        private int isCheckedForToday;
+        //if lastCheckedInDate!=currentDate,isCheckedForToday=0
+        private String lastCheckedInDate;
+        DatabaseReference goalRef;
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
@@ -121,14 +124,17 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 RelativeLayout layout = (RelativeLayout) holder.itemView;
                 TextView textView = layout.findViewById(R.id.goal_textview);
                 textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                countOfGoalsCompletedToday += 1;
-                Log.d("count finished in GoalAdapter", String.valueOf(countOfGoalsCompletedToday));
+                //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
+                isCheckedForToday = 1;
+                lastCheckedInDate = dateFormat.format(currentDate);
+                Log.d("isCheckedForToday", String.valueOf(isCheckedForToday));
                 dialog.dismiss();
                 //save this count into db
-                // Update the Firebase database with the new count value
-                DatabaseReference goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
-                //update the count of this attribute
-                goalRef.child("countOfGoalsCompletedToday").setValue(countOfGoalsCompletedToday);
+                //retrieve this goal
+                goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+                //update the isCheckedForToday and lastCheckedInDate of this goal
+                goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
+                goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
             });
             //cancel the record
             noButton.setOnClickListener(v -> {
@@ -137,8 +143,12 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 TextView textView = layout.findViewById(R.id.goal_textview);
                 textView.setPaintFlags(textView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 dialog.dismiss();
-                countOfGoalsCompletedToday -= 1;
-                Log.d("count", String.valueOf(countOfGoalsCompletedToday));
+                isCheckedForToday = 0;
+                lastCheckedInDate = "";
+                goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+                //update this goal as not checked
+                goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
+                goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
 
             });
         }
@@ -152,14 +162,10 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         return new GoalViewHolder(view);
     }
     //for the update of progressIndicator
-    public int getCountOfGoalsCompletedToday() {
-        return countOfGoalsCompletedToday;
-    }
-    //get this and update in the db when there's a change
+
     @Override
     public void onDataChanged() {
         super.onDataChanged();
-        countOfAllGoalsToday = getItemCount();
         // store the countOfGoals in the database and update it whenever there is a change
     }
 

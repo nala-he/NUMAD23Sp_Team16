@@ -35,8 +35,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     DatabaseReference goalsRef;
     float percentageOfProgress;
-    int completedGoals;
-    int totalGoals;
+    int checkedCount = 0;
 
     private static final String CURRENT_USER = "CURRENT_USER";
     //get userId of currentUser
@@ -69,8 +68,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
                         filteredGoals.add(goal);
+                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+                            checkedCount++;
+                        }
                     }
                 }
+                // Use the checkedCount value as needed
+                Log.d("checkedCount", "Checked count for user " + userId + ": " + checkedCount);
+
                 //initialize goal options
                 options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
                 //instantiate adapter
@@ -105,19 +110,16 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
                 recyclerView.setAdapter(adapter);
                 //update percentage of progress
-                updateProgressPercentage();
+                //updateProgressPercentage();
 
 
 
             }
-            //update percentage of progress
+            //get the isChecked sum in db, update percentage of progress
             public void updateProgressPercentage() {
-                completedGoals = ((GoalAdapter) adapter).getCountOfGoalsCompletedToday();
-                totalGoals = ((GoalAdapter) adapter).getItemCount();
-                Log.d("completedGoals", String.valueOf(completedGoals));
-                Log.d("totalGoals", String.valueOf(totalGoals));
-                percentageOfProgress = (totalGoals > 0) ? ((float) completedGoals / totalGoals * 100) : 0;
-                progressIndicator.setText("Today's goal completion " + String.valueOf(percentageOfProgress));
+                percentageOfProgress = (adapter.getItemCount() > 0) ? ( (float)checkedCount / adapter.getItemCount() * 100) : 0;
+                progressIndicator.setText("Today's goal completion "+String.valueOf(percentageOfProgress)+"%");
+                Log.d("progress", "Today's goal completion " + checkedCount + " / "+ adapter.getItemCount());
 
             }
 
@@ -137,12 +139,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        adapter.stopListening();
-
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        adapter.stopListening();
+//
+//    }
 
     public void startProfileActivity(View view) {
         startActivity(new Intent(ProjectEntryActivity.this, ProfileActivity.class));
