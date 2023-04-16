@@ -76,6 +76,8 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
                 break;
         }
 
+
+
     }
 }
 

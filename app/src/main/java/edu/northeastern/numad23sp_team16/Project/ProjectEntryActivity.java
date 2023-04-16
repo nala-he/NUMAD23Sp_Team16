@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +28,7 @@ import edu.northeastern.numad23sp_team16.models.Goal;
 
 public class ProjectEntryActivity extends AppCompatActivity {
     TextView progressIndicator;
+    LinearProgressIndicator bar;
     //FirebaseRecyclerAdapter adapter
     FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter;
     //data
@@ -53,6 +55,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         }
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
+        bar = findViewById(R.id.progress_bar);
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
         // Show the progress bar
@@ -120,7 +123,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
             //get the isChecked sum in db, update percentage of progress
             public void updateProgressPercentage() {
                 percentageOfProgress = (adapter.getItemCount() > 0) ? ( (float)checkedCount / adapter.getItemCount() * 100) : 0;
-                progressIndicator.setText("Today's goal completion "+String.valueOf(percentageOfProgress)+"%");
+                bar.setProgress((int) percentageOfProgress);
+                progressIndicator.setText("Today's goal completion "+ (int)percentageOfProgress +"%");
                 Log.d("progress", "Today's goal completion " + checkedCount + " / "+ adapter.getItemCount());
 
             }

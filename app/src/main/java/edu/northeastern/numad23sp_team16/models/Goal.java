@@ -35,6 +35,8 @@ public class Goal {
         this.endDate = endDate;
         this.priority = priority;
         this.memo = memo;
+        this.isCheckedForToday = 0;
+        this.lastCheckedInDate = "";
     }
 
     // Constructor for when reminder turned off
