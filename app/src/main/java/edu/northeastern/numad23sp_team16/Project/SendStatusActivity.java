@@ -57,7 +57,6 @@ import edu.northeastern.numad23sp_team16.models.User;
 public class SendStatusActivity extends AppCompatActivity {
     private static final String TAG = "SendStatusActivity";
     private String channelId = "notification_channel_0";
-    private int notificationId = 0;
     private static int messageId = 1;
 
     private ArrayList<Username> friendsList = new ArrayList<>();
@@ -204,50 +203,6 @@ public class SendStatusActivity extends AppCompatActivity {
             }
         });
 
-//        // receive the status notification if happen to be the currently logged in user
-//        messagesRef.addChildEventListener(
-//                new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-//                        Message message = snapshot.getValue(Message.class);
-//                        if (message != null) {
-//                            Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-//                            Log.i("SendStatusActivity",
-//                                   " currentUser: " + currentUser +
-//                                    " message time: " + messageTime + " login time: " + loginTime);
-//                            if (message.receiverId.equals(currentUser) && messageTime.after(loginTime)) {
-//                                // send and receive status message
-//                                Log.i("SendStatusActivity",
-//                                        "receiverId: " + message.receiverId
-//                                                + " currentUser: " + currentUser
-//                                                + " sender: " + message.senderName);
-//                                sendStatusMessage(message.senderName, message.petType,
-//                                        message.petName, heartCount);
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                }
-//        );
     }
 
     // this event will enable the back function to the back button on press in customized action bar
@@ -301,6 +256,12 @@ public class SendStatusActivity extends AppCompatActivity {
 
                         friendListAdapter = new UsernameAdapter(friendsList);
                         friendListRecyclerView.setAdapter(friendListAdapter);
+
+                        if (friendsList.isEmpty()) {
+                            Toast.makeText(SendStatusActivity.this,
+                                    "You have not added any friends! Go back to Add Friends first.",
+                                    Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override
@@ -380,72 +341,4 @@ public class SendStatusActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
-
-//    // send status message to the receiver
-//    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
-//
-//        // Build notification
-//        // Need to define a channel ID after Android Oreo
-//        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
-////        int id = Integer.parseInt(petIconId);
-//        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
-//
-//        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
-//                //"Notification icons must be entirely white."
-//                .setSmallIcon(R.drawable.heart)
-//                .setContentTitle("You received a GoalForIt pet status from " + senderName)
-//                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
-//                        + "/10 hearts.")
-//                .setLargeIcon(myBitmap)
-//                .setStyle(new NotificationCompat.BigPictureStyle()
-//                        .bigPicture(myBitmap)
-//                        .bigLargeIcon(null))
-//                .setPriority(NotificationCompat.PRIORITY_LOW)
-//                // hide the notification after its selected
-//                .setAutoCancel(true)
-//                .setWhen(System.currentTimeMillis())
-//                .setShowWhen(true)
-//                .setSilent(true);
-//
-//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-//
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-//                != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
-//
-//        }
-//
-//        notificationManager.notify(notificationId++, notifyBuild.build());
-//
-//        // if only want to let the notification panel show the latest one notification, use this below
-////        notificationManager.notify(notificationId, notifyBuild.build());
-//        Log.i("SendStatusActivity", "receive notification");
-//
-//
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode,
-//                                           String permissions[], int[] grantResults) {
-//
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case PERMISSION_REQUEST_CODE:
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                    Log.v(TAG, "The user gave access.");
-//                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
-//
-//                } else {
-//                    Log.e(TAG, "User denied permission.");
-//                    // permission denied
-//                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
-//                }
-//                return;
-//        }
-//
-//    }
 }

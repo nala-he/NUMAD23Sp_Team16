@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -136,10 +137,6 @@ public class AddFriendsActivity extends AppCompatActivity {
                 // close all the activities in the call stack above ShareActivity and bring it to
                 // the top of the call stack
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                // pass the friendsList to the ShareActivity, need to be replaced with data from firebase later
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelableArrayList(FRIENDS_LIST, (ArrayList<? extends Parcelable>) friendsList);
-//                intent.putExtras(bundle);
 
                 // pass the current user id back to share activity
                 intent.putExtra(CURRENT_USER, currentUser);
@@ -208,6 +205,12 @@ public class AddFriendsActivity extends AppCompatActivity {
                         }
                         usernameAdapter = new UsernameAdapter(usersList);
                         userListRecyclerView.setAdapter(usernameAdapter);
+
+                        if (usersList.isEmpty() && !preFriendIdsList.isEmpty()) {
+                            Toast.makeText(AddFriendsActivity.this,
+                                    "You have already added all users as friends. No more to be added!",
+                                    Toast.LENGTH_LONG).show();
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
