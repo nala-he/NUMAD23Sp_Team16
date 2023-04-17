@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -112,58 +113,58 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         long durationInMillis = eDate.getTime() - sDate.getTime();
         //+1
         int diffInDaysFromStartToEnd = (int) TimeUnit.DAYS.convert(durationInMillis, TimeUnit.MILLISECONDS) + 1;
-
         // Calculate the current day from startDate
-        Date currentDate = new Date(); // or use System.currentTimeMillis() for better performance
-        //long diffInMillies = Math.abs(currentDate.getTime() - sDate.getTime());
+        Date currentDate = new Date();
         long diffInMillies = currentDate.getTime() - sDate.getTime();
         int diffInDaysFromStartToNow = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        if(diffInDaysFromStartToNow < 0){
+        if(sDate.compareTo(currentDate) >0){
             //start from today and end in the future
             goalNameAndDay.setText("Start date not come yet.Not ready for clock in");
-        } else if(diffInDaysFromStartToNow == 0 && diffInDaysFromStartToEnd!=0) {
+            Toast.makeText(dialogView.getContext(), "can not click clock in",Toast.LENGTH_SHORT).show();
+        } else if(sDate.compareTo(currentDate) ==0 && eDate.compareTo(currentDate) >0) {
             //start from today and end in today
             goalNameAndDay.setText( goal.getGoalName() +" "+" "+ (diffInDaysFromStartToNow+1) + "/" + diffInDaysFromStartToEnd +" day" );
-        } else if(diffInDaysFromStartToNow == 0) {
+        } else if(sDate.compareTo(currentDate) ==0 && eDate.compareTo(currentDate) ==0) {
             //start from today and end in today
             goalNameAndDay.setText( goal.getGoalName() +" "+" "+  "1/1 day" );
-        } else {
-            // display goal+ day
-            goalNameAndDay.setText( goal.getGoalName() +" "+" "+ diffInDaysFromStartToNow + "/" + diffInDaysFromStartToEnd+" day" );
         }
-        if(diffInDaysFromStartToNow >= 0) {
+        if(sDate.compareTo(currentDate)  <= 0 && eDate.compareTo(currentDate) >= 0) {
             //clock in for today, background turns to green with a strike-through line
             String currentDateStr = dateFormat.format(currentDate);;
             lastCheckedInDate = dateFormat.format(currentDate);
             yesButton.setOnClickListener(v -> {
                 //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
-                if (goal.getIsCheckedForToday() == 0 || (goal.getIsCheckedForToday() == 1 && !goal.getLastCheckedInDate().equals(currentDateStr))) {
-                    isCheckedForToday = 1;
-                    lastCheckedInDate = currentDateStr;
-                    goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
-                    //wrong position for the following two lines
+
+                    if (goal.getIsCheckedForToday() == 0 || (goal.getIsCheckedForToday() == 1 && !goal.getLastCheckedInDate().equals(currentDateStr))) {
+                        isCheckedForToday = 1;
+                        lastCheckedInDate = currentDateStr;
+                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+                        //wrong position for the following two lines
 //                    holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
 //                    textViewForGoal.setPaintFlags(textViewForGoal.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    //update this goal as checked in db
-                    goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
-                    goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
-                }
+                        //update this goal as checked in db
+                        goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
+                        goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
+                    }
 
                 dialog.dismiss();
             });
             noButton.setOnClickListener(v -> {
-                //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
-                if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
-                    isCheckedForToday = 0;
-                    lastCheckedInDate = "";
-                    goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+
+                    //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
+                    if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
+                        isCheckedForToday = 0;
+                        lastCheckedInDate = "";
+                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
 //                    holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.light_pink));
 //                    textViewForGoal.setPaintFlags(textViewForGoal.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                    //update this goal as checked in db
-                    goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
-                    goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
+                        //update this goal as checked in db
+                        goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
+                        goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
 
-                }
+                    }
+
+
                 dialog.dismiss();
 
             });
