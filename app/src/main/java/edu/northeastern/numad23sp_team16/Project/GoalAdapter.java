@@ -78,7 +78,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     }
     //show a dialog to let the user clock in
     //click yes,progress bar would be affected
-    //click no(in case the user clicked yes by mistake and want to withdraw), cancel the record,progress bar gets updated
+    //click no(in case the user clicked yes by mistake and wants to withdraw), cancel the record,progress bar gets updated
     //The name of the goal and day would be displayed in the dialog as well.
     private void showClockInDialog(GoalViewHolder holder, Goal goal, String goalId,int position ) throws ParseException {
         // Inflate dialog view using finish_goal_dialog.xml
@@ -120,16 +120,16 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         int diffInDaysFromStartToNow = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
         if(diffInDaysFromStartToNow < 0){
             //start from today and end in the future
-            goalNameAndDay.setText("Start date for this goal has not come yet.");
+            goalNameAndDay.setText("Start date not come yet.Not ready for clock in");
         } else if(diffInDaysFromStartToNow == 0 && diffInDaysFromStartToEnd!=0) {
             //start from today and end in today
-            goalNameAndDay.setText( goal.getGoalName() +" "+" "+ (diffInDaysFromStartToNow+1) + "/" + diffInDaysFromStartToEnd );
+            goalNameAndDay.setText( goal.getGoalName() +" "+" "+ (diffInDaysFromStartToNow+1) + "/" + diffInDaysFromStartToEnd +" day" );
         } else if(diffInDaysFromStartToNow == 0) {
             //start from today and end in today
-            goalNameAndDay.setText( goal.getGoalName() +" "+" "+  "1 / 1" );
+            goalNameAndDay.setText( goal.getGoalName() +" "+" "+  "1/1 day" );
         } else {
             // display goal+ day
-            goalNameAndDay.setText( goal.getGoalName() +" "+" "+ diffInDaysFromStartToNow + "/" + diffInDaysFromStartToEnd );
+            goalNameAndDay.setText( goal.getGoalName() +" "+" "+ diffInDaysFromStartToNow + "/" + diffInDaysFromStartToEnd+" day" );
         }
         if(diffInDaysFromStartToNow >= 0) {
             //clock in for today, background turns to green with a strike-through line
