@@ -12,6 +12,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,7 +56,9 @@ public class ProgressActivity extends AppCompatActivity {
     // Firebase database
     private DatabaseReference mDatabase;
     private static final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
     private String currentUser;
+    private String loginTime;
     private User currentUserObject;
 
     @Override
@@ -62,6 +70,7 @@ public class ProgressActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
         }
 
         // Set custom action bar with back button
@@ -154,7 +163,11 @@ public class ProgressActivity extends AppCompatActivity {
     // Navigate to share pet status with friends screen
     public void onSharePetStatus(View view) {
         // TODO: pass currently logged in user to Share activity
-        startActivity(new Intent(ProgressActivity.this, ShareActivity.class));
+        Intent intent = new Intent(ProgressActivity.this, ShareActivity.class);
+        // pass the current user id and login time
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
     public void setCalendar() {
@@ -191,8 +204,9 @@ public class ProgressActivity extends AppCompatActivity {
             // Respond to the custom action bar's back button
             case android.R.id.home:
                 Intent homeIntent = new Intent(ProgressActivity.this, ProjectEntryActivity.class);
-                // Add currently logged in user to intent
+                // Add currently logged in user and log in time to intent
                 homeIntent.putExtra(CURRENT_USER, currentUser);
+                homeIntent.putExtra(LOGIN_TIME, loginTime);
                 setResult(Activity.RESULT_OK, homeIntent);
                 finish();
                 return true;

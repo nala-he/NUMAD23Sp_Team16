@@ -112,6 +112,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String REMINDER_INFO_DIALOG_OPEN = "REMINDER_INFO_DIALOG_OPEN";
     private static final String PRIORITY_INFO_DIALOG_OPEN = "PRIORITY_INFO_DIALOG_OPEN";
 
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
+    private String loginTime;
+
     // New goal values
     private String goalName;
     private Icon selectedIcon;
@@ -129,10 +133,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_goal);
 
-        // Get currently logged in user
+        // Get currently logged in user and login time
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
         }
 
         editGoalName = findViewById(R.id.text_goal_name);
@@ -169,9 +174,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Pick goal end date
         selectEndDate();
 
+
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
     }
+
 
     // Show start date picker dialog
     private void showStartDatePickerDialog(int selectedYear, int selectedMonth, int selectedDay) {
@@ -537,10 +544,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Navigate to home screen
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
 
-        // Pass currently logged in user back
-        Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
-        homeIntent.putExtra(CURRENT_USER, currentUser);
-        startActivity(homeIntent);
+        // pass the current user id and login time
+        Intent intent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
     // Pass currently logged in user back when swipe back
@@ -568,6 +576,18 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+//    // Use this function to enable the currentUser and loginTime data to be passed to the
+//    // previous activity when the back button is clicked -- Yutong
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//
+//    }
 
     // Dismiss any dialogs to avoid leakage
     @Override

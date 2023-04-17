@@ -409,6 +409,7 @@ public class StickItToEmActivity extends AppCompatActivity {
         sentStickersCount.forEach((id, num) -> stickerCountList.add(new Sticker(Integer.parseInt(id), num)));
     }
 
+    @SuppressLint("InvalidSetHasFixedSize")
     // Display history of stickers user has received (sticker, who sent it, when it was sent)
     public void showStickerHistory() {
         // Set up recycler view
