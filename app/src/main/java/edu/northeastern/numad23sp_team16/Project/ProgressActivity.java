@@ -162,7 +162,7 @@ public class ProgressActivity extends AppCompatActivity {
 
     // Navigate to share pet status with friends screen
     public void onSharePetStatus(View view) {
-        // TODO: pass currently logged in user to Share activity
+        // pass currently logged in user and log in time to Share activity
         Intent intent = new Intent(ProgressActivity.this, ShareActivity.class);
         // pass the current user id and login time
         intent.putExtra(CURRENT_USER, currentUser);

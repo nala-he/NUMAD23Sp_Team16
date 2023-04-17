@@ -83,7 +83,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     // Firebase database
     private DatabaseReference mDatabase;
     private static final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
     private String currentUser;
+    private String loginTime;
 
     // For orientation changes
     private static final String GOAL_NAME = "GOAL_NAME";
@@ -111,10 +113,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String UNSAVED_END_DAY = "UNSAVED_END_DAY";
     private static final String REMINDER_INFO_DIALOG_OPEN = "REMINDER_INFO_DIALOG_OPEN";
     private static final String PRIORITY_INFO_DIALOG_OPEN = "PRIORITY_INFO_DIALOG_OPEN";
-
-    private final String LOGIN_TIME = "LOGIN_TIME";
-
-    private String loginTime;
 
     // New goal values
     private String goalName;
@@ -174,11 +172,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Pick goal end date
         selectEndDate();
 
-
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
     }
-
 
     // Show start date picker dialog
     private void showStartDatePickerDialog(int selectedYear, int selectedMonth, int selectedDay) {
@@ -544,50 +540,40 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Navigate to home screen
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
 
-        // pass the current user id and login time
-        Intent intent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
-        intent.putExtra(CURRENT_USER, currentUser);
-        intent.putExtra(LOGIN_TIME, loginTime);
-        startActivity(intent);
+        // Pass currently logged in user and log in time back
+        Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+        homeIntent.putExtra(CURRENT_USER, currentUser);
+        homeIntent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(homeIntent);
     }
 
-    // Pass currently logged in user back when swipe back
+    // Pass currently logged in user and log in time back when swipe back
     @Override
     public void onBackPressed() {
         Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
-        // Add currently logged in user to intent
+        // Add currently logged in user and log in time to intent
         homeIntent.putExtra(CURRENT_USER, currentUser);
+        homeIntent.putExtra(LOGIN_TIME, loginTime);
         setResult(Activity.RESULT_OK, homeIntent);
         super.onBackPressed();
     }
 
-    // Pass currently logged in user back when click on triangle back
+    // Pass currently logged in user and log in time back when click on triangle back
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the custom action bar's back button
             case android.R.id.home:
                 Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
-                // Add currently logged in user to intent
+                // Add currently logged in user and log in time to intent
                 homeIntent.putExtra(CURRENT_USER, currentUser);
+                homeIntent.putExtra(LOGIN_TIME, loginTime);
                 setResult(Activity.RESULT_OK, homeIntent);
                 finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    // Use this function to enable the currentUser and loginTime data to be passed to the
-//    // previous activity when the back button is clicked -- Yutong
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == android.R.id.home) {
-//            this.finish();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//
-//    }
 
     // Dismiss any dialogs to avoid leakage
     @Override
