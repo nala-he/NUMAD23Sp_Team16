@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -155,8 +156,6 @@ public class ProgressActivity extends AppCompatActivity {
         };
         petHealthRef.addValueEventListener(petHealthPostListener);
 
-        Log.d(TAG, "onCreate: outer PET HEALTH = " + String.valueOf(petHealth));
-
         // Recycler view to show hearts (pet health)
         petHealthRecyclerView = findViewById(R.id.progress_pet_health);
         listOfHearts = new ArrayList<>();
@@ -179,6 +178,7 @@ public class ProgressActivity extends AppCompatActivity {
         setCalendar();
     }
 
+    @SuppressLint("SetTextI18n")
     private void petHealthMessage() {
         // Set text below hearts to remind user what health condition their pet is in
         petHealthInfo = findViewById(R.id.pet_health_info);
@@ -231,17 +231,18 @@ public class ProgressActivity extends AppCompatActivity {
         }
     }
 
-    // Pass currently logged in user back when swipe back
+    // Pass currently logged in user and log in time back when swipe back
     @Override
     public void onBackPressed() {
         Intent homeIntent = new Intent(ProgressActivity.this, ProjectEntryActivity.class);
-        // Add currently logged in user to intent
+        // Add currently logged in user and log in time to intent
         homeIntent.putExtra(CURRENT_USER, currentUser);
+        homeIntent.putExtra(LOGIN_TIME, loginTime);
         setResult(Activity.RESULT_OK, homeIntent);
         super.onBackPressed();
     }
 
-    // Pass currently logged in user back when click on triangle back
+    // Pass currently logged in user and log in time back when click on triangle back
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
