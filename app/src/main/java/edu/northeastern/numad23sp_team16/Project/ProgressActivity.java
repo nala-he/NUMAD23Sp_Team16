@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.protobuf.Value;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.PetHealth;
 import edu.northeastern.numad23sp_team16.models.User;
 
 public class ProgressActivity extends AppCompatActivity {
@@ -60,6 +62,9 @@ public class ProgressActivity extends AppCompatActivity {
     private String currentUser;
     private String loginTime;
     private User currentUserObject;
+    private PetHealth currentUserPetHealth;
+    ValueEventListener userPostListener;
+    ValueEventListener petHealthPostListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +95,7 @@ public class ProgressActivity extends AppCompatActivity {
 
         // Get user's attributes from database and create listener
         DatabaseReference userRef = mDatabase.child("FinalProjectUsers").child(currentUser);
-        ValueEventListener postListener = new ValueEventListener() {
+        userPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 // Get User object and use the values to update the UI
@@ -113,10 +118,44 @@ public class ProgressActivity extends AppCompatActivity {
                 Log.w(TAG, "Error getting user from database");
             }
         };
-        userRef.addValueEventListener(postListener);
+        userRef.addValueEventListener(userPostListener);
 
-        // TODO: get user's pet's overall health and replace number
-        petHealth = Math.round((float) 5 / DENOMINATOR);
+        // Get user's pet's health node from database and create listener
+        DatabaseReference petHealthRef = mDatabase.child("PetHealth")
+                .child("health" + currentUser);
+        petHealthPostListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Get PetHealth object and use the average health value to update UI
+                currentUserPetHealth = snapshot.getValue(PetHealth.class);
+
+                // Set current user's pet's overall health
+                if (currentUserPetHealth != null) {
+                    float averageHealth = currentUserPetHealth.getAverageHealth();
+                    petHealth = Math.round(averageHealth / DENOMINATOR);
+
+                    Log.d(TAG, "onDataChange: PET HEALTH = " + petHealth);
+
+                    // Update # of hearts in hearts recycler view adapter
+                    heartAdapter.setNumberOfHearts(petHealth);
+
+                    // Notify hearts recycler view adapter of change in pet health
+                    heartAdapter.notifyDataSetChanged();
+
+                    // Update message about pet health to user
+                    petHealthMessage();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Getting PetHealth failed, log a message
+                Log.w(TAG, "Error getting pet's health from database");
+            }
+        };
+        petHealthRef.addValueEventListener(petHealthPostListener);
+
+        Log.d(TAG, "onCreate: outer PET HEALTH = " + String.valueOf(petHealth));
 
         // Recycler view to show hearts (pet health)
         petHealthRecyclerView = findViewById(R.id.progress_pet_health);
@@ -125,6 +164,22 @@ public class ProgressActivity extends AppCompatActivity {
             listOfHearts.add((Integer) R.drawable.heart);
         }
 
+        // Set adapter for pet health recycler view
+        heartAdapter = new HeartAdapter(getApplicationContext(), listOfHearts, petHealth);
+        petHealthRecyclerView.setAdapter(heartAdapter);
+
+        // Set layout of hearts in recycler view
+        petHealthRecyclerView.setLayoutManager(new GridLayoutManager(ProgressActivity.this, 5));
+
+        // Provide message to user depending on health condition of pet
+        petHealthMessage();
+
+        // Set up calendar to view past history
+        calendarHistory = findViewById(R.id.completion_history_calendar);
+        setCalendar();
+    }
+
+    private void petHealthMessage() {
         // Set text below hearts to remind user what health condition their pet is in
         petHealthInfo = findViewById(R.id.pet_health_info);
         if (petHealth == 10) {
@@ -147,17 +202,6 @@ public class ProgressActivity extends AppCompatActivity {
             petHealthInfo.setText("Your pet has died. Complete your goals " +
                     "everyday to bring it back to life.");
         }
-
-        // Set adapter for pet health recycler view
-        heartAdapter = new HeartAdapter(getApplicationContext(), listOfHearts, petHealth);
-        petHealthRecyclerView.setAdapter(heartAdapter);
-
-        // Set layout of hearts in recycler view
-        petHealthRecyclerView.setLayoutManager(new GridLayoutManager(ProgressActivity.this, 5));
-
-        // Set up calendar to view past history
-        calendarHistory = findViewById(R.id.completion_history_calendar);
-        setCalendar();
     }
 
     // Navigate to share pet status with friends screen

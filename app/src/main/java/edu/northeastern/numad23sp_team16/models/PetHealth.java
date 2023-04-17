@@ -20,6 +20,11 @@ public class PetHealth {
         this.totalHealth = totalHealth;
     }
 
+    // Default constructor required for calls to DataSnapshot.getValue(PetHealth.class)
+    public PetHealth() {
+
+    }
+
     public String getOwner() {
         return this.owner;
     }
