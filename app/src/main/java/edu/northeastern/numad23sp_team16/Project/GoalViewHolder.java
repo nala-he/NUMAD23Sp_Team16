@@ -6,6 +6,11 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 
@@ -23,9 +28,16 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
         priorityImageView = itemView.findViewById(R.id.right_image_view);
     }
 
-    public void bind(Goal goal) {
+    public void bind(Goal goal) throws ParseException {
         //bind goal name textview
-        goalNameTextView.setText(goal.getGoalName());
+        if(isNotStarted(goal)){
+            goalNameTextView.setText(goal.getGoalName() + ": (start soon)");
+        }else if(hasExpired(goal)){
+            goalNameTextView.setText(goal.getGoalName() + ": (end date passed)");
+        }else{
+            goalNameTextView.setText(goal.getGoalName());
+        }
+
         //bind icon imageview
         switch (goal.getIcon()){
             case "icon_self_care" :
@@ -78,6 +90,23 @@ public class GoalViewHolder extends RecyclerView.ViewHolder {
 
 
 
+    }
+
+    private boolean hasExpired(Goal goal) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        Date eDate = dateFormat.parse(goal.getEndDate());
+        String currentDateStr = dateFormat.format(new Date());
+        Date currentDate = dateFormat.parse(currentDateStr);
+        return eDate.compareTo(currentDate)< 0;
+    }
+
+    private boolean isNotStarted(Goal goal) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        Date sDate = dateFormat.parse(goal.getStartDate());
+        Date eDate = dateFormat.parse(goal.getEndDate());
+        String currentDateStr = dateFormat.format(new Date());
+        Date currentDate = dateFormat.parse(currentDateStr);
+        return sDate.compareTo(currentDate)> 0;
     }
 }
 

@@ -37,9 +37,12 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         //if lastCheckedInDate!=currentDate,isCheckedForToday=0
         private String lastCheckedInDate;
         DatabaseReference goalRef;
-        //click yes button to update background
-        RelativeLayout layoutForItemView;
-        TextView textViewForGoal;
+        Date sDate = null;
+        Date eDate = null;
+        Date currentDate =null;
+        String startDateStr ;
+        String endDateStr;
+        String currentDateStr;
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
@@ -54,28 +57,52 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     @Override
     protected void onBindViewHolder(@NonNull GoalViewHolder holder, int position, @NonNull Goal model) {
         // Bind the goal data to the view holder
-        holder.bind(model);
+        try {
+            holder.bind(model);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
         // Get the ID of the goal object,update isCheckedForToday later
         String goalId = getRef(position).getKey();
         //get goal to display name and calculate days for popup dialog
         Goal goal = getItem(position);
-        layoutForItemView = (RelativeLayout) holder.itemView;
-        textViewForGoal = layoutForItemView.findViewById(R.id.goal_textview);
+        // Retrieve the start date and duration of the goal
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-        String currentDateStr = dateFormat.format(new Date());
+        currentDateStr = dateFormat.format(new Date());
+        try {
+            sDate = dateFormat.parse(goal.getStartDate());
+            eDate = dateFormat.parse(goal.getEndDate());
+            currentDate = dateFormat.parse(currentDateStr);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        //can't clock in
+        if(sDate.compareTo(currentDate) >0 || eDate.compareTo(currentDate) <0) {
+            //not started or expired marked as grey
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
+            //set background unclickable for clockin
+            if(sDate.compareTo(currentDate) >0 || eDate.compareTo(currentDate) <0){
+                //start in the future,//passed end date
+                holder.itemView.setClickable(false);
+                Toast.makeText(holder.itemView.getContext(), "Invalid to clock in due to date.",Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            //can clock in, click the item view, a popup dialog should display
+            holder.itemView.setOnClickListener(v -> {
+                try {
+                    showClockInDialog(holder,goal,goalId, position);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+        }
         //display green background by checking if it has been clocked in
         if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
-            textViewForGoal.setPaintFlags(textViewForGoal.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
-        //click the item view, a popup dialog should display
-        holder.itemView.setOnClickListener(v -> {
-            try {
-                showClockInDialog(holder,goal,goalId, position);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        });
+
     }
     //show a dialog to let the user clock in
     //click yes,progress bar would be affected
@@ -93,64 +120,35 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         RelativeLayout relativeLayout = (RelativeLayout)dialogView;
         TextView goalNameAndDay = relativeLayout.findViewById(R.id.description_textview);
         ImageView closeImageView =relativeLayout.findViewById(R.id.close_button);
-
         LinearLayout btnLinearLayout = relativeLayout.findViewById(R.id.btn_linear_layout);
         Button yesButton =btnLinearLayout.findViewById(R.id.yes_button);
         Button noButton =btnLinearLayout.findViewById(R.id.no_button);
-
         //dismiss the dialog
         closeImageView.setOnClickListener(v -> dialog.dismiss());
-
-        //current day
-        // Retrieve the start date and duration of the goal
-        String startDate = goal.getStartDate();
-        String endDate = goal.getEndDate();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-
-        Date sDate = dateFormat.parse(startDate);
-        Date eDate = dateFormat.parse(endDate);
         // Calculate the duration between the two dates in milliseconds
         long durationInMillis = eDate.getTime() - sDate.getTime();
-        //+1
         int diffInDaysFromStartToEnd = (int) TimeUnit.DAYS.convert(durationInMillis, TimeUnit.MILLISECONDS) + 1;
         // Calculate the current day from startDate
-        Date currentDate = new Date();
         long diffInMillies = currentDate.getTime() - sDate.getTime();
-        int diffInDaysFromStartToNow = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        if(sDate.compareTo(currentDate) >0){
-            //start from today and end in the future
-            goalNameAndDay.setText("Start date not come yet.Not ready for clock in");
-            Toast.makeText(dialogView.getContext(), "can not click clock in",Toast.LENGTH_SHORT).show();
-        } else if(sDate.compareTo(currentDate) ==0 && eDate.compareTo(currentDate) >0) {
-            //start from today and end in today
-            goalNameAndDay.setText( goal.getGoalName() +" "+" "+ (diffInDaysFromStartToNow+1) + "/" + diffInDaysFromStartToEnd +" day" );
-        } else if(sDate.compareTo(currentDate) ==0 && eDate.compareTo(currentDate) ==0) {
-            //start from today and end in today
-            goalNameAndDay.setText( goal.getGoalName() +" "+" "+  "1/1 day" );
-        }
-        if(sDate.compareTo(currentDate)  <= 0 && eDate.compareTo(currentDate) >= 0) {
+        int diffInDaysFromStartToNow = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS) + 1;
+        if(sDate.compareTo(currentDate) <=0 && eDate.compareTo(currentDate) >=0) {
+            //start from past/today and end in today/future
+            goalNameAndDay.setText( goal.getGoalName() +" "+" "+ diffInDaysFromStartToNow + "/" + diffInDaysFromStartToEnd +" day" );
             //clock in for today, background turns to green with a strike-through line
-            String currentDateStr = dateFormat.format(currentDate);;
-            lastCheckedInDate = dateFormat.format(currentDate);
+            lastCheckedInDate = currentDateStr;
             yesButton.setOnClickListener(v -> {
                 //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
-
                     if (goal.getIsCheckedForToday() == 0 || (goal.getIsCheckedForToday() == 1 && !goal.getLastCheckedInDate().equals(currentDateStr))) {
                         isCheckedForToday = 1;
                         lastCheckedInDate = currentDateStr;
                         goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
-                        //wrong position for the following two lines
-//                    holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
-//                    textViewForGoal.setPaintFlags(textViewForGoal.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
                     }
-
                 dialog.dismiss();
             });
             noButton.setOnClickListener(v -> {
-
                     //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
                     if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
                         isCheckedForToday = 0;
@@ -163,13 +161,9 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
 
                     }
-
-
                 dialog.dismiss();
-
             });
         }
-
     }
 
     @NonNull

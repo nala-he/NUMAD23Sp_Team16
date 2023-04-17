@@ -1,12 +1,5 @@
 package edu.northeastern.numad23sp_team16.Project;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,20 +7,23 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,14 +32,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
-
-import java.sql.Timestamp;
-
 import edu.northeastern.numad23sp_team16.models.Message;
 
 public class ProjectEntryActivity extends AppCompatActivity {
@@ -58,6 +56,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     DatabaseReference goalsRef;
     float percentageOfProgress;
     int checkedCount = 0;
+    int invalidGoalCount = 0;
+    int allGoalsDisplayedInRC;
     
     // use the currentUser variable for the userId value -- Yutong
     ////get userId of currentUser
@@ -74,6 +74,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private final String LOGIN_TIME = "LOGIN_TIME";
 
     private String currentUser;
+    private String userId;
     private String loginTime;
 
 
@@ -81,18 +82,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
-//<<<<<<< Project-display-goal
-        
-        //// Get currently logged in user
-        //Bundle extras = getIntent().getExtras();
-        //if (extras != null) {
-        //    userId = extras.getString(CURRENT_USER);
-        //}
         
         // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            userId = extras.getString(CURRENT_USER);
             loginTime = extras.getString(LOGIN_TIME);
         }
         Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
@@ -103,9 +98,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         bar = findViewById(R.id.progress_bar);
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
-        
-        // Show the progress bar
-        //Query query = goalsRef.orderByChild("userId").equalTo(userId);
+
         
         // replace the userId variable with the name currentUser -- Yutong
         Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
@@ -126,6 +119,21 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
                             checkedCount++;
                         }
+                        //get number of goals that are displayed but not started(user can't clock in)
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                        try {
+                            Date sDate = dateFormat.parse(goal.getStartDate());
+                            Date eDate = dateFormat.parse(goal.getEndDate());
+                            String currentDateStr = dateFormat.format(new Date());
+                            Date currentDate = dateFormat.parse(currentDateStr);
+                            //goals not started or expired
+                            if(sDate.compareTo(currentDate) > 0 || eDate.compareTo(currentDate) < 0){
+                                invalidGoalCount ++;
+                            }
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+
                     }
                 }
                 // Use the checkedCount value as needed
@@ -136,8 +144,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 //instantiate adapter
                 adapter = new GoalAdapter(options);
 
-                //Todo:change the value to the proportion from progress page,(GoalAdapter)adapter).getItemCount() returns all the goals for today
-                // Register a listener on the adapter to calculate percentage when data is loaded, otherwise it's always NaN
                 adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onChanged() {
@@ -145,19 +151,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {
-                        updateProgressPercentage();
-                    }
+                    public void onItemRangeChanged(int positionStart, int itemCount) {updateProgressPercentage();}
 
                     @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        updateProgressPercentage();
-                    }
+                    public void onItemRangeInserted(int positionStart, int itemCount) {updateProgressPercentage();}
 
                     @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        updateProgressPercentage();
-                    }
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {updateProgressPercentage();}
                 });
                 //this is the key to solving the problem-2hs
                 adapter.startListening();
@@ -166,27 +166,15 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
                 //update percentage of progress
                 updateProgressPercentage();
-
-
-
             }
-            //get the isChecked sum in db, update percentage of progress
-            public void updateProgressPercentage() {
-                percentageOfProgress = (adapter.getItemCount() > 0) ? ( (float)checkedCount / adapter.getItemCount() * 100) : 0;
-                bar.setProgress((int) percentageOfProgress);
-                progressIndicator.setText("Today's goal completion "+ (int)percentageOfProgress +"%");
-                //this function is called ten times if there're then item views in rc
-                Log.d("progress", "Today's goal completion " + checkedCount + " / "+ adapter.getItemCount());
-//=======
 
-        // // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
-        //Bundle extras = getIntent().getExtras();
-        //if (extras != null) {
-        //    currentUser = extras.getString(CURRENT_USER);
-        //    loginTime = extras.getString(LOGIN_TIME);
-        //}
-        //Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
-        //Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ProjectEntryActivity.this,"database error",Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
 
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
         int heartCount = 8;
@@ -229,20 +217,28 @@ public class ProjectEntryActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//>>>>>>> Project
-
-            }
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors here
                 Log.e("ProjectEntryActivity", "Error retrieving goals: " + databaseError.getMessage());
             }
-        });
+        };
         
         messagesRef.addChildEventListener(messagesChildEventListener);
     }
+
+    //get the isChecked sum in db, update percentage of progress
+    public void updateProgressPercentage() {
+        allGoalsDisplayedInRC = adapter.getItemCount();
+        percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
+        bar.setProgress((int) percentageOfProgress);
+        progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
+        //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
+        Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
+    }
+
 
     @Override
     protected void onStart() {
@@ -250,12 +246,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        adapter.stopListening();
-//
-//    }
 
     public void startProfileActivity(View view) {
         // Pass the current user info to Profile activity -- Yutong
