@@ -109,6 +109,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
                 checkedCount = 0;
+                invalidGoalCount = 0;
                 //filter goals for current user
                 List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
