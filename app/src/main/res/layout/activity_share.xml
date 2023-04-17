@@ -33,7 +33,7 @@
       android:layout_marginBottom="120dp"
       android:backgroundTint="@color/pink"
       android:onClick="onClickSendStatus"
-      android:text="@string/send_my_pet_status_to_friends"
+      android:text="@string/my_friends"
       android:textAllCaps="false"
       android:textColor="@color/black"
       android:textSize="10pt"

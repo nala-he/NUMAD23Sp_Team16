@@ -6,30 +6,30 @@ plugins {
 
 android {
         signingConfigs {
-        debug {
-            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
-            storePassword 'GoodluckNEU2023!'
-            keyAlias 'groupKey'
-            keyPassword 'GoodluckNEU2023!'
-        }
-        team16Release {
-            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
-            storePassword 'GoodluckNEU2023!'
-            keyAlias 'groupKey'
-            keyPassword 'GoodluckNEU2023!'
-        }
-//        team16DebugByYutong {
-//            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+//        debug {
+//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
 //            storePassword 'GoodluckNEU2023!'
-//            keyAlias 'key0'
+//            keyAlias 'groupKey'
 //            keyPassword 'GoodluckNEU2023!'
 //        }
-//        team16ReleaseByYutong {
-//            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+//        team16Release {
+//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
 //            storePassword 'GoodluckNEU2023!'
-//            keyAlias 'key0'
+//            keyAlias 'groupKey'
 //            keyPassword 'GoodluckNEU2023!'
 //        }
+        team16DebugByYutong {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storePassword 'GoodluckNEU2023!'
+            keyAlias 'key0'
+            keyPassword 'GoodluckNEU2023!'
+        }
+        team16ReleaseByYutong {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+            storePassword 'GoodluckNEU2023!'
+            keyAlias 'key0'
+            keyPassword 'GoodluckNEU2023!'
+        }
     }
 
     namespace 'edu.northeastern.numad23sp_team16'
@@ -43,8 +43,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        signingConfig signingConfigs.team16ReleaseByYutong
-        signingConfig signingConfigs.team16Release
+        signingConfig signingConfigs.team16ReleaseByYutong
+//        signingConfig signingConfigs.team16Release
     }
 
     buildTypes {
@@ -54,8 +54,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_16
+        targetCompatibility JavaVersion.VERSION_16
     }
 }
 
@@ -79,7 +79,7 @@ dependencies {
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation 'com.google.firebase:firebase-database:20.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
     implementation 'com.google.firebase:firebase-inappmessaging-display'
     implementation 'com.google.firebase:firebase-inappmessaging'
 
@@ -94,6 +94,8 @@ dependencies {
     implementation 'androidx.core:core:1.9.0'
 
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+
+    implementation 'com.firebaseui:firebase-ui-database:8.0.1'
 
 
 }
