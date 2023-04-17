@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
 
@@ -36,6 +37,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private int notificationId = 0;
     private final int PERMISSION_REQUEST_CODE = 0;
     private DatabaseReference messagesRef;
+    private ChildEventListener messagesChildEventListener;
 
     private final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
@@ -63,54 +65,53 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // receive the status notification if happen to be the currently logged in user
         // initialize messagesRef from firebase database
         messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
-        messagesRef.addChildEventListener(
 
-                new ChildEventListener() {
+        // Create new child event listener for messages
+        messagesChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                Log.i("ProjectEntry", "currentUser in line 71: " + currentUser);
+                Log.i("ProjectEntry", "loginTime in line 72: " + loginTime);
 
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-                        Log.i("ProjectEntry", "currentUser in line 71: " + currentUser);
-                        Log.i("ProjectEntry", "loginTime in line 72: " + loginTime);
-
-                        Message message = snapshot.getValue(Message.class);
-                        if (message != null) {
-                            Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-                            Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
-                                    " message time: " + messageTime + " login time: " + loginTime);
-                            if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
-                                // send and receive status message
-                                Log.i("ProjectEntryActivity",
-                                        "receiverId: " + message.receiverId
-                                                + " currentUser: " + currentUser
-                                                + " sender: " + message.senderName);
-                                sendStatusMessage(message.senderName, message.petType,
-                                        message.petName, heartCount);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
+                Message message = snapshot.getValue(Message.class);
+                if (message != null) {
+                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                    //Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
+                    //      " message time: " + messageTime + " login time: " + loginTime);
+                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
+                        // send and receive status message
+                        Log.i("ProjectEntryActivity",
+                                "receiverId: " + message.receiverId
+                                        + " currentUser: " + currentUser
+                                        + " sender: " + message.senderName);
+                        sendStatusMessage(message.senderName, message.petType,
+                                message.petName, heartCount);
                     }
                 }
-        );
+            }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
     public void startProfileActivity(View view) {
@@ -225,14 +226,30 @@ public class ProjectEntryActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        // remove messages child event listener if user went back to log in page
+        messagesRef.removeEventListener(messagesChildEventListener);
+
         finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            // remove messages child event listener
+            messagesRef.removeEventListener(messagesChildEventListener);
             this.finish();
             return true;
         }
