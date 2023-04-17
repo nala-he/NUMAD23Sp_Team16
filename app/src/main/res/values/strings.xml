@@ -29,8 +29,6 @@
     <string name="username_hint">Username</string>
     <string name="close_string">Close</string>
     <string name="login_button">Login</string>
-
-    ========== need to revise later -- yutong
     <string name="sender_logged_in_user">Sender: logged in user</string>
     <string name="receiver_a">Receiver A</string>
     <string name="receiver_b">Receiver B</string>
@@ -98,6 +96,6 @@
     <string name="create_a_new_account">Create a New Account</string>
     <string name="save">Save</string>
     <string name="finished_it_today">Finished it today?</string>
-    =======
-
+    <string name="my_friends">My Friends</string>
+   
 </resources>

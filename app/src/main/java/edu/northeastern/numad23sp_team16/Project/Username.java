@@ -6,10 +6,17 @@ import android.os.Parcelable;
 public class Username implements Parcelable {
     private String username;
     private boolean isSelected = false;
+    private String userId;
 
-    public Username(String username) {
+//    public Username(String username) {
+//        this.username = username;
+//    }
+
+    public Username(String username, String userId) {
         this.username = username;
+        this.userId = userId;
     }
+
 
     private Username(Parcel in) {
         this.username = in.readString();
@@ -39,12 +46,11 @@ public class Username implements Parcelable {
     public String getName() {
         return this.username;
     }
-
-    public void setSelected(boolean selected) {
-        this.isSelected = selected;
-    }
-
     public boolean isSelected() {
         return isSelected;
+    }
+    public String getUserId() { return this.userId; }
+    public void setSelected(boolean selected) {
+        this.isSelected = selected;
     }
 }

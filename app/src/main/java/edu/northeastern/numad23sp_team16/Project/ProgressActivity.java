@@ -11,6 +11,8 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,7 +28,11 @@ import java.util.List;
 import edu.northeastern.numad23sp_team16.R;
 
 public class ProgressActivity extends AppCompatActivity {
+    private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
 
+    private String currentUser;
+    private String loginTime;
     private Toolbar toolbar;
     private TextView petName;
     private ImageView petImage;
@@ -51,6 +57,15 @@ public class ProgressActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_button);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        // Retrieve currently logged in user -- Yutong
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
+        }
+        Log.i("ProgressActivity", "currentUser: " + currentUser);
+
 
         // Get pet name and image from view
         petName = findViewById(R.id.progress_pet_name);
@@ -106,9 +121,24 @@ public class ProgressActivity extends AppCompatActivity {
         setCalendar();
     }
 
+    // Use this function to enable the currentUser and loginTime data to be passed to the
+    // previous activity when the back button is clicked -- Yutong
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     // Navigate to share pet status with friends screen
     public void onSharePetStatus(View view) {
-        startActivity(new Intent(ProgressActivity.this, ShareActivity.class));
+        Intent intent = new Intent(ProgressActivity.this, ShareActivity.class);
+        // pass the current user id and login time
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
     public void setCalendar() {
