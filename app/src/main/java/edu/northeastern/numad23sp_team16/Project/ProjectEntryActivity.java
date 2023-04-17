@@ -1,8 +1,20 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,6 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +42,10 @@ import java.util.List;
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 
+import java.sql.Timestamp;
+
+import edu.northeastern.numad23sp_team16.models.Message;
+
 public class ProjectEntryActivity extends AppCompatActivity {
     TextView progressIndicator;
     LinearProgressIndicator bar;
@@ -38,28 +58,58 @@ public class ProjectEntryActivity extends AppCompatActivity {
     DatabaseReference goalsRef;
     float percentageOfProgress;
     int checkedCount = 0;
+    
+    // use the currentUser variable for the userId value -- Yutong
+    ////get userId of currentUser
+    //private String userId;
 
-    private static final String CURRENT_USER = "CURRENT_USER";
-    //get userId of currentUser
-    private String userId;
+    private static final String TAG = "SendStatusActivity";
+    private String channelId = "notification_channel_0";
+    private int notificationId = 0;
+    private final int PERMISSION_REQUEST_CODE = 0;
+    private DatabaseReference messagesRef;
+    private ChildEventListener messagesChildEventListener;
+
+    private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
+
+    private String currentUser;
+    private String loginTime;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
+//<<<<<<< Project-display-goal
         
-        // Get currently logged in user
+        //// Get currently logged in user
+        //Bundle extras = getIntent().getExtras();
+        //if (extras != null) {
+        //    userId = extras.getString(CURRENT_USER);
+        //}
+        
+        // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            userId = extras.getString(CURRENT_USER);
+            currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
         }
+        Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
+        Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
+        
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
         bar = findViewById(R.id.progress_bar);
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
+        
         // Show the progress bar
-        Query query = goalsRef.orderByChild("userId").equalTo(userId);
+        //Query query = goalsRef.orderByChild("userId").equalTo(userId);
+        
+        // replace the userId variable with the name currentUser -- Yutong
+        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
+
         // Add a ValueEventListener to the query
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -127,6 +177,60 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 progressIndicator.setText("Today's goal completion "+ (int)percentageOfProgress +"%");
                 //this function is called ten times if there're then item views in rc
                 Log.d("progress", "Today's goal completion " + checkedCount + " / "+ adapter.getItemCount());
+//=======
+
+        // // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
+        //Bundle extras = getIntent().getExtras();
+        //if (extras != null) {
+        //    currentUser = extras.getString(CURRENT_USER);
+        //    loginTime = extras.getString(LOGIN_TIME);
+        //}
+        //Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
+        //Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
+
+        // TODO: change the hardcoded heartCount to user's pet heartCount from database
+        int heartCount = 8;
+        // receive the status notification if happen to be the currently logged in user
+        // initialize messagesRef from firebase database
+        messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
+
+        // Create new child event listener for messages
+        messagesChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                Log.i("ProjectEntry", "currentUser in line 71: " + currentUser);
+                Log.i("ProjectEntry", "loginTime in line 72: " + loginTime);
+
+                Message message = snapshot.getValue(Message.class);
+                if (message != null) {
+                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                    //Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
+                    //      " message time: " + messageTime + " login time: " + loginTime);
+                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
+                        // send and receive status message
+                        Log.i("ProjectEntryActivity",
+                                "receiverId: " + message.receiverId
+                                        + " currentUser: " + currentUser
+                                        + " sender: " + message.senderName);
+                        sendStatusMessage(message.senderName, message.petType,
+                                message.petName, heartCount);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//>>>>>>> Project
 
             }
 
@@ -136,8 +240,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 Log.e("ProjectEntryActivity", "Error retrieving goals: " + databaseError.getMessage());
             }
         });
-
-
+        
+        messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
     @Override
@@ -154,36 +258,147 @@ public class ProjectEntryActivity extends AppCompatActivity {
 //    }
 
     public void startProfileActivity(View view) {
-        startActivity(new Intent(ProjectEntryActivity.this, ProfileActivity.class));
+        // Pass the current user info to Profile activity -- Yutong
+        Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
     public void startShareActivity(View view) {
-        startActivity(new Intent(ProjectEntryActivity.this, ShareActivity.class));
+        // Pass the current user info to Share activity -- Yutong
+        Intent intent = new Intent(ProjectEntryActivity.this, ShareActivity.class);
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
     
     public void startCreateNewGoalActivity(View view) {
-        // Pass currently logged in user to create new goal
-        Intent createGoalIntent = new Intent(ProjectEntryActivity.this,
-                CreateNewGoalActivity.class);
-        createGoalIntent.putExtra(CURRENT_USER, userId);
-        startActivity(createGoalIntent);
+        // Pass the current user info to Create New Goal activity -- Yutong
+        Intent intent = new Intent(ProjectEntryActivity.this, CreateNewGoalActivity.class);
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
     public void startProgressActivity(View view) {
-        startActivity(new Intent(ProjectEntryActivity.this, ProgressActivity.class));
+        // Pass the current user info to Progress activity -- Yutong
+        Intent intent = new Intent(ProjectEntryActivity.this, ProgressActivity.class);
+        intent.putExtra(CURRENT_USER, currentUser);
+        intent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(intent);
     }
 
 
-
-    // Receive currently logged in user from child activity
+    // Receive currently logged in user and login time from child activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (data != null) {
-                userId = data.getStringExtra(CURRENT_USER);
+                //userId = data.getStringExtra(CURRENT_USER);
+
+                currentUser = data.getStringExtra(CURRENT_USER);
+                loginTime = data.getStringExtra(LOGIN_TIME);
             }
         }
+    }
+
+    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
+
+        // Build notification
+        // Need to define a channel ID after Android Oreo
+        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
+//        int id = Integer.parseInt(petIconId);
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+                //"Notification icons must be entirely white."
+                .setSmallIcon(R.drawable.heart)
+                .setContentTitle("You received a GoalForIt pet status from " + senderName)
+                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
+                        + "/10 hearts.")
+                .setLargeIcon(myBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(myBitmap)
+                        .bigLargeIcon(null))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // hide the notification after its selected
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+
+        }
+
+        notificationManager.notify(notificationId++, notifyBuild.build());
+
+        // if only want to let the notification panel show the latest one notification, use this below
+//        notificationManager.notify(notificationId, notifyBuild.build());
+        Log.i("SendStatusActivity", "receive notification");
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.v(TAG, "The user gave access.");
+                    Toast.makeText(this, "The user gave permission.", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Log.e(TAG, "User denied permission.");
+                    // permission denied
+                    Toast.makeText(this, "The user denied permission.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        // remove messages child event listener if user went back to log in page
+        messagesRef.removeEventListener(messagesChildEventListener);
+
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // remove messages child event listener
+            messagesRef.removeEventListener(messagesChildEventListener);
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

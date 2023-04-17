@@ -46,11 +46,11 @@ public class ProjectSignUpActivity extends AppCompatActivity {
 
     private Button buttonSave;
 
-    String username;
-    String password;
-    String email;
-    String petName;
-    String whichPet;
+    private String username;
+    private String password;
+    private String email;
+    private String petName;
+    private String whichPet;
 
     private static int userIdCounter = 1;
     private String userId;
@@ -87,6 +87,8 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         petNameInputText = findViewById(R.id.petname_input_s);
         radioGroup = findViewById(R.id.pet_radio_group2);
         dog = findViewById(R.id.dog_radio_button2);
+        // select dog button as the default pet type
+        dog.setChecked(true);
         cat = findViewById(R.id.cat_radio_button2);
         buttonSave = findViewById(R.id.save_profile_btn);
         //TODO:deal with screen rotation
@@ -109,7 +111,6 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }
@@ -141,18 +142,29 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                     // username is not in use, save user to database
                     User user = new User(email, username, password, whichPet, petName);
 
-                    //add a child node with username as a unique key, can't use email as key because of "@"
-                    usersRef.child(username).setValue(user);
+//<<<<<<< HEAD
+//                    //add a child node with username as a unique key, can't use email as key because of "@"
+//                    usersRef.child(username).setValue(user);
 
-
-                    // Create new pet health object in database to keep track of newly created pet's health
-                    // TODO: RELATED TO PROGRESS -- MACEE
-//                    mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
-//                    PetHealth petHealth = new PetHealth(userId);
-//                    mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
+                    // add a child node to use the time as part of the unique user id, format "user16082271023" -- Yutong
+                    String time = String.valueOf(System.currentTimeMillis()/1000);
+                    userId = "user" + time + userIdCounter++;
+                    usersRef.child(userId).setValue(user);
+//=======
+//                    //add a child node with username as a unique key, can't use email as key because of "@"
+//                    usersRef.child(username).setValue(user);
+//
+//
+//                    // Create new pet health object in database to keep track of newly created pet's health
+//                    // TODO: RELATED TO PROGRESS -- MACEE
+////                    mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+////                    PetHealth petHealth = new PetHealth(userId);
+////                    mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
+//>>>>>>> Project
 
                     // show success message
                     Toast.makeText(getApplicationContext(), "Sign up successfully!", Toast.LENGTH_SHORT).show();
+
                     // go to login activity
                     startActivity(new Intent(ProjectSignUpActivity.this, ProjectLoginActivity.class));
                 }
@@ -175,7 +187,13 @@ public class ProjectSignUpActivity extends AppCompatActivity {
         username = usernameInputText.getText().toString().trim();
         password = passwordInputText.getText().toString().trim();
         email = emailInputText.getText().toString().trim();
-        whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
+        // Revise whichPet or petType data from id into "dog" or "cat" string
+        if (radioGroup.getCheckedRadioButtonId() == -1) {
+            whichPet = "-1";
+        } else {
+            whichPet = dog.isChecked() ? "dog" : "cat";
+        }
+//        whichPet = String.valueOf(radioGroup.getCheckedRadioButtonId());//getCheckedRadioButtonId() return -1 if radio button is not selected
         petName = petNameInputText.getText().toString().trim();
         if (email.isEmpty() || username.isEmpty() || password.isEmpty() || petName.isEmpty() || whichPet.equals("-1")) {
             // Show error message
