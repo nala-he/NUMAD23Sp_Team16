@@ -13,12 +13,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +24,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.protobuf.Value;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -64,8 +57,8 @@ public class ProgressActivity extends AppCompatActivity {
     private String loginTime;
     private User currentUserObject;
     private PetHealth currentUserPetHealth;
-    ValueEventListener userPostListener;
-    ValueEventListener petHealthPostListener;
+    private ValueEventListener userPostListener;
+    private ValueEventListener petHealthPostListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +214,7 @@ public class ProgressActivity extends AppCompatActivity {
         // TODO: get the days that the user completed all daily goals from database
         completedGoalsDates = new ArrayList<>();
         completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
-        completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 24, 2023
+        completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 26, 2023
         completedGoalsDates.add(CalendarDay.from(2023, 3, 8)); // March 8, 2023
 
         // Add dots to calendar on dates the user completed all daily goals
