@@ -154,11 +154,11 @@ public class ProgressActivity extends AppCompatActivity {
                     petHealthMessage();
 
                     // Update pet image
-                    if (Objects.equals(currentUserObject.getPetType(), "dog")) {
+                    if (Objects.equals(petType, "dog")) {
                         // Assign appropriate dog image
                         petHealthImage(dogHealth);
                     }
-                    else if (Objects.equals(currentUserObject.getPetType(), "cat")) {
+                    else if (Objects.equals(petType, "cat")) {
                         // Assign appropriate cat image
                         petHealthImage(catHealth);
                     }
