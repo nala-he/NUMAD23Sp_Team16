@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +42,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     private final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
+    private final String EVENT_LISTENER = "EVENT_LISTENER";
+
 
     private String currentUser;
     private String loginTime;
@@ -119,6 +122,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        // remove the event listener before going to the profile page in case that the user will log
+        // out from the profile page
+        messagesRef.removeEventListener(messagesChildEventListener);
         startActivity(intent);
     }
 
