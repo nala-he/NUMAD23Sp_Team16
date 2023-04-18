@@ -118,21 +118,18 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         filteredGoals.add(goal);
                         if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
                             checkedCount++;
+                            Log.d("checkedCount", String.valueOf(checkedCount));
                         }
-                        //get number of goals that are displayed but not started(user can't clock in)
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-                        try {
-                            Date sDate = dateFormat.parse(goal.getStartDate());
-                            Date eDate = dateFormat.parse(goal.getEndDate());
-                            String currentDateStr = dateFormat.format(new Date());
-                            Date currentDate = dateFormat.parse(currentDateStr);
+
                             //goals not started or expired
-                            if(sDate.compareTo(currentDate) > 0 || eDate.compareTo(currentDate) < 0){
+                        try {
+                            if(hasExpired(goal) || isNotStarted(goal)){
                                 invalidGoalCount ++;
                             }
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
                         }
+
 
                     }
                 }
@@ -147,17 +144,17 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onChanged() {
-                        updateProgressPercentage(adapter);
+                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
                     }
 
                     @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {updateProgressPercentage(adapter);}
+                    public void onItemRangeChanged(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
 
                     @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {updateProgressPercentage(adapter);}
+                    public void onItemRangeInserted(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
 
                     @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {updateProgressPercentage(adapter);}
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
                 });
                 //this is the key to solving the problem-2hs
                 adapter.startListening();
@@ -165,7 +162,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
                 recyclerView.setAdapter(adapter);
                 //update percentage of progress
-                updateProgressPercentage(adapter);
+                updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
             }
 
             @Override
@@ -230,13 +227,16 @@ public class ProjectEntryActivity extends AppCompatActivity {
     }
 
     //get the isChecked sum in db, update percentage of progress
-    public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter) {
+    public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
         int allGoalsDisplayedInRC = adapter.getItemCount();
         percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
         bar.setProgress((int) percentageOfProgress);
-        progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
+        //progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
         Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
+        Log.d("progress",  "invalidCount: "+ invalidGoalCount);
+        //TODO:
+        progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
     }
 
 
@@ -391,4 +391,20 @@ public class ProjectEntryActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    private boolean hasExpired(Goal goal) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        Date eDate = dateFormat.parse(goal.getEndDate());
+        String currentDateStr = dateFormat.format(new Date());
+        Date currentDate = dateFormat.parse(currentDateStr);
+        return eDate.compareTo(currentDate)< 0;
+    }
+
+    private boolean isNotStarted(Goal goal) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        Date sDate = dateFormat.parse(goal.getStartDate());
+        String currentDateStr = dateFormat.format(new Date());
+        Date currentDate = dateFormat.parse(currentDateStr);
+        return sDate.compareTo(currentDate)> 0;
+    }
+
 }
