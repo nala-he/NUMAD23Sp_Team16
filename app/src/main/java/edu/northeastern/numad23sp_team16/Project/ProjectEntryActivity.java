@@ -38,8 +38,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
@@ -59,6 +61,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     float percentageOfProgress;
     int checkedCount = 0;
     int invalidGoalCount = 0;
+    DatabaseReference GoalFinishedStatusRef;
 
     // use the currentUser variable for the userId value -- Yutong
     ////get userId of currentUser
@@ -77,6 +80,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private String currentUser;
     private String userId;
     private String loginTime;
+    Boolean isAllFinishedToday = false;
 
 
     @Override
@@ -236,14 +240,26 @@ public class ProjectEntryActivity extends AppCompatActivity {
         //TODO:
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //Update in the db if the user has finished all goals today
-        Boolean isAllFinishedToday = (int) percentageOfProgress == 100 ? true : false;
-        // Create a LocalDate object representing the current date
-        LocalDate currentDate = LocalDate.now();
-        // Retrieve the year, month, and day from the LocalDate object
-        int year = currentDate.getYear();
-        int month = currentDate.getMonthValue();
-        int day = currentDate.getDayOfMonth();
-        //storeInDB(isAllFinishedToday,userId,calendarDay)
+        if((int) percentageOfProgress == 100){
+            isAllFinishedToday = true;
+        } else {
+            isAllFinishedToday = false;
+        }
+        Map<String, Integer> dateMap = getTheDay();
+        storeInDB(isAllFinishedToday,userId,dateMap);
+    }
+
+    private void storeInDB(Boolean isAllFinishedToday, String userId, Map<String, Integer> dateMap) {
+        GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
+         //userId=userName is the key to get the value
+//         GoalAllFinishedDaysRef.child(userId).setValue(dateMap);
+//         GoalAllFinishedDaysRef.child(userId).setValue(isAllFinishedToday);
+        // Create a new map to hold the date values and boolean value
+        Map<String, Object> values = new HashMap<>();
+        values.put("dateMap", dateMap);
+        values.put("isAllFinishedToday", isAllFinishedToday);
+        // Set the new map as the value for the child node with the user ID as the key
+        GoalFinishedStatusRef.child(userId).setValue(values);
     }
 
 
@@ -413,7 +429,18 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Date currentDate = dateFormat.parse(currentDateStr);
         return sDate.compareTo(currentDate)> 0;
     }
-//    private M getCurrentDate(){
-//
-//    }
+    //store this dateMap in db for later display in progressActivity, store as int for later use
+    private Map<String,Integer> getTheDay(){
+        // Create a LocalDate object representing the current date
+        LocalDate currentDate = LocalDate.now();
+        // Retrieve the year, month, and day from the LocalDate object
+        int year = currentDate.getYear();
+        int month = currentDate.getMonthValue();
+        int day = currentDate.getDayOfMonth();
+        Map<String,Integer> dateMap = new HashMap<>();
+        dateMap.put("year",year);
+        dateMap.put("month",month);
+        dateMap.put("day",day);
+        return dateMap;
+    }
 }
