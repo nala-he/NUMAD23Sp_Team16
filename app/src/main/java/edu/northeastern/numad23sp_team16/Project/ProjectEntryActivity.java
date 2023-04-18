@@ -58,7 +58,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //display goals
     RecyclerView recyclerView;
     DatabaseReference goalsRef;
-    float percentageOfProgress;
+    //float percentageOfProgress;
     int checkedCount = 0;
     int invalidGoalCount = 0;
     DatabaseReference GoalFinishedStatusRef;
@@ -80,7 +80,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private String currentUser;
     private String userId;
     private String loginTime;
-    Boolean isAllFinishedToday = false;
+    //I set this to boolean at the beginning,but it always shows true.So this is used to store percentage of progress for easier test
+    //in the db. The problem is it keeps updating and all data are stored in the db when the recyclerview is being loaded.
+    int isAllFinishedToday = 0;
 
 
     @Override
@@ -146,17 +148,27 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onChanged() {
+                        super.onChanged();
                         updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
                     }
 
                     @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
+                    public void onItemRangeChanged(int positionStart, int itemCount) {
+                        super.onChanged();
+                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                    }
 
                     @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+                        super.onChanged();
+                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                    }
 
                     @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {
+                        super.onChanged();
+                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                    }
                 });
                 //this is the key to solving the problem-2hs
                 adapter.startListening();
@@ -228,38 +240,39 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
-    //get the isChecked sum in db, update percentage of progress
+    //update percentage of progress
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
+        // Reset the variable to 0,if all finished the value is 100.Check the comment for this variable!
+        isAllFinishedToday = 0;
         int allGoalsDisplayedInRC = adapter.getItemCount();
-        percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
+        float percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
         bar.setProgress((int) percentageOfProgress);
-        //progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
         Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
         Log.d("progress",  "invalidCount: "+ invalidGoalCount);
         //TODO:
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //Update in the db if the user has finished all goals today
-        if((int) percentageOfProgress == 100){
-            isAllFinishedToday = true;
-        } else {
-            isAllFinishedToday = false;
-        }
+        GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
+        Log.d("percentageOfProgress", "percentageOfProgress = " + percentageOfProgress);
+        isAllFinishedToday = (int) percentageOfProgress;
+        Log.d("progress", "isAllFinishedToday = " + isAllFinishedToday);
+        //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
         Map<String, Integer> dateMap = getTheDay();
         storeInDB(isAllFinishedToday,userId,dateMap);
+
     }
 
-    private void storeInDB(Boolean isAllFinishedToday, String userId, Map<String, Integer> dateMap) {
-        GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
-         //userId=userName is the key to get the value
-//         GoalAllFinishedDaysRef.child(userId).setValue(dateMap);
-//         GoalAllFinishedDaysRef.child(userId).setValue(isAllFinishedToday);
+    private void storeInDB(int isAllFinishedToday, String userId, Map<String, Integer> dateMap) {
+        //GoalFinishedStatusRef.push().setValue(dateMap);
         // Create a new map to hold the date values and boolean value
         Map<String, Object> values = new HashMap<>();
         values.put("dateMap", dateMap);
         values.put("isAllFinishedToday", isAllFinishedToday);
+        values.put("userId", userId);
+
         // Set the new map as the value for the child node with the user ID as the key
-        GoalFinishedStatusRef.child(userId).setValue(values);
+        GoalFinishedStatusRef.push().setValue(values);
     }
 
 
