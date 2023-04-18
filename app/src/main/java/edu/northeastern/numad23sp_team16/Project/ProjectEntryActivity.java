@@ -35,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.Locale;
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 import edu.northeastern.numad23sp_team16.models.Message;
+
 
 public class ProjectEntryActivity extends AppCompatActivity {
     TextView progressIndicator;
@@ -118,10 +120,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         filteredGoals.add(goal);
                         if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
                             checkedCount++;
-                            Log.d("checkedCount", String.valueOf(checkedCount));
                         }
-
-                            //goals not started or expired
+                        //goals not started or expired
                         try {
                             if(hasExpired(goal) || isNotStarted(goal)){
                                 invalidGoalCount ++;
@@ -129,8 +129,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
                         }
-
-
                     }
                 }
                 // Use the checkedCount value as needed
@@ -237,6 +235,15 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Log.d("progress",  "invalidCount: "+ invalidGoalCount);
         //TODO:
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
+        //Update in the db if the user has finished all goals today
+        Boolean isAllFinishedToday = (int) percentageOfProgress == 100 ? true : false;
+        // Create a LocalDate object representing the current date
+        LocalDate currentDate = LocalDate.now();
+        // Retrieve the year, month, and day from the LocalDate object
+        int year = currentDate.getYear();
+        int month = currentDate.getMonthValue();
+        int day = currentDate.getDayOfMonth();
+        //storeInDB(isAllFinishedToday,userId,calendarDay)
     }
 
 
@@ -406,5 +413,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Date currentDate = dateFormat.parse(currentDateStr);
         return sDate.compareTo(currentDate)> 0;
     }
-
+//    private M getCurrentDate(){
+//
+//    }
 }
