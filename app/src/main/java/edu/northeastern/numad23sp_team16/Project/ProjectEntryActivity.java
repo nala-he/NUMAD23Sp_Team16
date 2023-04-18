@@ -73,14 +73,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-                Log.i("ProjectEntry", "currentUser in line 71: " + currentUser);
-                Log.i("ProjectEntry", "loginTime in line 72: " + loginTime);
+                Log.i("ProjectEntry", "currentUser in listener: " + currentUser);
+                Log.i("ProjectEntry", "loginTime in listener: " + loginTime);
 
                 Message message = snapshot.getValue(Message.class);
                 if (message != null) {
                     Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-                    //Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
-                    //      " message time: " + messageTime + " login time: " + loginTime);
+                    Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
+                          " message time: " + messageTime + " login time: " + loginTime);
                     if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
                         // send and receive status message
                         Log.i("ProjectEntryActivity",
