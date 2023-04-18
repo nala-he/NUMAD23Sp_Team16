@@ -270,7 +270,6 @@ public class ProgressActivity extends AppCompatActivity {
             // 1 heart
             petImage.setImageResource(mappedPetImages.get(1));
 
-
         } else if (petHealth == 0) {
             // 0 hearts
             petImage.setImageResource(mappedPetImages.get(0));
