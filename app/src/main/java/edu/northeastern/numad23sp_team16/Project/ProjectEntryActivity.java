@@ -57,8 +57,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     float percentageOfProgress;
     int checkedCount = 0;
     int invalidGoalCount = 0;
-    int allGoalsDisplayedInRC;
-    
+
     // use the currentUser variable for the userId value -- Yutong
     ////get userId of currentUser
     //private String userId;
@@ -148,17 +147,17 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onChanged() {
-                        updateProgressPercentage();
+                        updateProgressPercentage(adapter);
                     }
 
                     @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {updateProgressPercentage();}
+                    public void onItemRangeChanged(int positionStart, int itemCount) {updateProgressPercentage(adapter);}
 
                     @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {updateProgressPercentage();}
+                    public void onItemRangeInserted(int positionStart, int itemCount) {updateProgressPercentage(adapter);}
 
                     @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {updateProgressPercentage();}
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {updateProgressPercentage(adapter);}
                 });
                 //this is the key to solving the problem-2hs
                 adapter.startListening();
@@ -166,7 +165,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
                 recyclerView.setAdapter(adapter);
                 //update percentage of progress
-                updateProgressPercentage();
+                updateProgressPercentage(adapter);
             }
 
             @Override
@@ -231,8 +230,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     }
 
     //get the isChecked sum in db, update percentage of progress
-    public void updateProgressPercentage() {
-        allGoalsDisplayedInRC = adapter.getItemCount();
+    public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter) {
+        int allGoalsDisplayedInRC = adapter.getItemCount();
         percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
         bar.setProgress((int) percentageOfProgress);
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
