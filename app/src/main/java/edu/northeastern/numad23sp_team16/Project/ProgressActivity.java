@@ -28,7 +28,9 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
@@ -48,6 +50,9 @@ public class ProgressActivity extends AppCompatActivity {
     private MaterialCalendarView calendarHistory;
     private List<CalendarDay> completedGoalsDates;
     private TextView petHealthInfo;
+    private Map<Integer, Integer> dogHealth;
+    private Map<Integer, Integer> catHealth;
+    private String petType;
 
     // Firebase database
     private DatabaseReference mDatabase;
@@ -84,6 +89,9 @@ public class ProgressActivity extends AppCompatActivity {
         petName = findViewById(R.id.progress_pet_name);
         petImage = findViewById(R.id.progress_pet_image);
 
+        // Assign pet health images to pet health
+        assignPetHealthImages();
+
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
 
@@ -95,14 +103,20 @@ public class ProgressActivity extends AppCompatActivity {
                 // Get User object and use the values to update the UI
                 currentUserObject = snapshot.getValue(User.class);
 
-                // Set pet name and image for current user
+                // Set pet name for current user
                 petName.setText(currentUserObject.getPetName());
 
+                // Set pet type for current user
+                petType = currentUserObject.getPetType();
+
+                // Set pet image
                 if (Objects.equals(currentUserObject.getPetType(), "dog")) {
-                    petImage.setImageResource(R.drawable.dog_small);
+                    // Assign appropriate dog image
+                    petHealthImage(dogHealth);
                 }
                 else if (Objects.equals(currentUserObject.getPetType(), "cat")) {
-                    petImage.setImageResource(R.drawable.cat_small);
+                    // Assign appropriate cat image
+                    petHealthImage(catHealth);
                 }
             }
 
@@ -138,6 +152,16 @@ public class ProgressActivity extends AppCompatActivity {
 
                     // Update message about pet health to user
                     petHealthMessage();
+
+                    // Update pet image
+                    if (Objects.equals(currentUserObject.getPetType(), "dog")) {
+                        // Assign appropriate dog image
+                        petHealthImage(dogHealth);
+                    }
+                    else if (Objects.equals(currentUserObject.getPetType(), "cat")) {
+                        // Assign appropriate cat image
+                        petHealthImage(catHealth);
+                    }
                 }
             }
 
@@ -171,7 +195,22 @@ public class ProgressActivity extends AppCompatActivity {
         setCalendar();
     }
 
+    private void assignPetHealthImages() {
+        // Create hash map to map dog's health to appropriate image
+        dogHealth = new HashMap<>();
+        dogHealth.put(10, R.drawable.dog_10);
+        dogHealth.put(9, R.drawable.dog_5_9);
+        dogHealth.put(8, R.drawable.dog_5_9);
+        dogHealth.put(7, R.drawable.dog_5_9);
+        dogHealth.put(6, R.drawable.dog_5_9);
+        dogHealth.put(5, R.drawable.dog_5_9);
+        dogHealth.put(4, R.drawable.dog_2_4);
+        dogHealth.put(3, R.drawable.dog_2_4);
+        dogHealth.put(2, R.drawable.dog_2_4);
+        dogHealth.put(1, R.drawable.dog_1);
+        dogHealth.put(0, R.drawable.dog_0);
 
+    }
 
     @SuppressLint("SetTextI18n")
     private void petHealthMessage() {
@@ -197,6 +236,32 @@ public class ProgressActivity extends AppCompatActivity {
             // 0 hearts
             petHealthInfo.setText("Your pet has died. Complete your goals " +
                     "everyday to bring it back to life.");
+        }
+    }
+
+    private void petHealthImage(Map<Integer, Integer> mappedPetImages) {
+        // Set pet health image depending on pet's health condition and type of pet chosen
+        if (petHealth == 10) {
+            // 10 hearts
+            petImage.setImageResource(mappedPetImages.get(10));
+
+        } else if (petHealth >= 5 && petHealth < 10) {
+            // 5-9 hearts
+            petImage.setImageResource(mappedPetImages.get(5));
+
+        } else if (petHealth >= 2 && petHealth < 5) {
+            // 2-4 hearts
+            petImage.setImageResource(mappedPetImages.get(2));
+
+        } else if (petHealth == 1) {
+            // 1 heart
+            petImage.setImageResource(mappedPetImages.get(1));
+
+
+        } else if (petHealth == 0) {
+            // 0 hearts
+            petImage.setImageResource(mappedPetImages.get(0));
+
         }
     }
 
