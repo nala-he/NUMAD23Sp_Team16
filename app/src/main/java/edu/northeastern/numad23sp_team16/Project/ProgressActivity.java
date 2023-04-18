@@ -171,13 +171,16 @@ public class ProgressActivity extends AppCompatActivity {
         setCalendar();
     }
 
+
+
     @SuppressLint("SetTextI18n")
     private void petHealthMessage() {
         // Set text below hearts to remind user what health condition their pet is in
         petHealthInfo = findViewById(R.id.pet_health_info);
         if (petHealth == 10) {
             // 10 hearts
-            petHealthInfo.setText("Your pet is in the best health condition! Keep it up!") ;
+            petHealthInfo.setText("Your pet is in the best health condition! Keep it up!");
+
         } else if (petHealth >= 5 && petHealth < 10) {
             // 5-9 hearts
             petHealthInfo.setText("Keep up the good work! Try to bring your pet's health back up " +
