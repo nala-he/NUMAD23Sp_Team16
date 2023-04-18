@@ -196,7 +196,7 @@ public class ProgressActivity extends AppCompatActivity {
     }
 
     private void assignPetHealthImages() {
-        // Create hash map to map dog's health to appropriate image
+        // Map dog's health to appropriate image
         dogHealth = new HashMap<>();
         dogHealth.put(10, R.drawable.dog_10);
         dogHealth.put(9, R.drawable.dog_5_9);
@@ -210,6 +210,19 @@ public class ProgressActivity extends AppCompatActivity {
         dogHealth.put(1, R.drawable.dog_1);
         dogHealth.put(0, R.drawable.dog_0);
 
+        // Map cat's health to appropriate image
+        catHealth = new HashMap<>();
+        catHealth.put(10, R.drawable.cat_10);
+        catHealth.put(9, R.drawable.cat_5_9);
+        catHealth.put(8, R.drawable.cat_5_9);
+        catHealth.put(7, R.drawable.cat_5_9);
+        catHealth.put(6, R.drawable.cat_5_9);
+        catHealth.put(5, R.drawable.cat_5_9);
+        catHealth.put(4, R.drawable.cat_2_4);
+        catHealth.put(3, R.drawable.cat_2_4);
+        catHealth.put(2, R.drawable.cat_2_4);
+        catHealth.put(1, R.drawable.cat_1);
+        catHealth.put(0, R.drawable.cat_0);
     }
 
     @SuppressLint("SetTextI18n")
