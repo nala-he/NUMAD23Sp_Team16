@@ -77,13 +77,14 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
                 String currentDateStr= dateFormat.format(new Date());
                 if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
+                    Log.d("GoalAdapter", "lastCheckedInDate" + goal.getLastCheckedInDate());
                     holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
                     holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
                 // Set a click listener
                 holder.itemView.setOnClickListener(v -> {
                     try {
-                        showClockInDialog(holder,goal,goalId, position);
+                        showClockInDialog(holder, goal, goalId, position);
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }

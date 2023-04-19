@@ -84,7 +84,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //in the db. The problem is it keeps updating and all data are stored in the db when the recyclerview is being loaded.
     int isAllFinishedToday = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +102,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
         bar = findViewById(R.id.progress_bar);
+
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
 
@@ -124,8 +124,16 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
                         filteredGoals.add(goal);
-                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+                        // check the lastCheckedInDate variable if it exists
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                        String currentDateStr= dateFormat.format(new Date());
+                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+                                && goal.getLastCheckedInDate() != null
+                                && goal.getLastCheckedInDate().equals(currentDateStr)){
                             checkedCount++;
+                            Log.d("Goal", "checkedCount: " + checkedCount);
+
                         }
                         //goals not started or expired
                         try {
