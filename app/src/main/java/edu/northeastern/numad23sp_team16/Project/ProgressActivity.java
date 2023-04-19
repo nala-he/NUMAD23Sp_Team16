@@ -23,15 +23,22 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.PetHealth;
@@ -53,6 +60,8 @@ public class ProgressActivity extends AppCompatActivity {
     private Map<Integer, Integer> dogHealth;
     private Map<Integer, Integer> catHealth;
     private String petType;
+    private float totalHealth = 0;
+    private int totalDays = 1;
 
     // Firebase database
     private DatabaseReference mDatabase;
@@ -63,6 +72,7 @@ public class ProgressActivity extends AppCompatActivity {
     private User currentUserObject;
     private PetHealth currentUserPetHealth;
     private ValueEventListener userPostListener;
+    private DatabaseReference petHealthRef;
     private ValueEventListener petHealthPostListener;
     private ValueEventListener goalFinishedStatusPostListener;
 
@@ -130,7 +140,7 @@ public class ProgressActivity extends AppCompatActivity {
         userRef.addValueEventListener(userPostListener);
 
         // Get user's pet's health node from database and create listener
-        DatabaseReference petHealthRef = mDatabase.child("PetHealth")
+        petHealthRef = mDatabase.child("PetHealth")
                 .child("health" + currentUser);
         petHealthPostListener = new ValueEventListener() {
             @Override
@@ -193,13 +203,29 @@ public class ProgressActivity extends AppCompatActivity {
 
         // Set up calendar to view past history
         calendarHistory = findViewById(R.id.completion_history_calendar);
-        //completedGoalsDates = new ArrayList<>();
 
         // Set date selected to current date
         calendarHistory.setDateSelected(CalendarDay.today(), true);
 
         // Create reference to GoalFinishedStatus node in database
         DatabaseReference goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
+
+        // Get today's date
+        Date currentDate = new Date();
+
+        // Calculate and assign number of days it has been between current date and creation date
+        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
+                totalDays = calculateNumberOfDays(creationDate);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: Database error retrieving creation date");
+            }
+        });
 
         // Create listener for changes to GoalFinishedStatus
         goalFinishedStatusPostListener = new ValueEventListener() {
@@ -209,20 +235,39 @@ public class ProgressActivity extends AppCompatActivity {
                 for (DataSnapshot data : snapshot.getChildren()) {
                     // Check if goal finished status is associated with current user
                     if (Objects.equals(data.child("userId").getValue(String.class), currentUser)) {
+
+                        // Get the date
+                        DataSnapshot dateMap = data.child("dateMap");
+                        int year = dateMap.child("year").getValue(Integer.class);
+                        int month = dateMap.child("month").getValue(Integer.class);
+                        int day = dateMap.child("day").getValue(Integer.class);
+
                         // Add pink dot to calendar if percentage of completion is 100
                         if (data.child("percentageOfToday").getValue(Float.class) == 100) {
-                            DataSnapshot dateMap = data.child("dateMap");
-
-                            // Get the date
-                            int year = dateMap.child("year").getValue(Integer.class);
-                            int month = dateMap.child("month").getValue(Integer.class);
-                            int day = dateMap.child("day").getValue(Integer.class);
 
                             // Add pink dot to calendar if user completed all goals for that date
                             updateCalendar(year, month, day);
                         }
 
-                        // TODO: calculate and update PetHealth accordingly
+                        // Parse date to Date object
+                        String stringDate = month + "/" + day + "/" + year;
+                        Date date = null;
+                        try {
+                            date = new SimpleDateFormat("MM/dd/YYYY").parse(stringDate);
+                        } catch (ParseException e) {
+                            Log.d(TAG, "onDataChange: error parsing date");
+                        }
+
+                        // Only calculate into pet's health if not the current day
+                        if (currentDate != date) {
+                            // TODO: Add to total health (not including current day)
+                            totalHealth += data.child("percentageOfToday").getValue(Float.class);
+
+                            // TODO: Calculate number of days (not including current day) between creation and today
+
+                            // TODO: Calculate average health from total health and number of days
+
+                        }
 
                     }
                 }
@@ -236,6 +281,27 @@ public class ProgressActivity extends AppCompatActivity {
         };
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
 
+    }
+
+    // Calculate total number of days between creation date and current day
+    private int calculateNumberOfDays(String date) {
+        // Convert creation date to Date object
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        Date creationDate = null;
+        try {
+            creationDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            Log.d(TAG, "calculateNumberOfDays: Error parsing date");
+        }
+
+        Date currentDate = new Date();
+
+        // Calculate duration between the current date and creation date
+        long durationInMillis = currentDate.getTime() - creationDate.getTime();
+        int differenceInDays = (int) TimeUnit.DAYS.convert(durationInMillis, TimeUnit.MILLISECONDS);
+        Log.d(TAG, "calculateNumberOfDays: " + differenceInDays);
+
+        return differenceInDays;
     }
 
     private void assignPetHealthImages() {
@@ -334,25 +400,13 @@ public class ProgressActivity extends AppCompatActivity {
         // Create calendar date
         CalendarDay date = CalendarDay.from(year, month, day);
 
-        // Add dot to calendar for give date
+        // Add pink dot to calendar for given date
         DayDecorator dayDecorator = new DayDecorator(date);
         calendarHistory.addDecorator(dayDecorator);
-
-        // TODO: get the days that the user completed all daily goals from database
-        // Get dates where goal completion is 100 for user and store in completedGoalsDates
-        // Create listener for GoalFinishedStatus and add to completedGoalsDates when date updated with completion of 100
-
-
-//        completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
-//        completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 26, 2023
-//        completedGoalsDates.add(CalendarDay.from(2023, 3, 8)); // March 8, 2023
-//
-//        // Add dots to calendar on dates the user completed all daily goals
-//        for (int i = 0; i < completedGoalsDates.size(); i++) {
-//            DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
-//            calendarHistory.addDecorator(dayDecorator);
-//        }
     }
+
+
+
 
     // Pass currently logged in user and log in time back when swipe back
     @Override
