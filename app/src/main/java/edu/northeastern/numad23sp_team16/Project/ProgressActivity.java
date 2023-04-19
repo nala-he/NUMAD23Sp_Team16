@@ -212,8 +212,13 @@ public class ProgressActivity extends AppCompatActivity {
         // Create reference to GoalFinishedStatus node in database
         DatabaseReference goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
 
-        // Get today's date
-        Date currentDate = new Date();
+        // Get today's date with time of 0
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        Date currentDate = calendar.getTime();
 
         // Calculate and assign number of days it has been between current date and creation date
         petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -251,25 +256,20 @@ public class ProgressActivity extends AppCompatActivity {
                             updateCalendar(year, month, day);
                         }
 
-                        // Parse date to Date object
-//                        String stringDate = month + "/" + day + "/" + year;
-//                        Log.d(TAG, "onDataChange: string date " + stringDate);
-//                        Date date = null;
-//                        try {
-//                            date = new SimpleDateFormat("MM/dd/YYYY").parse(stringDate);
-//                        } catch (ParseException e) {
-//                            Log.d(TAG, "onDataChange: error parsing date");
-//                        }
-
+                        // Convert stored date to Date object with time of 0
                         Calendar calendar = Calendar.getInstance();
-                        calendar.set(year, month, day);
+                        calendar.set(year, month - 1, day);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.HOUR, 0);
                         Date date = calendar.getTime();
 
                         Log.d(TAG, "onDataChange: current date " + currentDate);
                         Log.d(TAG, "onDataChange: string date " + date);
 
                         // Only calculate into pet's health if not the current day
-                        if (currentDate != date) {
+                        if (!currentDate.equals(date)) {
 
                             // Add to total health
                             totalHealth += data.child("percentageOfToday").getValue(Float.class);
