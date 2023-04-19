@@ -260,13 +260,14 @@ public class ProgressActivity extends AppCompatActivity {
 
                         // Only calculate into pet's health if not the current day
                         if (currentDate != date) {
-                            // TODO: Add to total health (not including current day)
+                            // Add to total health
                             totalHealth += data.child("percentageOfToday").getValue(Float.class);
 
-                            // TODO: Calculate number of days (not including current day) between creation and today
+                            // Calculate average health from total health and number of days
+                            float averageHealth = totalHealth / totalDays;
 
-                            // TODO: Calculate average health from total health and number of days
-
+                            // Update average health for PetHealth node
+                            petHealthRef.child("averageHealth").setValue(averageHealth);
                         }
 
                     }
