@@ -18,7 +18,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.northeastern.numad23sp_team16.R;
+import edu.northeastern.numad23sp_team16.models.FinishStatus;
 
 public class ProgressActivity extends AppCompatActivity {
     private final String CURRENT_USER = "CURRENT_USER";
@@ -154,13 +154,13 @@ public class ProgressActivity extends AppCompatActivity {
 
         getDaysAllCompletedFromDB(completedGoalsDates);
 
-        // Add dots to calendar on dates the user completed all daily goals
+        // Add dots to calendar on dates the user completed all daily goals-Macee
 //        for (int i = 0; i < completedGoalsDates.size(); i++) {
 //            DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
 //            calendarHistory.addDecorator(dayDecorator);
 //        }
     }
-    //This is added by Yuan to get the progress data from db.-Yuan
+    //This is added by Yuan to get the progress data from db.If the goal is all finished with finishStatus.getPercentageOfToday() == 100, the day is marked red.-Yuan
     private void getDaysAllCompletedFromDB(List<CalendarDay> completedGoalsDates) {
         DatabaseReference GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
         Query daysGoalAllFinishedQuery = GoalFinishedStatusRef.orderByChild("userId").equalTo(currentUser);
@@ -168,24 +168,28 @@ public class ProgressActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    // Loop through the results of the query
-                    for (DataSnapshot goalSnapshot : snapshot.getChildren()) {
-                        GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<>() {};
-                        Map<String, Object> values = goalSnapshot.getValue(genericTypeIndicator);
-                        Map<String, Integer> dateMap = (Map<String, Integer>) values.get("dateMap");
-                        // Use the dateMap data as needed
-                        int day = dateMap.get("day");
-                        Log.d("day:", String.valueOf(day));
-                        int month = dateMap.get("month");
-                        int year = dateMap.get("year");
-                        completedGoalsDates.add(CalendarDay.from(year, month, day));
-                        Log.d("progressActivity: " , day+"/"+month+"/"+year);
+                    for (DataSnapshot  goalSnapshot : snapshot.getChildren()) {
+                        FinishStatus finishStatus = goalSnapshot.getValue(FinishStatus.class);
+                        //add another condition to filter nodes with percentageOfToday == 100
+                        if(finishStatus.getPercentageOfToday() == 100){
+                            Map<String, Integer> dateMap = finishStatus.getDateMap();
+                            // Use the dateMap as needed
+                            int day = dateMap.get("day");
+                            int month = dateMap.get("month");
+                            int year = dateMap.get("year");
+                            Log.d("FinishStatus", "day: " + day + ", month: " + month + ", year: " + year);
+                            completedGoalsDates.add(CalendarDay.from(year, month, day));
+                        }
+
+                    }
+                    // Add dots to calendar on dates the user completed all daily goals
+                    for (int i = 0; i < completedGoalsDates.size(); i++) {
+                        DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
+                        calendarHistory.addDecorator(dayDecorator);
                     }
                 } else {
                     Log.d("database","No days info related to the user found in the db.");
                 }
-
-
             }
 
             @Override
@@ -194,10 +198,6 @@ public class ProgressActivity extends AppCompatActivity {
             }
         });
 
-        // Add dots to calendar on dates the user completed all daily goals
-        for (int i = 0; i < completedGoalsDates.size(); i++) {
-            DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
-            calendarHistory.addDecorator(dayDecorator);
-        }
+
     }
 }

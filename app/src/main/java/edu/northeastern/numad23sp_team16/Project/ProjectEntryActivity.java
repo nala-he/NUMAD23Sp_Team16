@@ -82,7 +82,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private String loginTime;
     //I set this to boolean at the beginning,but it always shows true.So this is used to store percentage of progress for easier test
     //in the db. The problem is it keeps updating and all data are stored in the db when the recyclerview is being loaded.
-    int isAllFinishedToday = 0;
+    int percentageOfToday = 0;
 
     //TODO:
     int allGoalsThisUser = 0;
@@ -115,7 +115,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
-                isAllFinishedToday = 0;
+                percentageOfToday = 0;
                 checkedCount = 0;
                 invalidGoalCount = 0;
                 allGoalsThisUser = 0;
@@ -251,8 +251,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     //update percentage of progress
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
-        // Reset the variable to 0,if all finished the value is 100.Check the comment for this variable!
-        isAllFinishedToday = 0;
+        // Reset the variable to 0,it keeps updating in a day when the user clocks in.Each day the user will have a node with a record, if percentageOfToday == 100, the goal is all finished on the day.
+        //percentageOfToday = 0;
         //int allGoalsDisplayedInRC = adapter.getItemCount();
         float percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
         bar.setProgress((int) percentageOfProgress);
@@ -265,26 +265,25 @@ public class ProjectEntryActivity extends AppCompatActivity {
         //Update in the db if the user has finished all goals today
         GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
         Log.d("percentageOfProgress", "percentageOfProgress = " + percentageOfProgress);
-        isAllFinishedToday = (int) percentageOfProgress;
-        Log.d("progress", "isAllFinishedToday = " + isAllFinishedToday);
+        percentageOfToday = (int) percentageOfProgress;
+        Log.d("progress", "percentageOfToday = " + percentageOfToday);
         //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
         Map<String, Integer> dateMap = getTheDay();
-        storeInDB(isAllFinishedToday,userId,dateMap);
+        storeInDB(percentageOfToday,userId,dateMap);
 
     }
 
-    private void storeInDB(int isAllFinishedToday, String userId, Map<String, Integer> dateMap) {
-        //GoalFinishedStatusRef.push().setValue(dateMap);
+    private void storeInDB(int percentageOfToday, String userId, Map<String, Integer> dateMap) {
         // Create a new map to hold the date values and boolean value
         Map<String, Object> values = new HashMap<>();
         values.put("dateMap", dateMap);
-        values.put("isAllFinishedToday", isAllFinishedToday);
+        values.put("percentageOfToday", percentageOfToday);
         values.put("userId", userId);
         //must leave out "/", otherwise,it will be displayed as different nodes
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyy", Locale.US);
         String currentDateStr = dateFormat.format(new Date());
+        //To make sure each user has a node for each day.
         String key =currentDateStr + userId;
-        Log.d("key",key);
         // percentage for the same day would be overwritten, only one final result is stored.
         GoalFinishedStatusRef.child(key).setValue(values);
     }
