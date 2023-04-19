@@ -283,7 +283,6 @@ public class ProgressActivity extends AppCompatActivity {
                             petHealthRef.child("averageHealth").setValue(averageHealth);
                             Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
                         }
-
                     }
                 }
             }
