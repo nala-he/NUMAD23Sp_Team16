@@ -32,6 +32,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ public class ProgressActivity extends AppCompatActivity {
     private String petType;
     private float totalHealth = 0;
     private int totalDays = 1;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
 
     // Firebase database
     private DatabaseReference mDatabase;
@@ -250,24 +252,36 @@ public class ProgressActivity extends AppCompatActivity {
                         }
 
                         // Parse date to Date object
-                        String stringDate = month + "/" + day + "/" + year;
-                        Date date = null;
-                        try {
-                            date = new SimpleDateFormat("MM/dd/YYYY").parse(stringDate);
-                        } catch (ParseException e) {
-                            Log.d(TAG, "onDataChange: error parsing date");
-                        }
+//                        String stringDate = month + "/" + day + "/" + year;
+//                        Log.d(TAG, "onDataChange: string date " + stringDate);
+//                        Date date = null;
+//                        try {
+//                            date = new SimpleDateFormat("MM/dd/YYYY").parse(stringDate);
+//                        } catch (ParseException e) {
+//                            Log.d(TAG, "onDataChange: error parsing date");
+//                        }
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, day);
+                        Date date = calendar.getTime();
+
+                        Log.d(TAG, "onDataChange: current date " + currentDate);
+                        Log.d(TAG, "onDataChange: string date " + date);
 
                         // Only calculate into pet's health if not the current day
                         if (currentDate != date) {
+
                             // Add to total health
                             totalHealth += data.child("percentageOfToday").getValue(Float.class);
+                            Log.d(TAG, "onDataChange: total health " + totalHealth);
 
                             // Calculate average health from total health and number of days
                             float averageHealth = totalHealth / totalDays;
+                            Log.d(TAG, "onDataChange: total days " + totalDays);
 
                             // Update average health for PetHealth node
                             petHealthRef.child("averageHealth").setValue(averageHealth);
+                            Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
                         }
 
                     }
@@ -287,7 +301,6 @@ public class ProgressActivity extends AppCompatActivity {
     // Calculate total number of days between creation date and current day
     private int calculateNumberOfDays(String date) {
         // Convert creation date to Date object
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
         Date creationDate = null;
         try {
             creationDate = dateFormat.parse(date);
@@ -302,6 +315,9 @@ public class ProgressActivity extends AppCompatActivity {
         int differenceInDays = (int) TimeUnit.DAYS.convert(durationInMillis, TimeUnit.MILLISECONDS);
         Log.d(TAG, "calculateNumberOfDays: " + differenceInDays);
 
+        if (differenceInDays == 0) {
+            return 1;
+        }
         return differenceInDays;
     }
 
