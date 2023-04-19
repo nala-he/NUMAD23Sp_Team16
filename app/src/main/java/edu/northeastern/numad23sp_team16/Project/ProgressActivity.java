@@ -173,6 +173,9 @@ public class ProgressActivity extends AppCompatActivity {
         };
         petHealthRef.addValueEventListener(petHealthPostListener);
 
+        // TODO: listener for changes to GoalFinishedStatus - calculate and update PetHealth accordingly
+
+
         // Recycler view to show hearts (pet health)
         petHealthRecyclerView = findViewById(R.id.progress_pet_health);
         listOfHearts = new ArrayList<>();
@@ -292,6 +295,10 @@ public class ProgressActivity extends AppCompatActivity {
         calendarHistory.setDateSelected(CalendarDay.today(), true);
 
         // TODO: get the days that the user completed all daily goals from database
+        // Get dates where goal completion is 100 for user and store in completedGoalsDates
+        // Create listener for GoalFinishedStatus and add to completedGoalsDates when date updated with completion of 100
+
+
         completedGoalsDates = new ArrayList<>();
         completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
         completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 26, 2023
