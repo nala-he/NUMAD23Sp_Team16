@@ -115,8 +115,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
-                        filteredGoals.add(goal);
-                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+//                        filteredGoals.add(goal);
+//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                            String currentDateStr= dateFormat.format(new Date());
+                            if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+                                    && goal.getLastCheckedInDate() != null
+                                    && goal.getLastCheckedInDate().equals(currentDateStr)){
                             checkedCount++;
                             Log.d("checkedCount", String.valueOf(checkedCount));
                         }
