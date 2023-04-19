@@ -67,9 +67,11 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
             if (isNotStarted(goal)) {
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (start soon)");
                 //not started or expired marked as grey
-                holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
+                //the following way only changes color without radius, use drawable resource instead
+                //holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
+                holder.itemView.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.goal_bg_grey));
                 holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.Not started.", Toast.LENGTH_SHORT).show());
-            } else if (hasExpired(goal)) {
+            } else if (hasExpired(goal)) { //this will not show any more in the new version since we filtered out expired goals
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (end date passed)");
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
                 holder.itemView.setOnClickListener(v -> Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.It has ended.", Toast.LENGTH_SHORT).show());
@@ -79,7 +81,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
                 String currentDateStr= dateFormat.format(new Date());
                 if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
-                    holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
+                    holder.itemView.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.goal_bg_finished));
                     holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
                 // Set a click listener
