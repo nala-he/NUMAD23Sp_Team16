@@ -86,6 +86,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     //TODO:
     int allGoalsThisUser = 0;
+    int allGoalsWeight=0;
+    int invalidGoalWeight = 0;
+    int checkedCountWithWeight=0;
 
 
     @Override
@@ -120,10 +123,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 checkedCount = 0;
                 invalidGoalCount = 0;
                 allGoalsThisUser = 0;
+                allGoalsWeight = 0;
+                invalidGoalWeight = 0;
+                checkedCountWithWeight=0;
                 //filter goals for current user
                 List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     allGoalsThisUser = (int) dataSnapshot.getChildrenCount();
+
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
@@ -131,15 +138,18 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         // check the lastCheckedInDate variable if it exists
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
                         String currentDateStr= dateFormat.format(new Date());
+                        allGoalsWeight += goal.getPriority();
                         if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
                                 && goal.getLastCheckedInDate() != null
                                 && goal.getLastCheckedInDate().equals(currentDateStr)){
                             checkedCount++;
+                            checkedCountWithWeight += goal.getPriority();
                         }
-                        //goals not started or expired
+                        //goals not started or expired(no need to consider any more since we have filtered them out)
                         try {
                             if(isNotStarted(goal)){
                                 invalidGoalCount ++;
+                                invalidGoalWeight += goal.getPriority();
                             }
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
@@ -258,23 +268,32 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //update percentage of progress
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
         // Reset the variable to 0,it keeps updating in a day when the user clocks in.Each day the user will have a node with a record, if percentageOfToday == 100, the goal is all finished on the day.
-        //percentageOfToday = 0;
-        float percentageOfProgress = (allGoalsThisUser > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
+        float percentageOfProgress = 0;
+        if(allGoalsThisUser!=invalidGoalCount){
+             percentageOfProgress = (allGoalsThisUser > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
+        }
         bar.setProgress((int) percentageOfProgress);
         //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
-        Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
-        Log.d("progress",  "invalidCount: "+ invalidGoalCount);
-        Log.d("progress",  "allGoalsThisUser: "+ allGoalsThisUser);
-        //TODO:
+        Log.d("progress", "Today's goal completion " + checkedCount + " / " + allGoalsThisUser);
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //Update in the db if the user has finished all goals today
         GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
         Log.d("percentageOfProgress", "percentageOfProgress = " + percentageOfProgress);
-        percentageOfToday = (int) percentageOfProgress;
-        Log.d("progress", "percentageOfToday = " + percentageOfToday);
-        //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
-        Map<String, Integer> dateMap = getTheDay();
-        storeInDB(percentageOfToday,userId,dateMap);
+        //This is the old version to store the percentage without considering priority.
+        // percentageOfToday = (int) percentageOfProgress;
+       //caculate weighted percentage to store in the db
+        if(allGoalsWeight == invalidGoalWeight){
+            Toast.makeText(ProjectEntryActivity.this,"All goals start soon.",Toast.LENGTH_SHORT);
+;        } else {
+            //This is the new version to store the percentage considering priority.
+            float weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
+            percentageOfToday = (int)weightedPercentage;
+            Log.d("checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)",allGoalsWeight +"/("+allGoalsWeight+" - "  +invalidGoalWeight+")" );
+            //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
+            Map<String, Integer> dateMap = getTheDay();
+            storeInDB(percentageOfToday,userId,dateMap);
+        }
+
 
     }
 

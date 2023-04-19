@@ -162,7 +162,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                     //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
                     if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
                         isCheckedForToday = 0;
-                        lastCheckedInDate = "";
+                        lastCheckedInDate = "N";
                         goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId).child(goalId);
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
