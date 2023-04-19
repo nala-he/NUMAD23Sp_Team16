@@ -122,7 +122,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
                         filteredGoals.add(goal);
-                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+                        // check the lastCheckedInDate variable if it exists
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                        String currentDateStr= dateFormat.format(new Date());
+                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+                                && goal.getLastCheckedInDate() != null
+                                && goal.getLastCheckedInDate().equals(currentDateStr)){
                             checkedCount++;
                         }
                         //goals not started or expired
