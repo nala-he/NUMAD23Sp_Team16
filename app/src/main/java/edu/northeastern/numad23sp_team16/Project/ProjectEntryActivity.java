@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +42,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     private static final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
+    private final String EVENT_LISTENER = "EVENT_LISTENER";
+
     private String currentUser;
     private String loginTime;
 
@@ -49,7 +52,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
 
-        // Get currently logged in user's id and the logged in time
+        // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
@@ -68,14 +71,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-                Log.i("ProjectEntry", "currentUser in line 71: " + currentUser);
-                Log.i("ProjectEntry", "loginTime in line 72: " + loginTime);
+                Log.i("ProjectEntry", "currentUser in listener: " + currentUser);
+                Log.i("ProjectEntry", "loginTime in listener: " + loginTime);
 
                 Message message = snapshot.getValue(Message.class);
                 if (message != null) {
                     Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-                    //Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
-                    //      " message time: " + messageTime + " login time: " + loginTime);
+                    Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
+                          " message time: " + messageTime + " login time: " + loginTime);
                     if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
                         // send and receive status message
                         Log.i("ProjectEntryActivity",
@@ -117,6 +120,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        // remove the event listener before going to the profile page in case that the user will log
+        // out from the profile page
+        messagesRef.removeEventListener(messagesChildEventListener);
         startActivity(intent);
     }
 

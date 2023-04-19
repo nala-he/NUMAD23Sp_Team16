@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
@@ -169,6 +170,18 @@ public class ProfileActivity extends AppCompatActivity {
 
         usersRef.child(currentUser).child("petType")
                 .setValue(petTypeOnSave);
+    }
+
+    public void onClickLogOut(View view) {
+        Intent intent = new Intent(ProfileActivity.this, ProjectStartActivity.class);
+        // close all the activities in the call stack above ShareActivity and bring it to
+        // the top of the call stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        finish();
+        startActivity(intent);
+        Toast.makeText(ProfileActivity.this, "The user is successfully logged out.",
+                Toast.LENGTH_LONG).show();
+
     }
 
     @Override
