@@ -64,6 +64,7 @@ public class ProgressActivity extends AppCompatActivity {
     private PetHealth currentUserPetHealth;
     private ValueEventListener userPostListener;
     private ValueEventListener petHealthPostListener;
+    private ValueEventListener goalFinishedStatusPostListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,9 +174,6 @@ public class ProgressActivity extends AppCompatActivity {
         };
         petHealthRef.addValueEventListener(petHealthPostListener);
 
-        // TODO: listener for changes to GoalFinishedStatus - calculate and update PetHealth accordingly
-
-
         // Recycler view to show hearts (pet health)
         petHealthRecyclerView = findViewById(R.id.progress_pet_health);
         listOfHearts = new ArrayList<>();
@@ -195,7 +193,49 @@ public class ProgressActivity extends AppCompatActivity {
 
         // Set up calendar to view past history
         calendarHistory = findViewById(R.id.completion_history_calendar);
-        setCalendar();
+        //completedGoalsDates = new ArrayList<>();
+
+        // Set date selected to current date
+        calendarHistory.setDateSelected(CalendarDay.today(), true);
+
+        // Create reference to GoalFinishedStatus node in database
+        DatabaseReference goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
+
+        // Create listener for changes to GoalFinishedStatus
+        goalFinishedStatusPostListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Iterate through GoalFinishedStatus nodes
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    // Check if goal finished status is associated with current user
+                    if (Objects.equals(data.child("userId").getValue(String.class), currentUser)) {
+                        // Add pink dot to calendar if percentage of completion is 100
+                        if (data.child("percentageOfToday").getValue(Float.class) == 100) {
+                            DataSnapshot dateMap = data.child("dateMap");
+
+                            // Get the date
+                            int year = dateMap.child("year").getValue(Integer.class);
+                            int month = dateMap.child("month").getValue(Integer.class);
+                            int day = dateMap.child("day").getValue(Integer.class);
+
+                            // Add pink dot to calendar if user completed all goals for that date
+                            updateCalendar(year, month, day);
+                        }
+
+                        // TODO: calculate and update PetHealth accordingly
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Getting GoalFinishedStatus failed, log a message
+                Log.w(TAG, "Error getting goal finished status from database");
+            }
+        };
+        goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
+
     }
 
     private void assignPetHealthImages() {
@@ -290,25 +330,28 @@ public class ProgressActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void setCalendar() {
-        // Set date selected to current date
-        calendarHistory.setDateSelected(CalendarDay.today(), true);
+    public void updateCalendar(int year, int month, int day) {
+        // Create calendar date
+        CalendarDay date = CalendarDay.from(year, month, day);
+
+        // Add dot to calendar for give date
+        DayDecorator dayDecorator = new DayDecorator(date);
+        calendarHistory.addDecorator(dayDecorator);
 
         // TODO: get the days that the user completed all daily goals from database
         // Get dates where goal completion is 100 for user and store in completedGoalsDates
         // Create listener for GoalFinishedStatus and add to completedGoalsDates when date updated with completion of 100
 
 
-        completedGoalsDates = new ArrayList<>();
-        completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
-        completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 26, 2023
-        completedGoalsDates.add(CalendarDay.from(2023, 3, 8)); // March 8, 2023
-
-        // Add dots to calendar on dates the user completed all daily goals
-        for (int i = 0; i < completedGoalsDates.size(); i++) {
-            DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
-            calendarHistory.addDecorator(dayDecorator);
-        }
+//        completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
+//        completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 26, 2023
+//        completedGoalsDates.add(CalendarDay.from(2023, 3, 8)); // March 8, 2023
+//
+//        // Add dots to calendar on dates the user completed all daily goals
+//        for (int i = 0; i < completedGoalsDates.size(); i++) {
+//            DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
+//            calendarHistory.addDecorator(dayDecorator);
+//        }
     }
 
     // Pass currently logged in user and log in time back when swipe back
