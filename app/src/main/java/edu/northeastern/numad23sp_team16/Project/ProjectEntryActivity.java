@@ -128,7 +128,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // TODO: associate method to onClick for creating new goal button in home screen by Yuan
     public void startCreateNewGoalActivity(View view) {
         // Pass currently logged in user to create new goal
         Intent createGoalIntent = new Intent(ProjectEntryActivity.this,
