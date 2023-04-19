@@ -27,6 +27,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
@@ -157,9 +161,15 @@ public class ProjectSignUpActivity extends AppCompatActivity {
 //                    // Add new user node
 //                    usersRef.child(userId).setValue(user);
 
-                    // Create new pet health object in database to keep track of newly created pet's health
+                    // Get reference to database
                     mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
-                    PetHealth petHealth = new PetHealth(userId);
+
+                    // Get current date as creation date
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                    String currentDate = dateFormat.format(new Date());
+
+                    // Create new pet health object in database to keep track of newly created pet's health
+                    PetHealth petHealth = new PetHealth(userId, currentDate);
                     mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
 
                     // show success message
