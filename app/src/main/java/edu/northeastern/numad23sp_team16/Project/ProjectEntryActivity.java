@@ -105,9 +105,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
         bar = findViewById(R.id.progress_bar);
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
-
-        
-        // replace the userId variable with the name currentUser -- Yutong
         Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
 
         // Add a ValueEventListener to the query
@@ -115,6 +112,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
+                isAllFinishedToday = 0;
                 checkedCount = 0;
                 invalidGoalCount = 0;
                 //filter goals for current user
@@ -140,8 +138,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 // Use the checkedCount value as needed
                 Log.d("checkedCount", "Checked count for user " + userId + ": " + checkedCount);
 
-                //initialize goal options
-                options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
+                //initialize goal options,add setLifecycleOwner to automatically listen to changes
+                options = new FirebaseRecyclerOptions.Builder<Goal>().setLifecycleOwner(ProjectEntryActivity.this).setQuery(query, Goal.class).build();
                 //instantiate adapter
                 adapter = new GoalAdapter(options);
 
@@ -279,6 +277,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        adapter.startListening();
+
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
 
     }
 
@@ -396,6 +401,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         }
 
     }
+
+
 
     @Override
     protected void onResume() {
