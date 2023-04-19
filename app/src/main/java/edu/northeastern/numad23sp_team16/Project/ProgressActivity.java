@@ -61,7 +61,7 @@ public class ProgressActivity extends AppCompatActivity {
     private Map<Integer, Integer> dogHealth;
     private Map<Integer, Integer> catHealth;
     private String petType;
-    private float totalHealth = 0;
+    private float totalHealth;
     private int totalDays = 1;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
 
@@ -238,10 +238,16 @@ public class ProgressActivity extends AppCompatActivity {
         goalFinishedStatusPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                totalHealth = 0;
+
                 // Iterate through GoalFinishedStatus nodes
                 for (DataSnapshot data : snapshot.getChildren()) {
+                    String user = data.child("userId").getValue(String.class);
+
                     // Check if goal finished status is associated with current user
-                    if (Objects.equals(data.child("userId").getValue(String.class), currentUser)) {
+                    if (Objects.equals(user, currentUser)) {
+                        Log.d(TAG, "onDataChange: user " + user);
+                        Log.d(TAG, "onDataChange: user current " + currentUser);
 
                         // Get the date
                         DataSnapshot dateMap = data.child("dateMap");
