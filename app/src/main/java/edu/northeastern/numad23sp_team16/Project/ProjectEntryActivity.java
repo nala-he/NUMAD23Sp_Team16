@@ -35,14 +35,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 import edu.northeastern.numad23sp_team16.models.Message;
+
 
 public class ProjectEntryActivity extends AppCompatActivity {
     TextView progressIndicator;
@@ -54,9 +58,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //display goals
     RecyclerView recyclerView;
     DatabaseReference goalsRef;
-    float percentageOfProgress;
+    //float percentageOfProgress;
     int checkedCount = 0;
     int invalidGoalCount = 0;
+    DatabaseReference GoalFinishedStatusRef;
 
     // use the currentUser variable for the userId value -- Yutong
     ////get userId of currentUser
@@ -75,7 +80,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private String currentUser;
     private String userId;
     private String loginTime;
-
+    //I set this to boolean at the beginning,but it always shows true.So this is used to store percentage of progress for easier test
+    //in the db. The problem is it keeps updating and all data are stored in the db when the recyclerview is being loaded.
+    int isAllFinishedToday = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +102,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
         bar = findViewById(R.id.progress_bar);
+
         // Get a reference to the "goals" node in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
 
@@ -115,6 +123,17 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
+//<<<<<<< Project-Display-Goal-Debug
+//                        filteredGoals.add(goal);
+//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+//                        // check the lastCheckedInDate variable if it exists
+//                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+//                        String currentDateStr= dateFormat.format(new Date());
+//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+//                                && goal.getLastCheckedInDate() != null
+//                                && goal.getLastCheckedInDate().equals(currentDateStr)){
+//=======
+
 //                        filteredGoals.add(goal);
 //                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
                             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
@@ -122,11 +141,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
                             if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
                                     && goal.getLastCheckedInDate() != null
                                     && goal.getLastCheckedInDate().equals(currentDateStr)){
+//>>>>>>> Project-display-goal
                             checkedCount++;
-                            Log.d("checkedCount", String.valueOf(checkedCount));
-                        }
+                            Log.d("Goal", "checkedCount: " + checkedCount);
 
-                            //goals not started or expired
+                        }
+                        //goals not started or expired
                         try {
                             if(hasExpired(goal) || isNotStarted(goal)){
                                 invalidGoalCount ++;
@@ -134,8 +154,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
                         }
-
-
                     }
                 }
                 // Use the checkedCount value as needed
@@ -149,17 +167,27 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onChanged() {
+                        super.onChanged();
                         updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
                     }
 
                     @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
+                    public void onItemRangeChanged(int positionStart, int itemCount) {
+                        super.onChanged();
+                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                    }
 
                     @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+                        super.onChanged();
+                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                    }
 
                     @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {updateProgressPercentage(adapter,checkedCount,invalidGoalCount);}
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {
+                        super.onChanged();
+                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                    }
                 });
                 //this is the key to solving the problem-2hs
                 adapter.startListening();
@@ -231,17 +259,39 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
-    //get the isChecked sum in db, update percentage of progress
+    //update percentage of progress
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
+        // Reset the variable to 0,if all finished the value is 100.Check the comment for this variable!
+        isAllFinishedToday = 0;
         int allGoalsDisplayedInRC = adapter.getItemCount();
-        percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
+        float percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
         bar.setProgress((int) percentageOfProgress);
-        //progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
         Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
         Log.d("progress",  "invalidCount: "+ invalidGoalCount);
         //TODO:
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
+        //Update in the db if the user has finished all goals today
+        GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
+        Log.d("percentageOfProgress", "percentageOfProgress = " + percentageOfProgress);
+        isAllFinishedToday = (int) percentageOfProgress;
+        Log.d("progress", "isAllFinishedToday = " + isAllFinishedToday);
+        //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
+        Map<String, Integer> dateMap = getTheDay();
+        storeInDB(isAllFinishedToday,userId,dateMap);
+
+    }
+
+    private void storeInDB(int isAllFinishedToday, String userId, Map<String, Integer> dateMap) {
+        //GoalFinishedStatusRef.push().setValue(dateMap);
+        // Create a new map to hold the date values and boolean value
+        Map<String, Object> values = new HashMap<>();
+        values.put("dateMap", dateMap);
+        values.put("isAllFinishedToday", isAllFinishedToday);
+        values.put("userId", userId);
+
+        // Set the new map as the value for the child node with the user ID as the key
+        GoalFinishedStatusRef.push().setValue(values);
     }
 
 
@@ -411,5 +461,18 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Date currentDate = dateFormat.parse(currentDateStr);
         return sDate.compareTo(currentDate)> 0;
     }
-
+    //store this dateMap in db for later display in progressActivity, store as int for later use
+    private Map<String,Integer> getTheDay(){
+        // Create a LocalDate object representing the current date
+        LocalDate currentDate = LocalDate.now();
+        // Retrieve the year, month, and day from the LocalDate object
+        int year = currentDate.getYear();
+        int month = currentDate.getMonthValue();
+        int day = currentDate.getDayOfMonth();
+        Map<String,Integer> dateMap = new HashMap<>();
+        dateMap.put("year",year);
+        dateMap.put("month",month);
+        dateMap.put("day",day);
+        return dateMap;
+    }
 }

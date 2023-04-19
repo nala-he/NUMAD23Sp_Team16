@@ -1,29 +1,32 @@
 package edu.northeastern.numad23sp_team16.Project;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.appcompat.widget.Toolbar;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import edu.northeastern.numad23sp_team16.R;
 
@@ -145,11 +148,51 @@ public class ProgressActivity extends AppCompatActivity {
         // Set date selected to current date
         calendarHistory.setDateSelected(CalendarDay.today(), true);
 
-        // TODO: get the days that the user completed all daily goals from database
+        //  get the days that the user completed all daily goals from database
         completedGoalsDates = new ArrayList<>();
-        completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
-        completedGoalsDates.add(CalendarDay.from(2023, 3, 26)); // March 24, 2023
-        completedGoalsDates.add(CalendarDay.from(2023, 3, 8)); // March 8, 2023
+//        completedGoalsDates.add(CalendarDay.from(2023, 4, 1)); // April 1, 2023
+
+        getDaysAllCompletedFromDB(completedGoalsDates);
+
+        // Add dots to calendar on dates the user completed all daily goals
+//        for (int i = 0; i < completedGoalsDates.size(); i++) {
+//            DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
+//            calendarHistory.addDecorator(dayDecorator);
+//        }
+    }
+    //This is added by Yuan to get the progress data from db.-Yuan
+    private void getDaysAllCompletedFromDB(List<CalendarDay> completedGoalsDates) {
+        DatabaseReference GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus").child("userId");
+        Query daysGoalAllFinishedQuery = GoalFinishedStatusRef.orderByChild("userId").equalTo(currentUser);
+        daysGoalAllFinishedQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    // Loop through the results of the query
+                    for (DataSnapshot goalSnapshot : snapshot.getChildren()) {
+                        GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<>() {};
+                        Map<String, Object> values = goalSnapshot.getValue(genericTypeIndicator);
+                        Map<String, Integer> dateMap = (Map<String, Integer>) values.get("dateMap");
+                        // Use the dateMap data as needed
+                        int day = dateMap.get("day");
+                        Log.d("day:", String.valueOf(day));
+                        int month = dateMap.get("month");
+                        int year = dateMap.get("year");
+                        completedGoalsDates.add(CalendarDay.from(year, month, day));
+                        Log.d("which day all goals finished: " , day+"/"+month+"/"+year);
+                    }
+                } else {
+                    Log.d("database","No days info related to the user found in the db.");
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         // Add dots to calendar on dates the user completed all daily goals
         for (int i = 0; i < completedGoalsDates.size(); i++) {

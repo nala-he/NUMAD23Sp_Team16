@@ -66,24 +66,25 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (start soon)");
                 //not started or expired marked as grey
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
-                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.Not started.", Toast.LENGTH_SHORT).show());
+                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in. Not started.", Toast.LENGTH_SHORT).show());
             } else if (hasExpired(goal)) {
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (end date passed)");
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
-                holder.itemView.setOnClickListener(v -> Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.It has ended.", Toast.LENGTH_SHORT).show());
+                holder.itemView.setOnClickListener(v -> Toast.makeText(holder.itemView.getContext(), "Invalid to clock in. It has ended.", Toast.LENGTH_SHORT).show());
             } else {
                 holder.goalNameTextView.setText(goal.getGoalName());
                 //display green background by checking if it has been clocked in
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
                 String currentDateStr= dateFormat.format(new Date());
                 if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
+                    Log.d("GoalAdapter", "lastCheckedInDate" + goal.getLastCheckedInDate());
                     holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
                     holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
                 // Set a click listener
                 holder.itemView.setOnClickListener(v -> {
                     try {
-                        showClockInDialog(holder,goal,goalId, position);
+                        showClockInDialog(holder, goal, goalId, position);
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
