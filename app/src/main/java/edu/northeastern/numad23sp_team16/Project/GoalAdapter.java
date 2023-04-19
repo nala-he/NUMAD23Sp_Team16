@@ -66,11 +66,11 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (start soon)");
                 //not started or expired marked as grey
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
-                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.Not started.", Toast.LENGTH_SHORT).show());
+                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in. Not started.", Toast.LENGTH_SHORT).show());
             } else if (hasExpired(goal)) {
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (end date passed)");
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
-                holder.itemView.setOnClickListener(v -> Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.It has ended.", Toast.LENGTH_SHORT).show());
+                holder.itemView.setOnClickListener(v -> Toast.makeText(holder.itemView.getContext(), "Invalid to clock in. It has ended.", Toast.LENGTH_SHORT).show());
             } else {
                 holder.goalNameTextView.setText(goal.getGoalName());
                 //display green background by checking if it has been clocked in
