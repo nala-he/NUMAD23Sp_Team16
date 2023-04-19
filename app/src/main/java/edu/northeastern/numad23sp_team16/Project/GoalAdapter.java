@@ -43,6 +43,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         Date currentDate =null;
         private boolean isToastShown = false;
         AlertDialog dialog;
+        String userId;
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
@@ -58,6 +59,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     protected void onBindViewHolder(@NonNull GoalViewHolder holder, int position, @NonNull Goal goal) {
         // Get the ID of the goal object,update isCheckedForToday later
         String goalId = getRef(position).getKey();
+        userId = goal.getUserId();
 
         // Bind the goal data to the view holder
         try {
@@ -147,7 +149,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                     if (goal.getIsCheckedForToday() == 0 || (goal.getIsCheckedForToday() == 1 && !goal.getLastCheckedInDate().equals(currentDateStr))) {
                         isCheckedForToday = 1;
                         lastCheckedInDate = currentDateStr;
-                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId).child(goalId);
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
@@ -161,7 +163,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                     if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
                         isCheckedForToday = 0;
                         lastCheckedInDate = "";
-                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId).child(goalId);
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);

@@ -106,9 +106,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
         bar = findViewById(R.id.progress_bar);
-        // Get a reference to the "goals" node in the database
-        goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
-        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
+        // Get a reference to the "goals" node of this user in the database
+        goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId);
+//        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
+        Query query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
 
         // Add a ValueEventListener to the query
         query.addValueEventListener(new ValueEventListener() {
@@ -122,12 +123,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 //filter goals for current user
                 List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    //TODO
                     allGoalsThisUser = (int) dataSnapshot.getChildrenCount();
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
-//<<<<<<< progress-to-db
                         //filteredGoals.add(goal);
                         // check the lastCheckedInDate variable if it exists
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
@@ -135,20 +134,11 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
                                 && goal.getLastCheckedInDate() != null
                                 && goal.getLastCheckedInDate().equals(currentDateStr)){
-//=======
-//                        filteredGoals.add(goal);
-//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
-//                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-//                            String currentDateStr= dateFormat.format(new Date());
-//                            if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
-//                                    && goal.getLastCheckedInDate() != null
-//                                    && goal.getLastCheckedInDate().equals(currentDateStr)){
-//>>>>>>> Project-display-goal
                             checkedCount++;
                         }
                         //goals not started or expired
                         try {
-                            if(hasExpired(goal) || isNotStarted(goal)){
+                            if(isNotStarted(goal)){
                                 invalidGoalCount ++;
                             }
                         } catch (ParseException e) {
@@ -159,8 +149,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 // Use the checkedCount value as needed
                 Log.d("checkedCount", "Checked count for user / all goals" + userId + ": " + checkedCount+"/"+allGoalsThisUser);
 
-                //initialize goal options,add setLifecycleOwner to automatically listen to changes
-                options = new FirebaseRecyclerOptions.Builder<Goal>().setLifecycleOwner(ProjectEntryActivity.this).setQuery(query, Goal.class).build();
+                //initialize goal options,add setLifecycleOwner to automatically listen to changes.setLifecycleOwner(ProjectEntryActivity.this)
+                options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
                 //instantiate adapter
                 adapter = new GoalAdapter(options);
 
@@ -259,12 +249,17 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
+    private String getCurrentDateStr() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        String currentDateStr = dateFormat.format(new Date());
+        return currentDateStr;
+    }
+
     //update percentage of progress
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
         // Reset the variable to 0,it keeps updating in a day when the user clocks in.Each day the user will have a node with a record, if percentageOfToday == 100, the goal is all finished on the day.
         //percentageOfToday = 0;
-        //int allGoalsDisplayedInRC = adapter.getItemCount();
-        float percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
+        float percentageOfProgress = (allGoalsThisUser > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
         bar.setProgress((int) percentageOfProgress);
         //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
         Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
