@@ -128,7 +128,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
 //<<<<<<< progress-to-db
-                        filteredGoals.add(goal);
+                        //filteredGoals.add(goal);
                         // check the lastCheckedInDate variable if it exists
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
                         String currentDateStr= dateFormat.format(new Date());
