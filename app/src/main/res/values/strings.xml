@@ -98,6 +98,7 @@
     <string name="create_a_new_account">Create a New Account</string>
     <string name="save">Save</string>
     <string name="my_friends">My Friends</string>
+    <string name="log_out">Log Out</string>
     =======
 
 </resources>
