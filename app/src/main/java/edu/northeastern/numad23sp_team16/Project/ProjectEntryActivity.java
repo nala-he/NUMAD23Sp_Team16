@@ -84,6 +84,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //in the db. The problem is it keeps updating and all data are stored in the db when the recyclerview is being loaded.
     int isAllFinishedToday = 0;
 
+    //TODO:
+    int allGoalsThisUser = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,9 +118,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 isAllFinishedToday = 0;
                 checkedCount = 0;
                 invalidGoalCount = 0;
+                allGoalsThisUser = 0;
                 //filter goals for current user
                 List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    //TODO
+                    allGoalsThisUser = (int) dataSnapshot.getChildrenCount();
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
@@ -141,7 +147,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     }
                 }
                 // Use the checkedCount value as needed
-                Log.d("checkedCount", "Checked count for user " + userId + ": " + checkedCount);
+                Log.d("checkedCount", "Checked count for user / all goals" + userId + ": " + checkedCount+"/"+allGoalsThisUser);
 
                 //initialize goal options,add setLifecycleOwner to automatically listen to changes
                 options = new FirebaseRecyclerOptions.Builder<Goal>().setLifecycleOwner(ProjectEntryActivity.this).setQuery(query, Goal.class).build();
@@ -247,12 +253,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
         // Reset the variable to 0,if all finished the value is 100.Check the comment for this variable!
         isAllFinishedToday = 0;
-        int allGoalsDisplayedInRC = adapter.getItemCount();
-        float percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
+        //int allGoalsDisplayedInRC = adapter.getItemCount();
+        float percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
         bar.setProgress((int) percentageOfProgress);
         //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
         Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
         Log.d("progress",  "invalidCount: "+ invalidGoalCount);
+        Log.d("progress",  "allGoalsThisUser: "+ allGoalsThisUser);
         //TODO:
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //Update in the db if the user has finished all goals today
@@ -273,24 +280,16 @@ public class ProjectEntryActivity extends AppCompatActivity {
         values.put("dateMap", dateMap);
         values.put("isAllFinishedToday", isAllFinishedToday);
         values.put("userId", userId);
-
-        // Set the new map as the value for the child node with the user ID as the key
-        GoalFinishedStatusRef.push().setValue(values);
+        //must leave out "/", otherwise,it will be displayed as different nodes
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyy", Locale.US);
+        String currentDateStr = dateFormat.format(new Date());
+        String key =currentDateStr + userId;
+        Log.d("key",key);
+        // percentage for the same day would be overwritten, only one final result is stored.
+        GoalFinishedStatusRef.child(key).setValue(values);
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        adapter.startListening();
-
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        adapter.stopListening();
-
-    }
 
 
     public void startProfileActivity(View view) {

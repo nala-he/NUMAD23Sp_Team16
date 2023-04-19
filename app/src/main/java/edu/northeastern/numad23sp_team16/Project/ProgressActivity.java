@@ -162,7 +162,7 @@ public class ProgressActivity extends AppCompatActivity {
     }
     //This is added by Yuan to get the progress data from db.-Yuan
     private void getDaysAllCompletedFromDB(List<CalendarDay> completedGoalsDates) {
-        DatabaseReference GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus").child("userId");
+        DatabaseReference GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
         Query daysGoalAllFinishedQuery = GoalFinishedStatusRef.orderByChild("userId").equalTo(currentUser);
         daysGoalAllFinishedQuery.addValueEventListener(new ValueEventListener() {
             @Override
@@ -179,7 +179,7 @@ public class ProgressActivity extends AppCompatActivity {
                         int month = dateMap.get("month");
                         int year = dateMap.get("year");
                         completedGoalsDates.add(CalendarDay.from(year, month, day));
-                        Log.d("which day all goals finished: " , day+"/"+month+"/"+year);
+                        Log.d("progressActivity: " , day+"/"+month+"/"+year);
                     }
                 } else {
                     Log.d("database","No days info related to the user found in the db.");
