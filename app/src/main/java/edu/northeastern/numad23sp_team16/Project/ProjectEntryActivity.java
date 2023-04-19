@@ -123,14 +123,25 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
-                        filteredGoals.add(goal);
+//<<<<<<< Project-Display-Goal-Debug
+//                        filteredGoals.add(goal);
 //                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
-                        // check the lastCheckedInDate variable if it exists
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-                        String currentDateStr= dateFormat.format(new Date());
-                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
-                                && goal.getLastCheckedInDate() != null
-                                && goal.getLastCheckedInDate().equals(currentDateStr)){
+//                        // check the lastCheckedInDate variable if it exists
+//                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+//                        String currentDateStr= dateFormat.format(new Date());
+//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+//                                && goal.getLastCheckedInDate() != null
+//                                && goal.getLastCheckedInDate().equals(currentDateStr)){
+//=======
+
+//                        filteredGoals.add(goal);
+//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                            String currentDateStr= dateFormat.format(new Date());
+                            if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+                                    && goal.getLastCheckedInDate() != null
+                                    && goal.getLastCheckedInDate().equals(currentDateStr)){
+//>>>>>>> Project-display-goal
                             checkedCount++;
                             Log.d("Goal", "checkedCount: " + checkedCount);
 
