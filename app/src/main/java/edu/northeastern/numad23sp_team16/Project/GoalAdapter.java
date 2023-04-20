@@ -43,6 +43,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
         Date currentDate =null;
         private boolean isToastShown = false;
         AlertDialog dialog;
+        String userId;
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
@@ -58,6 +59,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
     protected void onBindViewHolder(@NonNull GoalViewHolder holder, int position, @NonNull Goal goal) {
         // Get the ID of the goal object,update isCheckedForToday later
         String goalId = getRef(position).getKey();
+        userId = goal.getUserId();
 
         // Bind the goal data to the view holder
         try {
@@ -65,9 +67,11 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
             if (isNotStarted(goal)) {
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (start soon)");
                 //not started or expired marked as grey
-                holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
-                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in. Not started.", Toast.LENGTH_SHORT).show());
-            } else if (hasExpired(goal)) {
+                //the following way only changes color without radius, use drawable resource instead
+                //holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
+                holder.itemView.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.goal_bg_grey));
+                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.Not started.", Toast.LENGTH_SHORT).show());
+            } else if (hasExpired(goal)) { //this will not show any more in the new version since we filtered out expired goals
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (end date passed)");
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
                 holder.itemView.setOnClickListener(v -> Toast.makeText(holder.itemView.getContext(), "Invalid to clock in. It has ended.", Toast.LENGTH_SHORT).show());
@@ -77,8 +81,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
                 String currentDateStr= dateFormat.format(new Date());
                 if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
-                    Log.d("GoalAdapter", "lastCheckedInDate" + goal.getLastCheckedInDate());
-                    holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
+                    holder.itemView.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.goal_bg_finished));
                     holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
                 // Set a click listener
@@ -148,12 +151,10 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                     if (goal.getIsCheckedForToday() == 0 || (goal.getIsCheckedForToday() == 1 && !goal.getLastCheckedInDate().equals(currentDateStr))) {
                         isCheckedForToday = 1;
                         lastCheckedInDate = currentDateStr;
-                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId).child(goalId);
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
-//                        holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
-//                        holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     }
                 dialog.dismiss();
             });
@@ -161,13 +162,11 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                     //to save in the db whether the item view has been changed to green,isCheckedForToday = 1->checked
                     if (goal.getIsCheckedForToday() == 1 && goal.getLastCheckedInDate().equals(currentDateStr)) {
                         isCheckedForToday = 0;
-                        lastCheckedInDate = "";
-                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals").child(goalId);
+                        lastCheckedInDate = "N";
+                        goalRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId).child(goalId);
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
-//                        holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.light_pink));
-//                        holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
                     }
                 dialog.dismiss();

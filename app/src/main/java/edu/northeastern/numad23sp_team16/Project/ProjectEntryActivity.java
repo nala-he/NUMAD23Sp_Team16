@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
@@ -59,6 +60,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     DatabaseReference goalsRef;
     //float percentageOfProgress;
+
+    Query query;
     int checkedCount = 0;
     int invalidGoalCount = 0;
     DatabaseReference GoalFinishedStatusRef;
@@ -73,7 +76,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private final int PERMISSION_REQUEST_CODE = 0;
     private DatabaseReference messagesRef;
     private ChildEventListener messagesChildEventListener;
-
+    private ValueEventListener queryEventListener;
     private final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
 
@@ -82,7 +85,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private String loginTime;
     //I set this to boolean at the beginning,but it always shows true.So this is used to store percentage of progress for easier test
     //in the db. The problem is it keeps updating and all data are stored in the db when the recyclerview is being loaded.
-    int isAllFinishedToday = 0;
+    int percentageOfToday = 0;
+
+    //TODO:
+    int allGoalsThisUser = 0;
+    int allGoalsWeight=0;
+    int invalidGoalWeight = 0;
+    int checkedCountWithWeight=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,53 +112,47 @@ public class ProjectEntryActivity extends AppCompatActivity {
         progressIndicator = findViewById(R.id.goal_finish_text_view);
         bar = findViewById(R.id.progress_bar);
 
-        // Get a reference to the "goals" node in the database
-        goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("Goals");
-
-        
-        // replace the userId variable with the name currentUser -- Yutong
-        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
-
-        // Add a ValueEventListener to the query
-        query.addValueEventListener(new ValueEventListener() {
+        // Get a reference to the "goals" node of this user in the database
+        goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId);
+//        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
+        query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
+        queryEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
+                percentageOfToday = 0;
                 checkedCount = 0;
                 invalidGoalCount = 0;
+                allGoalsThisUser = 0;
+                allGoalsWeight = 0;
+                invalidGoalWeight = 0;
+                checkedCountWithWeight=0;
                 //filter goals for current user
                 List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    allGoalsThisUser = (int) dataSnapshot.getChildrenCount();
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
-//<<<<<<< Project-Display-Goal-Debug
-//                        filteredGoals.add(goal);
-//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
-//                        // check the lastCheckedInDate variable if it exists
-//                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-//                        String currentDateStr= dateFormat.format(new Date());
-//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
-//                                && goal.getLastCheckedInDate() != null
-//                                && goal.getLastCheckedInDate().equals(currentDateStr)){
-//=======
+                        //filteredGoals.add(goal);
+                        // check the lastCheckedInDate variable if it exists
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                        String currentDateStr= dateFormat.format(new Date());
+                        allGoalsWeight += goal.getPriority();
+//                        Log.d("ProjectEntryActivity", "allGoalsWeight line 142: " + allGoalsWeight);
 
-//                        filteredGoals.add(goal);
-//                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)){
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-                            String currentDateStr= dateFormat.format(new Date());
-                            if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
-                                    && goal.getLastCheckedInDate() != null
-                                    && goal.getLastCheckedInDate().equals(currentDateStr)){
-//>>>>>>> Project-display-goal
+                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+                                && goal.getLastCheckedInDate() != null
+                                && goal.getLastCheckedInDate().equals(currentDateStr)){
                             checkedCount++;
-                            Log.d("Goal", "checkedCount: " + checkedCount);
-
+                            checkedCountWithWeight += goal.getPriority();
                         }
-                        //goals not started or expired
+
+                        //goals not started or expired(no need to consider any more since we have filtered them out)
                         try {
-                            if(hasExpired(goal) || isNotStarted(goal)){
+                            if(isNotStarted(goal)){
                                 invalidGoalCount ++;
+                                invalidGoalWeight += goal.getPriority();
                             }
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
@@ -157,9 +160,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     }
                 }
                 // Use the checkedCount value as needed
-                Log.d("checkedCount", "Checked count for user " + userId + ": " + checkedCount);
+                Log.d("checkedCount", "Checked count for user / all goals" + userId + ": " + checkedCount+"/"+allGoalsThisUser);
 
-                //initialize goal options
+                //initialize goal options,add setLifecycleOwner to automatically listen to changes.setLifecycleOwner(ProjectEntryActivity.this)
                 options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
                 //instantiate adapter
                 adapter = new GoalAdapter(options);
@@ -203,7 +206,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 Toast.makeText(ProjectEntryActivity.this,"database error",Toast.LENGTH_SHORT).show();
             }
 
-        });
+        };
+
+        // Add a ValueEventListener to the query
+        query.addValueEventListener(queryEventListener);
 
 
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
@@ -259,47 +265,66 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
+    private String getCurrentDateStr() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        String currentDateStr = dateFormat.format(new Date());
+        return currentDateStr;
+    }
+
     //update percentage of progress
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
-        // Reset the variable to 0,if all finished the value is 100.Check the comment for this variable!
-        isAllFinishedToday = 0;
-        int allGoalsDisplayedInRC = adapter.getItemCount();
-        float percentageOfProgress = (adapter.getItemCount() > 0) ? ((float) checkedCount / (allGoalsDisplayedInRC - invalidGoalCount) * 100) : 0;
+        // Reset the variable to 0,it keeps updating in a day when the user clocks in.Each day the user will have a node with a record, if percentageOfToday == 100, the goal is all finished on the day.
+        float percentageOfProgress = 0;
+        float weightedPercentage = 0;
+        if(allGoalsThisUser!=invalidGoalCount){
+             percentageOfProgress = (allGoalsThisUser > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
+        }
         bar.setProgress((int) percentageOfProgress);
         //this function is called ten times if there're ten item views in rc, checkedCount needs to be reset to 0 during each loading
-        Log.d("progress", "Today's goal completion " + checkedCount + " / " + adapter.getItemCount());
-        Log.d("progress",  "invalidCount: "+ invalidGoalCount);
-        //TODO:
+        Log.d("progress", "Today's goal completion " + checkedCount + " / " + allGoalsThisUser);
         progressIndicator.setText("Today's goal completion " + (int) percentageOfProgress + "%");
         //Update in the db if the user has finished all goals today
         GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
         Log.d("percentageOfProgress", "percentageOfProgress = " + percentageOfProgress);
-        isAllFinishedToday = (int) percentageOfProgress;
-        Log.d("progress", "isAllFinishedToday = " + isAllFinishedToday);
-        //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
-        Map<String, Integer> dateMap = getTheDay();
-        storeInDB(isAllFinishedToday,userId,dateMap);
+        //This is the old version to store the percentage without considering priority.
+        // percentageOfToday = (int) percentageOfProgress;
+       //caculate weighted percentage to store in the db
+        if(allGoalsWeight == invalidGoalWeight){
+            Toast.makeText(ProjectEntryActivity.this,"All goals start soon.",Toast.LENGTH_SHORT);
+;        } else {
+            //This is the new version to store the percentage considering priority.
+            weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
+            //Log.d("ProjectEntryActivity", "allGoalsWeight line 297: " + allGoalsWeight);
+            //Log.d("ProjectEntryActivity", "checkedCountWithWeight line 297: " + checkedCountWithWeight);
+
+            percentageOfToday = (int)weightedPercentage;
+            // changed allGoalsWeight to checkedCountWithWeight at line 310 log msg part -- Yutong
+            Log.d("checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)",checkedCountWithWeight +"/("+allGoalsWeight+" - "  +invalidGoalWeight+")" );
+
+            //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
+            Map<String, Integer> dateMap = getTheDay();
+            storeInDB(percentageOfToday,userId,dateMap);
+        }
+
 
     }
 
-    private void storeInDB(int isAllFinishedToday, String userId, Map<String, Integer> dateMap) {
-        //GoalFinishedStatusRef.push().setValue(dateMap);
+    private void storeInDB(int percentageOfToday, String userId, Map<String, Integer> dateMap) {
         // Create a new map to hold the date values and boolean value
         Map<String, Object> values = new HashMap<>();
         values.put("dateMap", dateMap);
-        values.put("isAllFinishedToday", isAllFinishedToday);
+        values.put("percentageOfToday", percentageOfToday);
         values.put("userId", userId);
-
-        // Set the new map as the value for the child node with the user ID as the key
-        GoalFinishedStatusRef.push().setValue(values);
+        //must leave out "/", otherwise,it will be displayed as different nodes
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyy", Locale.US);
+        String currentDateStr = dateFormat.format(new Date());
+        //To make sure each user has a node for each day.
+        String key =currentDateStr + userId;
+        // percentage for the same day would be overwritten, only one final result is stored.
+        GoalFinishedStatusRef.child(key).setValue(values);
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
 
     public void startProfileActivity(View view) {
@@ -307,6 +332,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        // remove messages child event listener
+        messagesRef.removeEventListener(messagesChildEventListener);
+        // remove query event listener -- Yutong
+        query.removeEventListener(queryEventListener);
         startActivity(intent);
     }
 
@@ -416,6 +445,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -432,7 +463,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
         // remove messages child event listener if user went back to log in page
         messagesRef.removeEventListener(messagesChildEventListener);
-
+        // remove query event listener -- Yutong
+        query.removeEventListener(queryEventListener);
         finish();
     }
 
@@ -441,6 +473,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             // remove messages child event listener
             messagesRef.removeEventListener(messagesChildEventListener);
+            // remove query event listener -- Yutong
+            query.removeEventListener(queryEventListener);
             this.finish();
             return true;
         }
