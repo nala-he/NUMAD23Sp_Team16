@@ -70,7 +70,7 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                 //the following way only changes color without radius, use drawable resource instead
                 //holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
                 holder.itemView.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.goal_bg_grey));
-                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in.Not started.", Toast.LENGTH_SHORT).show());
+                holder.itemView.setOnClickListener(v ->Toast.makeText(holder.itemView.getContext(), "Invalid to clock in. Not started.", Toast.LENGTH_SHORT).show());
             } else if (hasExpired(goal)) { //this will not show any more in the new version since we filtered out expired goals
                 holder.goalNameTextView.setText(goal.getGoalName() + ": (end date passed)");
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
