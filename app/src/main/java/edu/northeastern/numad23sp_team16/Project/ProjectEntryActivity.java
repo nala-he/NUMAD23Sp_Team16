@@ -6,7 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
@@ -117,102 +117,113 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
         // Get a reference to the "goals" node of this user in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId);
-//        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
-        query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
-        queryEventListener = new ValueEventListener() {
+//        query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
+        //put the query in a different thread at line 121,origianl code from line 129-222
+        HandlerThread handlerThread = new HandlerThread("MyHandlerThread");
+        handlerThread.start();
+        Handler handler = new Handler(handlerThread.getLooper());
+        handler.post(new Runnable() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
-                percentageOfToday = 0;
-                checkedCount = 0;
-                invalidGoalCount = 0;
-                allGoalsThisUser = 0;
-                allGoalsWeight = 0;
-                invalidGoalWeight = 0;
-                checkedCountWithWeight=0;
-                //filter goals for current user
-                List<Goal> filteredGoals = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    allGoalsThisUser = (int) dataSnapshot.getChildrenCount();
-                    Goal goal = snapshot.getValue(Goal.class);
-                    if (goal != null) {
-                        Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
-                        //filteredGoals.add(goal);
-                        // check the lastCheckedInDate variable if it exists
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
-                        String currentDateStr= dateFormat.format(new Date());
-                        allGoalsWeight += goal.getPriority();
+            public void run() {
+                query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
+                queryEventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
+                        percentageOfToday = 0;
+                        checkedCount = 0;
+                        invalidGoalCount = 0;
+                        allGoalsThisUser = 0;
+                        allGoalsWeight = 0;
+                        invalidGoalWeight = 0;
+                        checkedCountWithWeight=0;
+                        //filter goals for current user
+                        List<Goal> filteredGoals = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            allGoalsThisUser = (int) dataSnapshot.getChildrenCount();
+                            Goal goal = snapshot.getValue(Goal.class);
+                            if (goal != null) {
+                                Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
+                                //filteredGoals.add(goal);
+                                // check the lastCheckedInDate variable if it exists
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                                String currentDateStr= dateFormat.format(new Date());
+                                allGoalsWeight += goal.getPriority();
 //                        Log.d("ProjectEntryActivity", "allGoalsWeight line 142: " + allGoalsWeight);
 
-                        if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
-                                && goal.getLastCheckedInDate() != null
-                                && goal.getLastCheckedInDate().equals(currentDateStr)){
-                            checkedCount++;
-                            checkedCountWithWeight += goal.getPriority();
-                        }
+                                if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
+                                        && goal.getLastCheckedInDate() != null
+                                        && goal.getLastCheckedInDate().equals(currentDateStr)){
+                                    checkedCount++;
+                                    checkedCountWithWeight += goal.getPriority();
+                                }
 
-                        //goals not started or expired(no need to consider any more since we have filtered them out)
-                        try {
-                            if(isNotStarted(goal)){
-                                invalidGoalCount ++;
-                                invalidGoalWeight += goal.getPriority();
+                                //goals not started or expired(no need to consider any more since we have filtered them out)
+                                try {
+                                    if(isNotStarted(goal)){
+                                        invalidGoalCount ++;
+                                        invalidGoalWeight += goal.getPriority();
+                                    }
+                                } catch (ParseException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
                         }
-                    }
-                }
-                // Use the checkedCount value as needed
-                Log.d("checkedCount", "Checked count for user / all goals" + userId + ": " + checkedCount+"/"+allGoalsThisUser);
+                        // Use the checkedCount value as needed
+                        Log.d("checkedCount", "Checked count for user / all goals" + userId + ": " + checkedCount+"/"+allGoalsThisUser);
 
-                //initialize goal options,add setLifecycleOwner to automatically listen to changes.setLifecycleOwner(ProjectEntryActivity.this)
-                options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
-                //instantiate adapter
-                adapter = new GoalAdapter(options);
+                        //initialize goal options,add setLifecycleOwner to automatically listen to changes.setLifecycleOwner(ProjectEntryActivity.this)
+                        options = new FirebaseRecyclerOptions.Builder<Goal>().setQuery(query, Goal.class).build();
+                        //instantiate adapter
+                        adapter = new GoalAdapter(options);
 
-                adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                    @Override
-                    public void onChanged() {
-                        super.onChanged();
+                        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                            @Override
+                            public void onChanged() {
+                                super.onChanged();
+                                updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                            }
+
+                            @Override
+                            public void onItemRangeChanged(int positionStart, int itemCount) {
+                                super.onChanged();
+                                updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                            }
+
+                            @Override
+                            public void onItemRangeInserted(int positionStart, int itemCount) {
+                                super.onChanged();
+                                updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                            }
+
+                            @Override
+                            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                                super.onChanged();
+                                updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                            }
+                        });
+                        //this is the key to solving the problem-2hs
+                        adapter.startListening();
+                        //initialize recyclerview
+                        recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
+                        recyclerView.setAdapter(adapter);
+                        //update percentage of progress
                         updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
                     }
 
                     @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {
-                        super.onChanged();
-                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(ProjectEntryActivity.this,"database error",Toast.LENGTH_SHORT).show();
                     }
 
-                    @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        super.onChanged();
-                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
-                    }
+                };
 
-                    @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        super.onChanged();
-                        updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
-                    }
-                });
-                //this is the key to solving the problem-2hs
-                adapter.startListening();
-                //initialize recyclerview
-                recyclerView.setLayoutManager(new LinearLayoutManager(ProjectEntryActivity.this));
-                recyclerView.setAdapter(adapter);
-                //update percentage of progress
-                updateProgressPercentage(adapter,checkedCount,invalidGoalCount);
+                // Add a ValueEventListener to the query
+                query.addValueEventListener(queryEventListener);
+
             }
+        });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ProjectEntryActivity.this,"database error",Toast.LENGTH_SHORT).show();
-            }
-
-        };
-
-        // Add a ValueEventListener to the query
-        query.addValueEventListener(queryEventListener);
 
 
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
@@ -290,11 +301,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
         Log.d("percentageOfProgress", "percentageOfProgress = " + percentageOfProgress);
         //This is the old version to store the percentage without considering priority.
-        // percentageOfToday = (int) percentageOfProgress;
        //caculate weighted percentage to store in the db
-        if(allGoalsWeight == invalidGoalWeight){
-            Toast.makeText(ProjectEntryActivity.this,"All goals start soon.",Toast.LENGTH_SHORT);
-;        } else {
+        if(allGoalsWeight != invalidGoalWeight){
             //This is the new version to store the percentage considering priority.
             weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
             //Log.d("ProjectEntryActivity", "allGoalsWeight line 297: " + allGoalsWeight);
