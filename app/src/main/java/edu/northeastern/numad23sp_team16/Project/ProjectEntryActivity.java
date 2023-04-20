@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -221,10 +222,21 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 // Add a ValueEventListener to the query
                 query.addValueEventListener(queryEventListener);
 
+                //check thread
+                Thread thread = Thread.currentThread();
+                Looper looper = Looper.myLooper();
+
+                Log.d(TAG, "Current thread: " + thread.getName());
+                Log.d(TAG, "Current looper: " + looper.getThread().getName());
+                //quit thread
+                handlerThread.quit();
+
             }
         });
 
-
+        //check thread
+        Thread thread = Thread.currentThread();
+        Log.d(TAG, "Current thread out of the query thread: " + thread.getName());
 
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
         int heartCount = 8;
