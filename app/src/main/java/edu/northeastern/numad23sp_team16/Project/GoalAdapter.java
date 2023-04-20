@@ -155,8 +155,6 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
-//                        holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
-//                        holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     }
                 dialog.dismiss();
             });
@@ -169,8 +167,6 @@ public class GoalAdapter extends FirebaseRecyclerAdapter<Goal, GoalViewHolder> {
                         //update this goal as checked in db
                         goalRef.child("isCheckedForToday").setValue(isCheckedForToday);
                         goalRef.child("lastCheckedInDate").setValue(lastCheckedInDate);
-//                        holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.light_pink));
-//                        holder.goalNameTextView.setPaintFlags(holder.goalNameTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
                     }
                 dialog.dismiss();
