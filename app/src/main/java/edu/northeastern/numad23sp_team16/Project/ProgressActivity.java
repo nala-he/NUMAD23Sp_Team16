@@ -61,9 +61,6 @@ public class ProgressActivity extends AppCompatActivity {
     private Map<Integer, Integer> dogHealth;
     private Map<Integer, Integer> catHealth;
     private String petType;
-    private float totalHealth;
-    private int totalDays = 1;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
 
     // Firebase database
     private DatabaseReference mDatabase;
@@ -212,33 +209,10 @@ public class ProgressActivity extends AppCompatActivity {
         // Create reference to GoalFinishedStatus node in database
         DatabaseReference goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
 
-        // Get today's date with time of 0
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR, 0);
-        Date currentDate = calendar.getTime();
-
-        // Calculate and assign number of days it has been between current date and creation date
-        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
-                totalDays = calculateNumberOfDays(creationDate);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: Database error retrieving creation date");
-            }
-        });
-
         // Create listener for changes to GoalFinishedStatus
         goalFinishedStatusPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                totalHealth = 0;
 
                 // Iterate through GoalFinishedStatus nodes
                 for (DataSnapshot data : snapshot.getChildren()) {
@@ -261,34 +235,6 @@ public class ProgressActivity extends AppCompatActivity {
                             // Add pink dot to calendar if user completed all goals for that date
                             updateCalendar(year, month, day);
                         }
-
-                        // Convert stored date to Date object with time of 0
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(year, month - 1, day);
-                        calendar.set(Calendar.MILLISECOND, 0);
-                        calendar.set(Calendar.SECOND, 0);
-                        calendar.set(Calendar.MINUTE, 0);
-                        calendar.set(Calendar.HOUR, 0);
-                        Date date = calendar.getTime();
-
-                        Log.d(TAG, "onDataChange: current date " + currentDate);
-                        Log.d(TAG, "onDataChange: string date " + date);
-
-                        // Only calculate into pet's health if not the current day
-                        if (!currentDate.equals(date)) {
-
-                            // Add to total health
-                            totalHealth += data.child("percentageOfToday").getValue(Float.class);
-                            Log.d(TAG, "onDataChange: total health " + totalHealth);
-
-                            // Calculate average health from total health and number of days
-                            float averageHealth = totalHealth / totalDays;
-                            Log.d(TAG, "onDataChange: total days " + totalDays);
-
-                            // Update average health for PetHealth node
-                            petHealthRef.child("averageHealth").setValue(averageHealth);
-                            Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
-                        }
                     }
                 }
             }
@@ -301,29 +247,6 @@ public class ProgressActivity extends AppCompatActivity {
         };
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
 
-    }
-
-    // Calculate total number of days between creation date and current day
-    private int calculateNumberOfDays(String date) {
-        // Convert creation date to Date object
-        Date creationDate = null;
-        try {
-            creationDate = dateFormat.parse(date);
-        } catch (ParseException e) {
-            Log.d(TAG, "calculateNumberOfDays: Error parsing date");
-        }
-
-        Date currentDate = new Date();
-
-        // Calculate duration between the current date and creation date
-        long durationInMillis = currentDate.getTime() - creationDate.getTime();
-        int differenceInDays = (int) TimeUnit.DAYS.convert(durationInMillis, TimeUnit.MILLISECONDS);
-        Log.d(TAG, "calculateNumberOfDays: " + differenceInDays);
-
-        if (differenceInDays == 0) {
-            return 1;
-        }
-        return differenceInDays;
     }
 
     private void assignPetHealthImages() {
