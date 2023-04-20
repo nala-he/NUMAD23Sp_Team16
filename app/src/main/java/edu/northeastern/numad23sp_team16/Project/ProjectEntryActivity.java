@@ -39,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Message;
+import edu.northeastern.numad23sp_team16.models.PetHealth;
+import edu.northeastern.numad23sp_team16.models.User;
 
 // TODO: to be merged or replaced with the login/sign in page activity created by Yuan
 public class ProjectEntryActivity extends AppCompatActivity {
@@ -173,10 +175,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
 
 
-
-
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
-        int heartCount = 8;
         // receive the status notification if happen to be the currently logged in user
         // initialize messagesRef from firebase database
         messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
@@ -200,7 +199,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                                         + " currentUser: " + currentUser
                                         + " sender: " + message.senderName);
                         sendStatusMessage(message.senderName, message.petType,
-                                message.petName, heartCount);
+                                message.petName, message.heartCount);
                     }
                 }
             }

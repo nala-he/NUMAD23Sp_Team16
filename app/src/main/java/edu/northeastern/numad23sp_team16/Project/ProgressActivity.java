@@ -56,7 +56,6 @@ public class ProgressActivity extends AppCompatActivity {
     private int petHealth;
     private static final int DENOMINATOR = 10;
     private MaterialCalendarView calendarHistory;
-    private List<CalendarDay> completedGoalsDates;
     private TextView petHealthInfo;
     private Map<Integer, Integer> dogHealth;
     private Map<Integer, Integer> catHealth;
