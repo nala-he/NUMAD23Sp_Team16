@@ -408,6 +408,7 @@ public class ProgressActivity extends AppCompatActivity {
         }
     }
 
+    // TODO: DO I NEED TO CANCEL ANY LISTENERS?
     // Navigate to share pet status with friends screen
     public void onSharePetStatus(View view) {
         // pass currently logged in user and log in time to Share activity
@@ -427,9 +428,7 @@ public class ProgressActivity extends AppCompatActivity {
         calendarHistory.addDecorator(dayDecorator);
     }
 
-
-
-
+    // TODO: DO I NEED TO CANCEL ANY LISTENERS?
     // Pass currently logged in user and log in time back when swipe back
     @Override
     public void onBackPressed() {
@@ -441,6 +440,7 @@ public class ProgressActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    // TODO: DO I NEED TO CANCEL ANY LISTENERS?
     // Pass currently logged in user and log in time back when click on triangle back
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
