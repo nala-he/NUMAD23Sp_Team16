@@ -269,6 +269,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     public void updateProgressPercentage(FirebaseRecyclerAdapter<Goal, GoalViewHolder> adapter, int checkedCount, int invalidGoalCount) {
         // Reset the variable to 0,it keeps updating in a day when the user clocks in.Each day the user will have a node with a record, if percentageOfToday == 100, the goal is all finished on the day.
         float percentageOfProgress = 0;
+        float weightedPercentage = 0;
         if(allGoalsThisUser!=invalidGoalCount){
              percentageOfProgress = (allGoalsThisUser > 0) ? ((float) checkedCount / (allGoalsThisUser - invalidGoalCount) * 100) : 0;
         }
@@ -286,7 +287,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             Toast.makeText(ProjectEntryActivity.this,"All goals start soon.",Toast.LENGTH_SHORT);
 ;        } else {
             //This is the new version to store the percentage considering priority.
-            float weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
+            weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
             percentageOfToday = (int)weightedPercentage;
             Log.d("checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)",allGoalsWeight +"/("+allGoalsWeight+" - "  +invalidGoalWeight+")" );
             //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
