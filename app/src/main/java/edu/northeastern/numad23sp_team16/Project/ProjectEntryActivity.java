@@ -57,9 +57,11 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private DatabaseReference petHealthRef;
     private float totalHealth;
     private int totalDays = 1;
+    private DatabaseReference goalFinishedStatusRef;
     private ValueEventListener goalFinishedStatusPostListener;
     private Map<Integer, Integer> dogHealth;
     private Map<Integer, Integer> catHealth;
+    private Date currentDate;
 
 
     private static final String CURRENT_USER = "CURRENT_USER";
@@ -90,7 +92,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
 
         // Create reference to GoalFinishedStatus node in database
-        DatabaseReference goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
+        goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
 
         // Get user's pet's health node from database and create listener
         petHealthRef = mDatabase.child("PetHealth")
@@ -102,7 +104,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.HOUR, 0);
-        Date currentDate = calendar.getTime();
+        currentDate = calendar.getTime();
 
         // Calculate and assign number of days it has been between current date and creation date
         petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -110,6 +112,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
                 totalDays = calculateNumberOfDays(creationDate);
+
+                Log.d(TAG, "onDataChange: creation date being called");
+                Log.d(TAG, "onDataChange: total days returned " + totalDays);
+
+                // Create listener for changes to GoalFinishedStatus
+                listenForGoalFinishedStatus();
             }
 
             @Override
@@ -118,6 +126,59 @@ public class ProjectEntryActivity extends AppCompatActivity {
             }
         });
 
+        // receive the status notification if happen to be the currently logged in user
+        // initialize messagesRef from firebase database
+        messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
+
+        // Create new child event listener for messages
+        messagesChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                Log.i("ProjectEntry", "currentUser in listener: " + currentUser);
+                Log.i("ProjectEntry", "loginTime in listener: " + loginTime);
+
+                Message message = snapshot.getValue(Message.class);
+                if (message != null) {
+                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                    Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
+                          " message time: " + messageTime + " login time: " + loginTime);
+                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
+                        // send and receive status message
+                        Log.i("ProjectEntryActivity",
+                                "receiverId: " + message.receiverId
+                                        + " currentUser: " + currentUser
+                                        + " sender: " + message.senderName);
+                        sendStatusMessage(message.senderName, message.petType,
+                                message.petName, message.heartCount);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        messagesRef.addChildEventListener(messagesChildEventListener);
+    }
+
+    private void listenForGoalFinishedStatus() {
         // Create listener for changes to GoalFinishedStatus
         goalFinishedStatusPostListener = new ValueEventListener() {
             @Override
@@ -177,58 +238,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
             }
         };
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
-
-
-        // receive the status notification if happen to be the currently logged in user
-        // initialize messagesRef from firebase database
-        messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
-
-        // Create new child event listener for messages
-        messagesChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-                Log.i("ProjectEntry", "currentUser in listener: " + currentUser);
-                Log.i("ProjectEntry", "loginTime in listener: " + loginTime);
-
-                Message message = snapshot.getValue(Message.class);
-                if (message != null) {
-                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
-                    Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
-                          " message time: " + messageTime + " login time: " + loginTime);
-                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
-                        // send and receive status message
-                        Log.i("ProjectEntryActivity",
-                                "receiverId: " + message.receiverId
-                                        + " currentUser: " + currentUser
-                                        + " sender: " + message.senderName);
-                        sendStatusMessage(message.senderName, message.petType,
-                                message.petName, message.heartCount);
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
-
-        messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
     private void assignPetHealthImages() {
