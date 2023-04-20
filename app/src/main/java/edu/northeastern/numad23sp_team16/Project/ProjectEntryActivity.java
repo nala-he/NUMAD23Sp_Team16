@@ -297,7 +297,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             Toast.makeText(ProjectEntryActivity.this,"All goals start soon.",Toast.LENGTH_SHORT);
 ;        } else {
             //This is the new version to store the percentage considering priority.
-            float weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
+            weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
             //Log.d("ProjectEntryActivity", "allGoalsWeight line 297: " + allGoalsWeight);
             //Log.d("ProjectEntryActivity", "checkedCountWithWeight line 297: " + checkedCountWithWeight);
 
