@@ -33,7 +33,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +44,6 @@ import edu.northeastern.numad23sp_team16.models.Message;
 import edu.northeastern.numad23sp_team16.models.PetHealth;
 import edu.northeastern.numad23sp_team16.models.User;
 
-// TODO: to be merged or replaced with the login/sign in page activity created by Yuan
 public class ProjectEntryActivity extends AppCompatActivity {
     private static final String TAG = "SendStatusActivity";
     private String channelId = "notification_channel_0";
@@ -57,6 +58,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private float totalHealth;
     private int totalDays = 1;
     private ValueEventListener goalFinishedStatusPostListener;
+    private Map<Integer, Integer> dogHealth;
+    private Map<Integer, Integer> catHealth;
 
 
     private static final String CURRENT_USER = "CURRENT_USER";
@@ -80,7 +83,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
         Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
 
-
+        // Map pet health images to health status
+        assignPetHealthImages();
 
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
@@ -175,7 +179,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
 
 
-        // TODO: change the hardcoded heartCount to user's pet heartCount from database
         // receive the status notification if happen to be the currently logged in user
         // initialize messagesRef from firebase database
         messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
@@ -228,7 +231,35 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
+    private void assignPetHealthImages() {
+        // Map dog's health to appropriate image
+        dogHealth = new HashMap<>();
+        dogHealth.put(10, R.drawable.dog_10);
+        dogHealth.put(9, R.drawable.dog_5_9);
+        dogHealth.put(8, R.drawable.dog_5_9);
+        dogHealth.put(7, R.drawable.dog_5_9);
+        dogHealth.put(6, R.drawable.dog_5_9);
+        dogHealth.put(5, R.drawable.dog_5_9);
+        dogHealth.put(4, R.drawable.dog_2_4);
+        dogHealth.put(3, R.drawable.dog_2_4);
+        dogHealth.put(2, R.drawable.dog_2_4);
+        dogHealth.put(1, R.drawable.dog_1);
+        dogHealth.put(0, R.drawable.dog_0);
 
+        // Map cat's health to appropriate image
+        catHealth = new HashMap<>();
+        catHealth.put(10, R.drawable.cat_10);
+        catHealth.put(9, R.drawable.cat_5_9);
+        catHealth.put(8, R.drawable.cat_5_9);
+        catHealth.put(7, R.drawable.cat_5_9);
+        catHealth.put(6, R.drawable.cat_5_9);
+        catHealth.put(5, R.drawable.cat_5_9);
+        catHealth.put(4, R.drawable.cat_2_4);
+        catHealth.put(3, R.drawable.cat_2_4);
+        catHealth.put(2, R.drawable.cat_2_4);
+        catHealth.put(1, R.drawable.cat_1);
+        catHealth.put(0, R.drawable.cat_0);
+    }
 
     // Calculate total number of days between creation date and current day
     private int calculateNumberOfDays(String date) {
@@ -305,11 +336,39 @@ public class ProjectEntryActivity extends AppCompatActivity {
         }
     }
 
+    private Integer petHealthImage(Map<Integer, Integer> mappedPetImages, int petHealth) {
+        // Return appropriate pet health image depending on pet's health condition and type of pet chosen
+        if (petHealth == 10) {
+            // 10 hearts
+            return mappedPetImages.get(10);
+
+        } else if (petHealth >= 5 && petHealth < 10) {
+            // 5-9 hearts
+            return mappedPetImages.get(5);
+
+        } else if (petHealth >= 2 && petHealth < 5) {
+            // 2-4 hearts
+            return mappedPetImages.get(2);
+
+        } else if (petHealth == 1) {
+            // 1 heart
+            return mappedPetImages.get(1);
+
+        } else if (petHealth == 0) {
+            // 0 hearts
+            return mappedPetImages.get(0);
+
+        }
+        return mappedPetImages.get(10);
+    }
+
     public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
 
         // Build notification
         // Need to define a channel ID after Android Oreo
-        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
+        // Get pet image depending on pet type and heart count
+        int id = petType.equals("dog") ? petHealthImage(dogHealth, heartCount) : petHealthImage(catHealth, heartCount);
+
 //        int id = Integer.parseInt(petIconId);
         Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
 
