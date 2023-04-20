@@ -93,7 +93,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
     int invalidGoalWeight = 0;
     int checkedCountWithWeight=0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,11 +111,11 @@ public class ProjectEntryActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
         bar = findViewById(R.id.progress_bar);
+
         // Get a reference to the "goals" node of this user in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId);
 //        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
         query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
-
         queryEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -132,7 +131,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 List<Goal> filteredGoals = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     allGoalsThisUser = (int) dataSnapshot.getChildrenCount();
-
                     Goal goal = snapshot.getValue(Goal.class);
                     if (goal != null) {
                         Log.d("Goal", "Goal: " + goal.getGoalName() + goal.getIcon() + ","+ goal.getPriority());
@@ -148,10 +146,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
                                 && goal.getLastCheckedInDate().equals(currentDateStr)){
                             checkedCount++;
                             checkedCountWithWeight += goal.getPriority();
-//                            Log.d("ProjectEntryActivity", "checkedCountWithWeight line 148: " + checkedCountWithWeight);
-
                         }
-//
+
                         //goals not started or expired(no need to consider any more since we have filtered them out)
                         try {
                             if(isNotStarted(goal)){
