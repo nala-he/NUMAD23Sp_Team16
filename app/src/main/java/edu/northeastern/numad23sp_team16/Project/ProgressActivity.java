@@ -212,6 +212,7 @@ public class ProgressActivity extends AppCompatActivity {
         goalFinishedStatusPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                calendarHistory.removeDecorators();
 
                 // Iterate through GoalFinishedStatus nodes
                 for (DataSnapshot data : snapshot.getChildren()) {
