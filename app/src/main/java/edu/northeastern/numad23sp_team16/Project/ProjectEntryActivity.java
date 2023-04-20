@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
@@ -59,6 +60,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     DatabaseReference goalsRef;
     //float percentageOfProgress;
+
+    Query query;
     int checkedCount = 0;
     int invalidGoalCount = 0;
     DatabaseReference GoalFinishedStatusRef;
@@ -73,7 +76,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private final int PERMISSION_REQUEST_CODE = 0;
     private DatabaseReference messagesRef;
     private ChildEventListener messagesChildEventListener;
-
+    private ValueEventListener queryEventListener;
     private final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
 
@@ -112,10 +115,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // Get a reference to the "goals" node of this user in the database
         goalsRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalGoals").child(userId);
 //        Query query = goalsRef.orderByChild("userId").equalTo(currentUser);
-        Query query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
+        query = goalsRef.orderByChild("endDate").startAt(getCurrentDateStr());
 
-        // Add a ValueEventListener to the query
-        query.addValueEventListener(new ValueEventListener() {
+        queryEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Reset checkedCount,otherwise,checkedCount will be repeatedly added when loading view
@@ -139,12 +141,17 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
                         String currentDateStr= dateFormat.format(new Date());
                         allGoalsWeight += goal.getPriority();
+//                        Log.d("ProjectEntryActivity", "allGoalsWeight line 142: " + allGoalsWeight);
+
                         if(goal.getIsCheckedForToday() == 1 && goal.getUserId().equals(userId)
                                 && goal.getLastCheckedInDate() != null
                                 && goal.getLastCheckedInDate().equals(currentDateStr)){
                             checkedCount++;
                             checkedCountWithWeight += goal.getPriority();
+//                            Log.d("ProjectEntryActivity", "checkedCountWithWeight line 148: " + checkedCountWithWeight);
+
                         }
+//
                         //goals not started or expired(no need to consider any more since we have filtered them out)
                         try {
                             if(isNotStarted(goal)){
@@ -203,7 +210,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 Toast.makeText(ProjectEntryActivity.this,"database error",Toast.LENGTH_SHORT).show();
             }
 
-        });
+        };
+
+        // Add a ValueEventListener to the query
+        query.addValueEventListener(queryEventListener);
 
 
         // TODO: change the hardcoded heartCount to user's pet heartCount from database
@@ -287,8 +297,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
 ;        } else {
             //This is the new version to store the percentage considering priority.
             float weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)*100;
+//            float weightedPercentage = (float)checkedCountWithWeight / (allGoalsWeight)*100;
+            Log.d("ProjectEntryActivity", "allGoalsWeight line 297: " + allGoalsWeight);
+            Log.d("ProjectEntryActivity", "checkedCountWithWeight line 297: " + checkedCountWithWeight);
+
             percentageOfToday = (int)weightedPercentage;
-            Log.d("checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)",allGoalsWeight +"/("+allGoalsWeight+" - "  +invalidGoalWeight+")" );
+            // changed allGoalsWeight to checkedCountWithWeight at line 310 log msg part -- Yutong
+            Log.d("checkedCountWithWeight / (allGoalsWeight - invalidGoalWeight)",checkedCountWithWeight +"/("+allGoalsWeight+" - "  +invalidGoalWeight+")" );
+
             //store date in the dateMap for easier access to add in the calendar,Which needs integer value.This is why the day,month,year value are set to int, not String
             Map<String, Integer> dateMap = getTheDay();
             storeInDB(percentageOfToday,userId,dateMap);
@@ -320,6 +336,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        // remove messages child event listener
+        messagesRef.removeEventListener(messagesChildEventListener);
+        // remove query event listener -- Yutong
+        query.removeEventListener(queryEventListener);
         startActivity(intent);
     }
 
@@ -447,7 +467,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
         // remove messages child event listener if user went back to log in page
         messagesRef.removeEventListener(messagesChildEventListener);
-
+        // remove query event listener -- Yutong
+        query.removeEventListener(queryEventListener);
         finish();
     }
 
@@ -456,6 +477,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             // remove messages child event listener
             messagesRef.removeEventListener(messagesChildEventListener);
+            // remove query event listener -- Yutong
+            query.removeEventListener(queryEventListener);
             this.finish();
             return true;
         }
