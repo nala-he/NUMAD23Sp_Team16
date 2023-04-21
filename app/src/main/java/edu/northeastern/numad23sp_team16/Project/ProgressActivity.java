@@ -380,8 +380,7 @@ public class ProgressActivity extends AppCompatActivity {
         // Log user out if date has changed
         if (!currentDate.equals(loginDate)) {
             Intent intent = new Intent(ProgressActivity.this, ProjectStartActivity.class);
-            // close all the activities in the call stack above ShareActivity and bring it to
-            // the top of the call stack
+            // close all activities in the call stack and bring it to the top
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             finish();
             startActivity(intent);
