@@ -2,8 +2,10 @@ package edu.northeastern.numad23sp_team16.Project;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +39,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -516,6 +519,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     reminderMessage, reminderHour, reminderMinute,
                     dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
                     priority, memo);
+            //TODO:send this reminder at designated time between startDate and endDate-Yuan
+            sendReminder(reminderMessage, reminderHour, reminderMinute, dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()));
         }
         else {
             // Reminders turned off
@@ -532,7 +537,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Add new goal to database with goal id as unique identifier
         //mDatabase.child("Goals").child(createUniqueGoalId()).setValue(newGoal);
-        //TODO:Yuan-I want to change it to:
+        //Yuan-I want to change it to:
         mDatabase.child("FinalGoals").child(currentUser).child(createUniqueGoalId()).setValue(newGoal);
 
         // Navigate to home screen
@@ -543,6 +548,29 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         homeIntent.putExtra(CURRENT_USER, currentUser);
         homeIntent.putExtra(LOGIN_TIME, loginTime);
         startActivity(homeIntent);
+    }
+    //TODO: send reminder-Yuan
+    private void sendReminder(String reminderMessage, int reminderHour, int reminderMinute, String startDateStr, String endDateStr) {
+        String currentDateStr = getCurrentDateStr();
+        Log.d("Time-cur-start-end",currentDateStr + " - " + startDateStr + " - " + endDateStr);
+        if(currentDateStr.compareTo(startDateStr) >= 0 && currentDateStr.compareTo(endDateStr) <= 0 ){
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            //an intent to launch  reminder notification
+            Intent intent = new Intent(this, MyReminder.class);
+            intent.putExtra("reminder_message", reminderMessage);
+            Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
+            //wrap the intent
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            //the PendingIntent will be launched when the alarm goes off
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, reminderHour); // Set the hour at which the reminder should be sent
+            calendar.set(Calendar.MINUTE, reminderMinute); // Set the minute at which the reminder should be sent
+            calendar.set(Calendar.SECOND, 0); // Set the second at which the reminder should be sent
+            long alarmTime = calendar.getTimeInMillis();
+            //TODO:can turn the selected time into a right alarmTime,why doesn't it get triggered at the time? -Yuan
+            Log.d(TAG,"alarmTime: " +alarmTime );
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+        }
     }
 
     // Pass currently logged in user and log in time back when swipe back
@@ -757,5 +785,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Restore memo
         memo = savedInstanceState.getString(GOAL_MEMO);
+    }
+    private String getCurrentDateStr() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        String currentDateStr = dateFormat.format(new Date());
+        return currentDateStr;
     }
 }
