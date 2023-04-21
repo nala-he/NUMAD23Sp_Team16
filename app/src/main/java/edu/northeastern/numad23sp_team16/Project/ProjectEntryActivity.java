@@ -481,8 +481,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
                     // Check if goal finished status is associated with current user
                     if (Objects.equals(user, currentUser)) {
-                        Log.d(TAG, "onDataChange: user " + user);
-                        Log.d(TAG, "onDataChange: user current " + currentUser);
+//                        Log.d(TAG, "onDataChange: user " + user);
+//                        Log.d(TAG, "onDataChange: user current " + currentUser);
 
                         // Get the date
                         DataSnapshot dateMap = data.child("dateMap");
@@ -502,33 +502,36 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         Log.d(TAG, "onDataChange: current date " + currentDate);
                         Log.d(TAG, "onDataChange: string date " + date);
 
-//<<<<<<< HEAD
-                        // Only calculate into pet's health if not the current day and before current day
-                        if (!currentDate.equals(date) && date.before(currentDate)) {
-                            Log.d(TAG, "onDataChange: currentDate in if" + currentDate);
-                            Log.d(TAG, "onDataChange: string date in if" + date);
-//=======
+                        if (currentDate.equals(createdDate)) {
                             // First day is automatically 100
-                            if (currentDate.equals(createdDate)) {
-                                petHealthRef.child("averageHealth").setValue(100);
+                            Log.d(TAG, "onDataChange: same day");
+                            petHealthRef.child("averageHealth").setValue(100);
+
+                        } else {
+                            // Ensure GoalFinishedStatus node was created after creation date
+                            if (date.equals(createdDate) || date.after(createdDate)) {
+                                // Only calculate into pet's health if not the current day and it's before current day
+                                if (!currentDate.equals(date) && date.before(currentDate)) {
+                                    Log.d(TAG, "onDataChange: ENTERED");
+
+                                    // Only calculate into pet's health if not the current day, it's before current day, and current day is not creation date
+                                    if (!currentDate.equals(date) && date.before(currentDate) && !currentDate.equals(createdDate)) {
+
+                                        // Add to total health
+                                        totalHealth += data.child("percentageOfToday").getValue(Float.class);
+                                        Log.d(TAG, "onDataChange: total health " + totalHealth);
+
+                                        // Calculate average health from total health and number of days
+                                        float averageHealth = totalHealth / totalDays;
+                                        Log.d(TAG, "onDataChange: total days " + totalDays);
+
+                                        // Update average health for PetHealth node
+                                        petHealthRef.child("averageHealth").setValue(averageHealth);
+                                        Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
+                                    }
+                                }
                             }
 
-                            // Only calculate into pet's health if not the current day, it's before current day, and current day is not creation date
-                            if (!currentDate.equals(date) && date.before(currentDate) && !currentDate.equals(createdDate)) {
-//>>>>>>> origin/project-database-progress
-
-                                // Add to total health
-                                totalHealth += data.child("percentageOfToday").getValue(Float.class);
-                                Log.d(TAG, "onDataChange: total health " + totalHealth);
-
-                                // Calculate average health from total health and number of days
-                                float averageHealth = totalHealth / totalDays;
-                                Log.d(TAG, "onDataChange: total days " + totalDays);
-
-                                // Update average health for PetHealth node
-                                petHealthRef.child("averageHealth").setValue(averageHealth);
-                                Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
-                            }
                         }
                     }
                 }
