@@ -18,6 +18,18 @@ android {
 //            keyAlias 'groupKey'
 //            keyPassword 'GoodluckNEU2023!'
 //        }
+//        team16DebugByYutong {
+//            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'groupKey'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
+//        team16Release {
+//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'groupKey'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
         team16DebugByYutong {
             storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
             storePassword 'GoodluckNEU2023!'
@@ -43,6 +55,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
         signingConfig signingConfigs.team16ReleaseByYutong
 //        signingConfig signingConfigs.team16Release
     }
@@ -94,6 +107,8 @@ dependencies {
     implementation 'androidx.core:core:1.9.0'
 
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+    // FirebaseUI for Firebase Realtime Database
+    implementation 'com.firebaseui:firebase-ui-database:8.0.2'
 
     implementation 'com.firebaseui:firebase-ui-database:8.0.1'
 
