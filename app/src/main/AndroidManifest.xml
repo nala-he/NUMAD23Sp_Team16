@@ -6,8 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
 
     <application
         android:allowBackup="true"
@@ -18,20 +18,22 @@
         android:roundIcon="@mipmap/ic_launcher_team16_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD23Sp_Team16"
-        tools:targetApi="31"
         android:usesCleartextTraffic="true"
-        >
+        tools:targetApi="31">
+        <activity
+            android:name=".MyReminder"
+            android:exported="false" />
         <activity
             android:name=".Project.ProjectSignUpActivity"
             android:exported="false" />
         <activity
             android:name=".Project.ProjectLoginActivity"
-            android:theme="@style/Theme.No_Action_Bar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.No_Action_Bar" />
         <activity
             android:name=".Project.ProjectStartActivity"
-            android:theme="@style/Theme.No_Action_Bar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.No_Action_Bar" />
         <activity
             android:name=".Project.CreateNewGoalActivity"
             android:exported="false"
@@ -41,8 +43,8 @@
         <activity
             android:name=".Project.ProgressActivity"
             android:exported="false"
-            android:theme="@style/Theme.No_Action_Bar"
-            android:parentActivityName=".Project.ProjectEntryActivity"/>
+            android:parentActivityName=".Project.ProjectEntryActivity"
+            android:theme="@style/Theme.No_Action_Bar" />
         <activity
             android:name=".Project.SendStatusActivity"
             android:exported="false" />
@@ -57,8 +59,8 @@
             android:exported="false" />
         <activity
             android:name=".Project.ProjectEntryActivity"
-            android:theme="@style/Theme.No_Action_Bar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.No_Action_Bar" />
         <activity
             android:name="edu.northeastern.numad23sp_team16.A8.RealtimeDatabaseActivity"
             android:exported="false" />
@@ -84,8 +86,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>
