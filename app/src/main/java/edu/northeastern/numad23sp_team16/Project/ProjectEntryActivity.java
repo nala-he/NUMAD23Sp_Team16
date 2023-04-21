@@ -40,6 +40,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -474,12 +475,46 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     }
 
-
-
+    //Macee's solution for logging user out if date changes, so that activity restarts to get refreshed data when user logs back
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Get today's date with time of 0
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        Date currentDate = calendar.getTime();
+
+        int year = Integer.parseInt(loginTime.substring(0, 4));
+        int month = Integer.parseInt(loginTime.substring(5, 7));
+        int day = Integer.parseInt(loginTime.substring(8, 10));
+
+        // Convert login time to Date object with time of 0
+        Log.d(TAG, "onResume: login time " + loginTime);
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month - 1, day);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.HOUR, 0);
+        Date loginDate = cal.getTime();
+
+        // Log user out if date has changed
+        if (!currentDate.equals(loginDate)) {
+            Intent intent = new Intent(ProjectEntryActivity.this, ProjectStartActivity.class);
+            // close all activities in the call stack and bring it to the top
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            finish();
+            startActivity(intent);
+            Toast.makeText(ProjectEntryActivity.this, "You have been logged out. Please log in.",
+                    Toast.LENGTH_LONG).show();
+
+        }
     }
+
 
     @Override
     protected void onPause() {
