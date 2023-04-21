@@ -554,6 +554,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         String currentDateStr = getCurrentDateStr();
         Log.d("Time-cur-start-end",currentDateStr + " - " + startDateStr + " - " + endDateStr);
         if(currentDateStr.compareTo(startDateStr) >= 0 && currentDateStr.compareTo(endDateStr) <= 0 ){
+            Log.d(TAG, "sendReminder: ENTERED SEND REMINDER IF MATCH");
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             //an intent to launch  reminder notification
             Intent intent = new Intent(this, MyReminder.class);
@@ -568,8 +569,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             calendar.set(Calendar.SECOND, 0); // Set the second at which the reminder should be sent
             long alarmTime = calendar.getTimeInMillis();
             //TODO:can turn the selected time into a right alarmTime,why doesn't it get triggered at the time? -Yuan
-            Log.d(TAG,"alarmTime: " +alarmTime );
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+            Log.d(TAG,"alarmTime: " + alarmTime );
+            //alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
         }
     }
 
