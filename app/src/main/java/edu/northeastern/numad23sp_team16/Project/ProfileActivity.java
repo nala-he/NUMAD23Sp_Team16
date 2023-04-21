@@ -31,6 +31,7 @@ import edu.northeastern.numad23sp_team16.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
     private final String CURRENT_USER = "CURRENT_USER";
+    private final String LOGIN_TIME = "LOGIN_TIME";
     private final String USERNAME = "USERNAME";
     private final String PASSWORD = "PASSWORD";
     private final String EMAIL = "EMAIL";
@@ -50,6 +51,8 @@ public class ProfileActivity extends AppCompatActivity {
     private RadioButton cat_button;
     // current logged-in user's userId in the database
     private String currentUser;
+    // date/time current user logged in
+    private String loginTime;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +78,11 @@ public class ProfileActivity extends AppCompatActivity {
         dog_button = findViewById(R.id.dog_radio_button);
         cat_button = findViewById(R.id.cat_radio_button);
 
-        // Retrieve currently logged in user -- Yutong
+        // Retrieve currently logged in user and login time
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
+            loginTime = extras.getString(LOGIN_TIME);
         }
         // Connect with firebase
         usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
@@ -136,6 +140,8 @@ public class ProfileActivity extends AppCompatActivity {
             // pass the current user's username to entry activity, in case it's getting updated
             Intent intent = new Intent(ProfileActivity.this, ProjectEntryActivity.class);
             intent.putExtra(CURRENT_USER, currentUser);
+            // Save log in time to intent
+            intent.putExtra(LOGIN_TIME, loginTime);
             startActivity(intent);
         }
     }
