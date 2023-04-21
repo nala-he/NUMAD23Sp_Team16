@@ -24,23 +24,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.PetHealth;
@@ -80,7 +74,7 @@ public class ProgressActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress);
 
-        // Get currently logged in user
+        // Get currently logged in user and login time
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
@@ -388,6 +382,45 @@ public class ProgressActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         }
     }
+
+    //This is added by Yuan to get the progress data from db.If the goal is all finished with finishStatus.getPercentageOfToday() == 100, the day is marked red.-Yuan
+//    private void getDaysAllCompletedFromDB(List<CalendarDay> completedGoalsDates) {
+//        DatabaseReference GoalFinishedStatusRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("GoalFinishedStatus");
+//        Query daysGoalAllFinishedQuery = GoalFinishedStatusRef.orderByChild("userId").equalTo(currentUser);
+//        daysGoalAllFinishedQuery.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if(snapshot.exists()){
+//                    for (DataSnapshot  goalSnapshot : snapshot.getChildren()) {
+//                        FinishStatus finishStatus = goalSnapshot.getValue(FinishStatus.class);
+//                        //add another condition to filter nodes with percentageOfToday == 100
+//                        if(finishStatus.getPercentageOfToday() == 100){
+//                            Map<String, Integer> dateMap = finishStatus.getDateMap();
+//                            // Use the dateMap as needed
+//                            int day = dateMap.get("day");
+//                            int month = dateMap.get("month");
+//                            int year = dateMap.get("year");
+//                            Log.d("FinishStatus", "day: " + day + ", month: " + month + ", year: " + year);
+//                            completedGoalsDates.add(CalendarDay.from(year, month, day));
+//                        }
+//
+//                    }
+//                    // Add dots to calendar on dates the user completed all daily goals
+//                    for (int i = 0; i < completedGoalsDates.size(); i++) {
+//                        DayDecorator dayDecorator = new DayDecorator(completedGoalsDates.get(i));
+//                        calendarHistory.addDecorator(dayDecorator);
+//                    }
+//                } else {
+//                    Log.d("database","No days info related to the user found in the db.");
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
 
     // Pass currently logged in user and log in time back when swipe back
     @Override

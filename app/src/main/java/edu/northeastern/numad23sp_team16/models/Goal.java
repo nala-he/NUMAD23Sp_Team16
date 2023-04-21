@@ -5,6 +5,7 @@ public class Goal {
 
     private String userId;
     private String goalName;
+    //name of icon, not id
     private String icon;
     private Boolean reminderOn;
     private String reminderMessage;
@@ -14,7 +15,11 @@ public class Goal {
     private String endDate;
     private int priority;
     private String memo;
-
+    private int isCheckedForToday;
+    //if lastCheckedInDate!=currentDate,isCheckedForToday=0
+    private String lastCheckedInDate;
+    //default constructor for firebase
+    public Goal(){}
     // Constructor for when reminder turned on
     public Goal(String user, String goalName, String icon, Boolean reminderOn, String reminderMessage,
                 int reminderHour, int reminderMinute, String startDate, String endDate,
@@ -30,6 +35,8 @@ public class Goal {
         this.endDate = endDate;
         this.priority = priority;
         this.memo = memo;
+        this.isCheckedForToday = 0;
+        this.lastCheckedInDate = "N";
     }
 
     // Constructor for when reminder turned off
@@ -59,7 +66,6 @@ public class Goal {
     public String getIcon() {
         return icon;
     }
-
     public Boolean getReminderOn() {
         return reminderOn;
     }
@@ -91,4 +97,12 @@ public class Goal {
     public String getMemo() {
         return memo;
     }
+    public int getIsCheckedForToday() {
+        return isCheckedForToday;
+    }
+
+    public String getLastCheckedInDate() {
+        return lastCheckedInDate;
+    }
+
 }

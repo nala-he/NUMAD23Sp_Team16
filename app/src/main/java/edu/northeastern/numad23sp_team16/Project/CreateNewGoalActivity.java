@@ -25,15 +25,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -535,7 +531,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         }
 
         // Add new goal to database with goal id as unique identifier
-        mDatabase.child("Goals").child(createUniqueGoalId()).setValue(newGoal);
+        //mDatabase.child("Goals").child(createUniqueGoalId()).setValue(newGoal);
+        //TODO:Yuan-I want to change it to:
+        mDatabase.child("FinalGoals").child(currentUser).child(createUniqueGoalId()).setValue(newGoal);
 
         // Navigate to home screen
         Toast.makeText(CreateNewGoalActivity.this, "Saved!", Toast.LENGTH_LONG).show();
