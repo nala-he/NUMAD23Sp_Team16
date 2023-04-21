@@ -11,6 +11,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.northeastern.numad23sp_team16.A6.WebServiceActivity;
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.PetHealth;
 import edu.northeastern.numad23sp_team16.models.User;
@@ -68,6 +71,8 @@ public class ProgressActivity extends AppCompatActivity {
     private DatabaseReference petHealthRef;
     private ValueEventListener petHealthPostListener;
     private ValueEventListener goalFinishedStatusPostListener;
+    private DatabaseReference goalFinishedStatusRef;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +105,8 @@ public class ProgressActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
 
         // Get user's attributes from database and create listener
-        DatabaseReference userRef = mDatabase.child("FinalProjectUsers").child(currentUser);
+        userRef = mDatabase.child("FinalProjectUsers").child(currentUser);
+
         userPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -135,6 +141,7 @@ public class ProgressActivity extends AppCompatActivity {
         // Get user's pet's health node from database and create listener
         petHealthRef = mDatabase.child("PetHealth")
                 .child("health" + currentUser);
+
         petHealthPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -194,14 +201,8 @@ public class ProgressActivity extends AppCompatActivity {
         // Provide message to user depending on health condition of pet
         petHealthMessage();
 
-        // Set up calendar to view past history
-        calendarHistory = findViewById(R.id.completion_history_calendar);
-
-        // Set date selected to current date
-        calendarHistory.setDateSelected(CalendarDay.today(), true);
-
         // Create reference to GoalFinishedStatus node in database
-        DatabaseReference goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
+        goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
 
         // Create listener for changes to GoalFinishedStatus
         goalFinishedStatusPostListener = new ValueEventListener() {
@@ -242,6 +243,12 @@ public class ProgressActivity extends AppCompatActivity {
         };
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
 
+
+        // Set up calendar to view past history
+        calendarHistory = findViewById(R.id.completion_history_calendar);
+
+        // Set date selected to current date
+        calendarHistory.setDateSelected(CalendarDay.today(), true);
     }
 
     private void assignPetHealthImages() {
@@ -333,8 +340,10 @@ public class ProgressActivity extends AppCompatActivity {
         // pass the current user id and login time
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
-        // remove petHealthPostListener -- Yutong
+        // remove listeners -- Yutong
         petHealthRef.removeEventListener(petHealthPostListener);
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+        userRef.removeEventListener(userPostListener);
         startActivity(intent);
     }
 
@@ -378,8 +387,10 @@ public class ProgressActivity extends AppCompatActivity {
             Intent intent = new Intent(ProgressActivity.this, ProjectStartActivity.class);
             // close all activities in the call stack and bring it to the top
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            // remove petHealthPostListener -- Yutong
+            // remove listeners -- Yutong
             petHealthRef.removeEventListener(petHealthPostListener);
+            goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+            userRef.removeEventListener(userPostListener);
             finish();
             startActivity(intent);
             Toast.makeText(ProgressActivity.this, "You have been logged out",
@@ -434,8 +445,10 @@ public class ProgressActivity extends AppCompatActivity {
         homeIntent.putExtra(CURRENT_USER, currentUser);
         homeIntent.putExtra(LOGIN_TIME, loginTime);
         setResult(Activity.RESULT_OK, homeIntent);
-        // remove petHealthPostListener -- Yutong
+        /// remove listeners -- Yutong
         petHealthRef.removeEventListener(petHealthPostListener);
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+        userRef.removeEventListener(userPostListener);
         super.onBackPressed();
     }
 
@@ -450,8 +463,10 @@ public class ProgressActivity extends AppCompatActivity {
                 homeIntent.putExtra(CURRENT_USER, currentUser);
                 homeIntent.putExtra(LOGIN_TIME, loginTime);
                 setResult(Activity.RESULT_OK, homeIntent);
-                // remove petHealthPostListener -- Yutong
+                // remove listeners -- Yutong
                 petHealthRef.removeEventListener(petHealthPostListener);
+                goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+                userRef.removeEventListener(userPostListener);
                 finish();
                 return true;
         }

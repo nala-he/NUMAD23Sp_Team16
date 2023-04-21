@@ -279,25 +279,55 @@ public class ProjectEntryActivity extends AppCompatActivity {
         calendar.set(Calendar.HOUR, 0);
         currentDate = calendar.getTime();
 
-        // Calculate and assign number of days it has been between current date and creation date
-        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Put the perHealthRef in a new thread (previous line 293-311)
+        HandlerThread petHealthThread = new HandlerThread("PetHealthThread");
+        petHealthThread.start();
+        Handler petHealthHandler = new Handler(petHealthThread.getLooper());
+        petHealthHandler.post(new Runnable() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
-                totalDays = calculateNumberOfDays(creationDate);
+            public void run() {
+                // Calculate and assign number of days it has been between current date and creation date
+                petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
+                        totalDays = calculateNumberOfDays(creationDate);
 
-                Log.d(TAG, "onDataChange: creation date being called");
-                Log.d(TAG, "onDataChange: total days returned " + totalDays);
+                        Log.d(TAG, "onDataChange: creation date being called");
+                        Log.d(TAG, "onDataChange: total days returned " + totalDays);
 
-                // Create listener for changes to GoalFinishedStatus
-                listenForGoalFinishedStatus();
-            }
+                        // Create listener for changes to GoalFinishedStatus
+                        listenForGoalFinishedStatus();
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: Database error retrieving creation date");
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d(TAG, "onCancelled: Database error retrieving creation date");
+                    }
+                });
+                petHealthThread.quit();
             }
         });
+
+//        // Calculate and assign number of days it has been between current date and creation date
+//        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
+//                totalDays = calculateNumberOfDays(creationDate);
+//
+//                Log.d(TAG, "onDataChange: creation date being called");
+//                Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//
+//                // Create listener for changes to GoalFinishedStatus
+//                listenForGoalFinishedStatus();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d(TAG, "onCancelled: Database error retrieving creation date");
+//            }
+//        });
 
         // receive the status notification if happen to be the currently logged in user
         // initialize messagesRef from firebase database
@@ -541,9 +571,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
         messagesRef.removeEventListener(messagesChildEventListener);
         // remove query event listener -- Yutong
         query.removeEventListener(queryEventListener);
-        // remove goalFinishedStatusPostListener -- Yutong
-        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
-
 
         startActivity(intent);
     }
@@ -571,8 +598,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 ProgressActivity.class);
         progressIntent.putExtra(CURRENT_USER, currentUser);
         progressIntent.putExtra(LOGIN_TIME, loginTime);
-        // remove goalFinishedStatusPostListener -- Yutong
-        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
         startActivity(progressIntent);
     }
 
