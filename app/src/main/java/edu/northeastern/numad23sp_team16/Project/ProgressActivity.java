@@ -333,6 +333,8 @@ public class ProgressActivity extends AppCompatActivity {
         // pass the current user id and login time
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        // remove petHealthPostListener -- Yutong
+        petHealthRef.removeEventListener(petHealthPostListener);
         startActivity(intent);
     }
 
@@ -376,6 +378,8 @@ public class ProgressActivity extends AppCompatActivity {
             Intent intent = new Intent(ProgressActivity.this, ProjectStartActivity.class);
             // close all activities in the call stack and bring it to the top
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            // remove petHealthPostListener -- Yutong
+            petHealthRef.removeEventListener(petHealthPostListener);
             finish();
             startActivity(intent);
             Toast.makeText(ProgressActivity.this, "You have been logged out",
@@ -430,6 +434,8 @@ public class ProgressActivity extends AppCompatActivity {
         homeIntent.putExtra(CURRENT_USER, currentUser);
         homeIntent.putExtra(LOGIN_TIME, loginTime);
         setResult(Activity.RESULT_OK, homeIntent);
+        // remove petHealthPostListener -- Yutong
+        petHealthRef.removeEventListener(petHealthPostListener);
         super.onBackPressed();
     }
 
@@ -444,6 +450,8 @@ public class ProgressActivity extends AppCompatActivity {
                 homeIntent.putExtra(CURRENT_USER, currentUser);
                 homeIntent.putExtra(LOGIN_TIME, loginTime);
                 setResult(Activity.RESULT_OK, homeIntent);
+                // remove petHealthPostListener -- Yutong
+                petHealthRef.removeEventListener(petHealthPostListener);
                 finish();
                 return true;
         }

@@ -445,6 +445,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
                         // Only calculate into pet's health if not the current day and before current day
                         if (!currentDate.equals(date) && date.before(currentDate)) {
+                            Log.d(TAG, "onDataChange: currentDate in if" + currentDate);
+                            Log.d(TAG, "onDataChange: string date in if" + date);
 
                             // Add to total health
                             totalHealth += data.child("percentageOfToday").getValue(Float.class);
@@ -533,13 +535,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
 
+        // remove the event listener before going to the profile page in case that the user will log
+        // out from the profile page
         // remove messages child event listener
         messagesRef.removeEventListener(messagesChildEventListener);
         // remove query event listener -- Yutong
         query.removeEventListener(queryEventListener);
-
-        // remove the event listener before going to the profile page in case that the user will log
-        // out from the profile page
+        // remove goalFinishedStatusPostListener -- Yutong
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
 
 
         startActivity(intent);
@@ -568,6 +571,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 ProgressActivity.class);
         progressIntent.putExtra(CURRENT_USER, currentUser);
         progressIntent.putExtra(LOGIN_TIME, loginTime);
+        // remove goalFinishedStatusPostListener -- Yutong
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
         startActivity(progressIntent);
     }
 
