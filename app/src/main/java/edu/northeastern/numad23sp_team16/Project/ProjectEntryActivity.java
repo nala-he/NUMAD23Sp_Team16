@@ -212,8 +212,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         Log.d(TAG, "onDataChange: current date " + currentDate);
                         Log.d(TAG, "onDataChange: string date " + date);
 
-                        // Only calculate into pet's health if not the current day
-                        if (!currentDate.equals(date)) {
+                        // Only calculate into pet's health if not the current day and before current day
+                        if (!currentDate.equals(date) && date.before(currentDate)) {
 
                             // Add to total health
                             totalHealth += data.child("percentageOfToday").getValue(Float.class);

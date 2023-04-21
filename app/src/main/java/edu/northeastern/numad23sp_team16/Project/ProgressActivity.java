@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -348,6 +349,45 @@ public class ProgressActivity extends AppCompatActivity {
         // Add pink dot to calendar for given date
         DayDecorator dayDecorator = new DayDecorator(date);
         calendarHistory.addDecorator(dayDecorator);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Get today's date with time of 0
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        Date currentDate = calendar.getTime();
+
+        int year = Integer.parseInt(loginTime.substring(0, 4));
+        int month = Integer.parseInt(loginTime.substring(5, 7));
+        int day = Integer.parseInt(loginTime.substring(8, 10));
+
+        // Convert login time to Date object with time of 0
+        Log.d(TAG, "onResume: login time " + loginTime);
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month - 1, day);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.HOUR, 0);
+        Date loginDate = cal.getTime();
+
+        // Log user out if date has changed
+        if (!currentDate.equals(loginDate)) {
+            Intent intent = new Intent(ProgressActivity.this, ProjectStartActivity.class);
+            // close all the activities in the call stack above ShareActivity and bring it to
+            // the top of the call stack
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            finish();
+            startActivity(intent);
+            Toast.makeText(ProgressActivity.this, "You have been logged out",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     // Pass currently logged in user and log in time back when swipe back
