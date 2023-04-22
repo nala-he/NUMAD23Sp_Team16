@@ -123,7 +123,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            usersRef.child(currentUser).removeEventListener(usersListener);
+            usersRef.removeEventListener(usersListener);
             this.finish();
             return true;
         }
@@ -149,7 +149,7 @@ public class ProfileActivity extends AppCompatActivity {
             // Save log in time to intent
             intent.putExtra(LOGIN_TIME, loginTime);
 
-            usersRef.child(currentUser).removeEventListener(usersListener);
+            usersRef.removeEventListener(usersListener);
             startActivity(intent);
         }
     }
@@ -191,7 +191,7 @@ public class ProfileActivity extends AppCompatActivity {
         // close all the activities in the call stack above ShareActivity and bring it to
         // the top of the call stack
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        usersRef.child(currentUser).removeEventListener(usersListener);
+        usersRef.removeEventListener(usersListener);
 
         finish();
         startActivity(intent);
