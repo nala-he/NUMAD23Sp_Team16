@@ -4,23 +4,29 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import edu.northeastern.numad23sp_team16.R;
 
-//<<<<<<< HEAD:app/src/main/java/edu/northeastern/numad23sp_team16/Project/MyReminder.java
 public class MyReminder extends BroadcastReceiver {
 
     private int notificationId = 0;
     private String channelId = "notification_channel_0";
-
+    private String reminderMessage;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         // Get the reminder message from the intent extras
-        String reminderMessage = intent.getStringExtra("reminder_message");
+//        String reminderMessage = intent.getStringExtra("reminder_message");
+
+        // Retrieve reminder message from extras (Macee)
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            reminderMessage = extras.getString("reminder_message");
+        }
         Log.d("MyReminder", "Reminder received: " + reminderMessage);
 
         // Create a notification using the reminder message
@@ -30,7 +36,6 @@ public class MyReminder extends BroadcastReceiver {
                 .setContentText(reminderMessage)
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-//<<<<<<< HEAD:app/src/main/java/edu/northeastern/numad23sp_team16/Project/MyReminder.java
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, builder.build());
