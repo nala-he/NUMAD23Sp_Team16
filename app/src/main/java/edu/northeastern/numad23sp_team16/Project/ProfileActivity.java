@@ -53,6 +53,8 @@ public class ProfileActivity extends AppCompatActivity {
     private String currentUser;
     // date/time current user logged in
     private String loginTime;
+
+    private ValueEventListener usersListener;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,41 +88,42 @@ public class ProfileActivity extends AppCompatActivity {
         }
         // Connect with firebase
         usersRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectUsers");
-        usersRef.child(currentUser).addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (savedInstanceState == null) {
-                            username = dataSnapshot.child("username").getValue(String.class);
-                            email = dataSnapshot.child("email").getValue(String.class);
-                            petName = dataSnapshot.child("petName").getValue(String.class);
-                            petType = dataSnapshot.child("petType").getValue(String.class);
-                            password = dataSnapshot.child("password").getValue(String.class);
+        usersListener = new ValueEventListener() {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (savedInstanceState == null) {
+                    username = dataSnapshot.child("username").getValue(String.class);
+                    email = dataSnapshot.child("email").getValue(String.class);
+                    petName = dataSnapshot.child("petName").getValue(String.class);
+                    petType = dataSnapshot.child("petType").getValue(String.class);
+                    password = dataSnapshot.child("password").getValue(String.class);
 
-                            // Set the input field default data using the current user's info from the database -- Yutong
-                            username_input.setText(username);
-                            password_input.setText(password);
-                            email_input.setText(email);
-                            petname_input.setText(petName);
-                            if (Objects.equals(petType, "dog")) {
-                                dog_button.setChecked(true);
-                            } else {
-                                cat_button.setChecked(true);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
+                    // Set the input field default data using the current user's info from the database -- Yutong
+                    username_input.setText(username);
+                    password_input.setText(password);
+                    email_input.setText(email);
+                    petname_input.setText(petName);
+                    if (Objects.equals(petType, "dog")) {
+                        dog_button.setChecked(true);
+                    } else {
+                        cat_button.setChecked(true);
                     }
                 }
-        );
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        usersRef.child(currentUser).addListenerForSingleValueEvent(usersListener);
+
     }
 
     // this event will enable the back function to the back button on press in customized action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            usersRef.child(currentUser).removeEventListener(usersListener);
             this.finish();
             return true;
         }
@@ -139,9 +142,14 @@ public class ProfileActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
             // pass the current user's username to entry activity, in case it's getting updated
             Intent intent = new Intent(ProfileActivity.this, ProjectEntryActivity.class);
+            // close all activities in the call stack and bring it to the top
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
             intent.putExtra(CURRENT_USER, currentUser);
             // Save log in time to intent
             intent.putExtra(LOGIN_TIME, loginTime);
+
+            usersRef.child(currentUser).removeEventListener(usersListener);
             startActivity(intent);
         }
     }
@@ -183,6 +191,8 @@ public class ProfileActivity extends AppCompatActivity {
         // close all the activities in the call stack above ShareActivity and bring it to
         // the top of the call stack
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        usersRef.child(currentUser).removeEventListener(usersListener);
+
         finish();
         startActivity(intent);
         Toast.makeText(ProfileActivity.this, "The user is successfully logged out.",

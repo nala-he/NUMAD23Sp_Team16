@@ -53,7 +53,6 @@ import edu.northeastern.numad23sp_team16.models.Icon;
 public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String TAG = "CreateNewGoalActivity";
     private String channelId = "notification_channel_0";
-    private int requestCode = 0;
 
     private Toolbar toolbar;
     private RecyclerView iconRecyclerView;
@@ -527,7 +526,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     reminderMessage, reminderHour, reminderMinute,
                     dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
                     priority, memo);
-            //TODO:send this reminder at designated time between startDate and endDate-Yuan
+            // send this reminder at designated time between startDate and endDate-Yuan
             sendReminder(reminderMessage, reminderHour, reminderMinute, dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()));
         }
         else {
@@ -566,19 +565,12 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             //an intent to launch reminder notification
             Intent intent = new Intent(this, MyReminder.class);
             intent.putExtra("reminder_message", reminderMessage);
-            intent.putExtra("request_code", requestCode);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
-            //wrap the intent
-//<<<<<<< HEAD
-//            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-            // Changed getActivity to getBroadcast -- Yutong
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-//                    intent, PendingIntent.FLAG_IMMUTABLE);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode,
-                    intent, PendingIntent.FLAG_IMMUTABLE);
-//=======
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//>>>>>>> origin/send-reminder
+
+            intent.setAction("uniqueCode");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                    intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
 
             //the PendingIntent will be launched when the alarm goes off
             Calendar calendar = Calendar.getInstance();
@@ -588,10 +580,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             long alarmTime = calendar.getTimeInMillis();
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//>>>>>>> origin/send-reminder
-           //alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+           alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
             //original way is triggered once only, change it to be triggered daily
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, AlarmManager.INTERVAL_DAY, pendingIntent);
 
 
         }
