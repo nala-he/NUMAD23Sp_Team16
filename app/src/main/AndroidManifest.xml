@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,9 +21,10 @@
         android:theme="@style/Theme.NUMAD23Sp_Team16"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".MyReminder"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".Project.MyReminder"-->
+<!--            android:exported="false" />-->
+        <receiver android:name=".Project.MyReminder"/>
         <activity
             android:name=".Project.ProjectSignUpActivity"
             android:exported="false" />
@@ -86,6 +88,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

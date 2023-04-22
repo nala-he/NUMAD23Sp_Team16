@@ -1,6 +1,10 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,37 +14,61 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import edu.northeastern.numad23sp_team16.MainActivity;
 import edu.northeastern.numad23sp_team16.R;
 
-public class MyReminder extends AppCompatActivity {
+public class MyReminder extends BroadcastReceiver {
+
+    private int notificationId = 0;
+    private final int PERMISSION_REQUEST_CODE = 0;
+    private String channelId = "notification_channel_0";
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onReceive(Context context, Intent intent) {
         // Get the reminder message from the intent extras
-        String reminderMessage = getIntent().getStringExtra("reminder_message");
+        String reminderMessage = intent.getStringExtra("reminder_message");
         Log.d("MyReminder", "Reminder received: " + reminderMessage);
 
         // Create a notification using the reminder message
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default")
-                .setSmallIcon(R.drawable.heart)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.flag)
                 .setContentTitle("Reminder")
                 .setContentText(reminderMessage)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-        // Show the notification
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // Request the permission
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.POST_NOTIFICATIONS }, 0);
-            return;
-        } else {
-            // Permission already granted, show the notification
-            notificationManager.notify(0, builder.build());
-        }
+        NotificationManager mNotificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(0, builder.build());
 
-        // Close the activity
-        finish();
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+//
+//
+//        // if only want to let the notification panel show the latest one notification, use this below
+//        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+//
+//        }
+//
+//        notificationManager.notify(notificationId, builder.build());
+        Log.i("MyReminder", "receive notification");
+
+
+
+//        // Show the notification
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+//            // Request the permission
+//            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.POST_NOTIFICATIONS }, 0);
+//            return;
+//        } else {
+//            // Permission already granted, show the notification
+//            notificationManager.notify(0, builder.build());
+//        }
+//
+//        // Close the activity
+//        finish();
     }
 }

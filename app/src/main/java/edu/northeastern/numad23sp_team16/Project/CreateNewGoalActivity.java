@@ -5,11 +5,15 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -42,6 +46,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
@@ -49,6 +54,8 @@ import edu.northeastern.numad23sp_team16.models.Icon;
 
 public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String TAG = "CreateNewGoalActivity";
+    private String channelId = "notification_channel_0";
+
 
     private Toolbar toolbar;
     private RecyclerView iconRecyclerView;
@@ -173,6 +180,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+
+
     }
 
     // Show start date picker dialog
@@ -560,7 +569,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             intent.putExtra("reminder_message", reminderMessage);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
             //wrap the intent
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+//            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            // Changed getActivity to getBroadcast -- Yutong
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                    intent, PendingIntent.FLAG_IMMUTABLE);
+
             //the PendingIntent will be launched when the alarm goes off
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, reminderHour); // Set the hour at which the reminder should be sent
@@ -568,8 +581,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             calendar.set(Calendar.SECOND, 0); // Set the second at which the reminder should be sent
             long alarmTime = calendar.getTimeInMillis();
             //TODO:can turn the selected time into a right alarmTime,why doesn't it get triggered at the time? -Yuan
-            Log.d(TAG,"alarmTime: " +alarmTime );
+
+            Log.d(TAG,"alarmTime: " +alarmTime);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+
         }
     }
 
