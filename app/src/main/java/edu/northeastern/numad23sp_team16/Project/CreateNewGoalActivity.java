@@ -567,9 +567,14 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             intent.putExtra("reminder_message", reminderMessage);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
 
-            intent.setAction("uniqueCode");
+            //wrap the intent
+//            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+            // Changed getActivity to getBroadcast (Yutong), update flag to allow changes to data from extras (Macee)
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
                     intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
             //the PendingIntent will be launched when the alarm goes off
@@ -581,6 +586,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+
             //original way is triggered once only, change it to be triggered daily
 //            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, AlarmManager.INTERVAL_DAY, pendingIntent);
 

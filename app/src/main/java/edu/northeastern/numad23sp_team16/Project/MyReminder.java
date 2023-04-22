@@ -5,6 +5,7 @@ import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -19,7 +20,14 @@ public class MyReminder extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // Get the reminder message from the intent extras
-        reminderMessage = intent.getStringExtra("reminder_message");
+
+//        String reminderMessage = intent.getStringExtra("reminder_message");
+
+        // Retrieve reminder message from extras (Macee)
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            reminderMessage = extras.getString("reminder_message");
+        }
         Log.d("MyReminder", "Reminder received: " + reminderMessage);
 
         // Create a notification using the reminder message
