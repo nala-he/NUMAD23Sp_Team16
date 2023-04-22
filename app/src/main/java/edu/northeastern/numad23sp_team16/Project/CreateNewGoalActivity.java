@@ -53,7 +53,7 @@ import edu.northeastern.numad23sp_team16.models.Icon;
 public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String TAG = "CreateNewGoalActivity";
     private String channelId = "notification_channel_0";
-
+    private int requestCode = 0;
 
     private Toolbar toolbar;
     private RecyclerView iconRecyclerView;
@@ -563,15 +563,18 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         Log.d("Time-cur-start-end",currentDateStr + " - " + startDateStr + " - " + endDateStr);
         if(currentDateStr.compareTo(startDateStr) >= 0 && currentDateStr.compareTo(endDateStr) <= 0 ){
 
-            //an intent to launch  reminder notification
+            //an intent to launch reminder notification
             Intent intent = new Intent(this, MyReminder.class);
             intent.putExtra("reminder_message", reminderMessage);
+            intent.putExtra("request_code", requestCode);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
             //wrap the intent
 //<<<<<<< HEAD
 //            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
             // Changed getActivity to getBroadcast -- Yutong
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+//                    intent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode,
                     intent, PendingIntent.FLAG_IMMUTABLE);
 //=======
 //            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);

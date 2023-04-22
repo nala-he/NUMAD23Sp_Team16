@@ -15,12 +15,14 @@ public class MyReminder extends BroadcastReceiver {
 
     private int notificationId = 0;
     private String channelId = "notification_channel_0";
+    private int requestCode;
 
 
     @Override
     public void onReceive(Context context, Intent intent) {
         // Get the reminder message from the intent extras
         String reminderMessage = intent.getStringExtra("reminder_message");
+        requestCode = intent.getIntExtra("request_code", 0);
         Log.d("MyReminder", "Reminder received: " + reminderMessage);
 
         // Create a notification using the reminder message
@@ -33,7 +35,8 @@ public class MyReminder extends BroadcastReceiver {
 //<<<<<<< HEAD:app/src/main/java/edu/northeastern/numad23sp_team16/Project/MyReminder.java
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(0, builder.build());
+//        mNotificationManager.notify(0, builder.build());
+        mNotificationManager.notify(notificationId++, builder.build());
 
 //        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 //
