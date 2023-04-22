@@ -1,5 +1,14 @@
 package edu.northeastern.numad23sp_team16.Project;
 
+import static android.content.ContentValues.TAG;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,12 +24,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,20 +39,25 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 import edu.northeastern.numad23sp_team16.models.Message;
+import edu.northeastern.numad23sp_team16.models.PetHealth;
+import edu.northeastern.numad23sp_team16.models.User;
 
 
 public class ProjectEntryActivity extends AppCompatActivity {
@@ -79,11 +87,23 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private final int PERMISSION_REQUEST_CODE = 0;
     private DatabaseReference messagesRef;
     private ChildEventListener messagesChildEventListener;
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+    private DatabaseReference mDatabase;
+    private DatabaseReference petHealthRef;
+    private float totalHealth;
+    private int totalDays = 1;
+    private DatabaseReference goalFinishedStatusRef;
+    private ValueEventListener goalFinishedStatusPostListener;
+    private Map<Integer, Integer> dogHealth;
+    private Map<Integer, Integer> catHealth;
+    private Date currentDate;
+    private Date createdDate;
+
+    private static final String CURRENT_USER = "CURRENT_USER";
     private ValueEventListener queryEventListener;
-    private final String CURRENT_USER = "CURRENT_USER";
     private final String LOGIN_TIME = "LOGIN_TIME";
     private final String EVENT_LISTENER = "EVENT_LISTENER";
-
 
     private String currentUser;
     private String userId;
@@ -102,7 +122,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
-        
+
         // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -112,7 +132,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
         }
         Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
         Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
-        
+
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
         bar = findViewById(R.id.progress_bar);
@@ -239,8 +259,105 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Thread thread = Thread.currentThread();
         Log.d(TAG, "Current thread out of the query thread: " + thread.getName());
 
-        // TODO: change the hardcoded heartCount to user's pet heartCount from database
-        int heartCount = 8;
+        // Map pet health images to health status
+        assignPetHealthImages();
+
+        // Connect to firebase database
+        mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+
+        // Create reference to GoalFinishedStatus node in database
+        goalFinishedStatusRef = mDatabase.child("GoalFinishedStatus");
+
+        // Get user's pet's health node from database and create listener
+        petHealthRef = mDatabase.child("PetHealth")
+                .child("health" + currentUser);
+
+        // Get today's date with time of 0
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        currentDate = calendar.getTime();
+
+        // Put the perHealthRef in a new thread (previous line 293-311)
+        HandlerThread petHealthThread = new HandlerThread("PetHealthThread");
+        petHealthThread.start();
+        Handler petHealthHandler = new Handler(petHealthThread.getLooper());
+        petHealthHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // Calculate and assign number of days it has been between current date and creation date
+                petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
+                        totalDays = calculateNumberOfDays(creationDate);
+
+//<<<<<<< HEAD
+                        Log.d(TAG, "onDataChange: creation date being called");
+                        Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//=======
+                        // Convert creation date string to Date with time of 0
+                        Date date;
+                        try {
+                            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                            date = dateFormat.parse(creationDate);
+                            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+                            creationDate = format.format(date);
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        Calendar cal = Calendar.getInstance();
+                        int month = Integer.parseInt(creationDate.substring(0, 2));
+                        int day = Integer.parseInt(creationDate.substring(3, 5));
+                        int year = Integer.parseInt(creationDate.substring(6));
+                        cal.set(year, month - 1, day);
+                        cal.set(Calendar.MILLISECOND, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.HOUR, 0);
+                        createdDate = cal.getTime();
+
+                        Log.d(TAG, "onDataChange: creation date being called");
+                        Log.d(TAG, "onDataChange: created date is " + createdDate);
+                        Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//>>>>>>> origin/project-database-progress
+
+                        // Create listener for changes to GoalFinishedStatus
+                        listenForGoalFinishedStatus();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d(TAG, "onCancelled: Database error retrieving creation date");
+                    }
+                });
+                petHealthThread.quit();
+            }
+        });
+
+//        // Calculate and assign number of days it has been between current date and creation date
+//        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
+//                totalDays = calculateNumberOfDays(creationDate);
+//
+//                Log.d(TAG, "onDataChange: creation date being called");
+//                Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//
+//                // Create listener for changes to GoalFinishedStatus
+//                listenForGoalFinishedStatus();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d(TAG, "onCancelled: Database error retrieving creation date");
+//            }
+//        });
+
         // receive the status notification if happen to be the currently logged in user
         // initialize messagesRef from firebase database
         messagesRef = FirebaseDatabase.getInstance().getReference("FinalProject").child("FinalProjectMessages");
@@ -264,7 +381,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                                         + " currentUser: " + currentUser
                                         + " sender: " + message.senderName);
                         sendStatusMessage(message.senderName, message.petType,
-                                message.petName, heartCount);
+                                message.petName, message.heartCount);
                     }
                 }
             }
@@ -288,7 +405,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 Log.e("ProjectEntryActivity", "Error retrieving goals: " + databaseError.getMessage());
             }
         };
-        
+
         messagesRef.addChildEventListener(messagesChildEventListener);
     }
 
@@ -351,20 +468,151 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
 
 
+    private void listenForGoalFinishedStatus() {
+        // Create listener for changes to GoalFinishedStatus
+        goalFinishedStatusPostListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                totalHealth = 0;
+
+                // Iterate through GoalFinishedStatus nodes
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    String user = data.child("userId").getValue(String.class);
+
+                    // Check if goal finished status is associated with current user
+                    if (Objects.equals(user, currentUser)) {
+//                        Log.d(TAG, "onDataChange: user " + user);
+//                        Log.d(TAG, "onDataChange: user current " + currentUser);
+
+                        // Get the date
+                        DataSnapshot dateMap = data.child("dateMap");
+                        int year = dateMap.child("year").getValue(Integer.class);
+                        int month = dateMap.child("month").getValue(Integer.class);
+                        int day = dateMap.child("day").getValue(Integer.class);
+
+                        // Convert stored date to Date object with time of 0
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month - 1, day);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.HOUR, 0);
+                        Date date = calendar.getTime();
+
+                        Log.d(TAG, "onDataChange: current date " + currentDate);
+                        Log.d(TAG, "onDataChange: string date " + date);
+
+                        if (currentDate.equals(createdDate)) {
+                            // First day is automatically 100
+                            Log.d(TAG, "onDataChange: same day");
+                            petHealthRef.child("averageHealth").setValue(100);
+
+                        } else {
+                            // Ensure GoalFinishedStatus node was created after creation date
+                            if (date.equals(createdDate) || date.after(createdDate)) {
+                                // Only calculate into pet's health if not the current day and it's before current day
+                                if (!currentDate.equals(date) && date.before(currentDate)) {
+                                    Log.d(TAG, "onDataChange: ENTERED");
+
+                                    // Only calculate into pet's health if not the current day, it's before current day, and current day is not creation date
+                                    if (!currentDate.equals(date) && date.before(currentDate) && !currentDate.equals(createdDate)) {
+
+                                        // Add to total health
+                                        totalHealth += data.child("percentageOfToday").getValue(Float.class);
+                                        Log.d(TAG, "onDataChange: total health " + totalHealth);
+
+                                        // Calculate average health from total health and number of days
+                                        float averageHealth = totalHealth / totalDays;
+                                        Log.d(TAG, "onDataChange: total days " + totalDays);
+
+                                        // Update average health for PetHealth node
+                                        petHealthRef.child("averageHealth").setValue(averageHealth);
+                                        Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Getting GoalFinishedStatus failed, log a message
+                Log.w(TAG, "Error getting goal finished status from database");
+            }
+        };
+        goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
+    };
+
+    private void assignPetHealthImages() {
+        // Map dog's health to appropriate image
+        dogHealth = new HashMap<>();
+        dogHealth.put(10, R.drawable.dog_10);
+        dogHealth.put(9, R.drawable.dog_5_9);
+        dogHealth.put(8, R.drawable.dog_5_9);
+        dogHealth.put(7, R.drawable.dog_5_9);
+        dogHealth.put(6, R.drawable.dog_5_9);
+        dogHealth.put(5, R.drawable.dog_5_9);
+        dogHealth.put(4, R.drawable.dog_2_4);
+        dogHealth.put(3, R.drawable.dog_2_4);
+        dogHealth.put(2, R.drawable.dog_2_4);
+        dogHealth.put(1, R.drawable.dog_1);
+        dogHealth.put(0, R.drawable.dog_0);
+
+        // Map cat's health to appropriate image
+        catHealth = new HashMap<>();
+        catHealth.put(10, R.drawable.cat_10);
+        catHealth.put(9, R.drawable.cat_5_9);
+        catHealth.put(8, R.drawable.cat_5_9);
+        catHealth.put(7, R.drawable.cat_5_9);
+        catHealth.put(6, R.drawable.cat_5_9);
+        catHealth.put(5, R.drawable.cat_5_9);
+        catHealth.put(4, R.drawable.cat_2_4);
+        catHealth.put(3, R.drawable.cat_2_4);
+        catHealth.put(2, R.drawable.cat_2_4);
+        catHealth.put(1, R.drawable.cat_1);
+        catHealth.put(0, R.drawable.cat_0);
+    }
+
+    // Calculate total number of days between creation date and current day
+    private int calculateNumberOfDays(String date) {
+        // Convert creation date to Date object
+        Date creationDate = null;
+        try {
+            creationDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            Log.d(TAG, "calculateNumberOfDays: Error parsing date");
+        }
+
+        Date currentDate = new Date();
+
+        // Calculate duration between the current date and creation date
+        long durationInMillis = currentDate.getTime() - creationDate.getTime();
+        int differenceInDays = (int) TimeUnit.DAYS.convert(durationInMillis, TimeUnit.MILLISECONDS);
+        Log.d(TAG, "calculateNumberOfDays: " + differenceInDays);
+
+        if (differenceInDays == 0) {
+            return 1;
+        }
+        return differenceInDays;
+    }
+
+
+
+
     public void startProfileActivity(View view) {
         // Pass the current user info to Profile activity -- Yutong
         Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
 
+        // remove the event listener before going to the profile page in case that the user will log
+        // out from the profile page
         // remove messages child event listener
         messagesRef.removeEventListener(messagesChildEventListener);
         // remove query event listener -- Yutong
         query.removeEventListener(queryEventListener);
-
-        // remove the event listener before going to the profile page in case that the user will log
-        // out from the profile page
-        
 
         startActivity(intent);
     }
@@ -377,23 +625,23 @@ public class ProjectEntryActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    
     public void startCreateNewGoalActivity(View view) {
-        // Pass the current user info to Create New Goal activity -- Yutong
-        Intent intent = new Intent(ProjectEntryActivity.this, CreateNewGoalActivity.class);
-        intent.putExtra(CURRENT_USER, currentUser);
-        intent.putExtra(LOGIN_TIME, loginTime);
-        startActivity(intent);
+        // Pass currently logged in user and login time to create new goal
+        Intent createGoalIntent = new Intent(ProjectEntryActivity.this,
+                CreateNewGoalActivity.class);
+        createGoalIntent.putExtra(CURRENT_USER, currentUser);
+        createGoalIntent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(createGoalIntent);
     }
 
     public void startProgressActivity(View view) {
-        // Pass the current user info to Progress activity -- Yutong
-        Intent intent = new Intent(ProjectEntryActivity.this, ProgressActivity.class);
-        intent.putExtra(CURRENT_USER, currentUser);
-        intent.putExtra(LOGIN_TIME, loginTime);
-        startActivity(intent);
+        // Pass currently logged in user and login time to progress page
+        Intent progressIntent = new Intent(ProjectEntryActivity.this,
+                ProgressActivity.class);
+        progressIntent.putExtra(CURRENT_USER, currentUser);
+        progressIntent.putExtra(LOGIN_TIME, loginTime);
+        startActivity(progressIntent);
     }
-
 
     // Receive currently logged in user and login time from child activity
     @Override
@@ -409,11 +657,39 @@ public class ProjectEntryActivity extends AppCompatActivity {
         }
     }
 
+    private Integer petHealthImage(Map<Integer, Integer> mappedPetImages, int petHealth) {
+        // Return appropriate pet health image depending on pet's health condition and type of pet chosen
+        if (petHealth == 10) {
+            // 10 hearts
+            return mappedPetImages.get(10);
+
+        } else if (petHealth >= 5 && petHealth < 10) {
+            // 5-9 hearts
+            return mappedPetImages.get(5);
+
+        } else if (petHealth >= 2 && petHealth < 5) {
+            // 2-4 hearts
+            return mappedPetImages.get(2);
+
+        } else if (petHealth == 1) {
+            // 1 heart
+            return mappedPetImages.get(1);
+
+        } else if (petHealth == 0) {
+            // 0 hearts
+            return mappedPetImages.get(0);
+
+        }
+        return mappedPetImages.get(10);
+    }
+
     public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
 
         // Build notification
         // Need to define a channel ID after Android Oreo
-        int id = petType.equals("dog") ? R.drawable.dog_small : R.drawable.cat_small;
+        // Get pet image depending on pet type and heart count
+        int id = petType.equals("dog") ? petHealthImage(dogHealth, heartCount) : petHealthImage(catHealth, heartCount);
+
 //        int id = Integer.parseInt(petIconId);
         Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
 

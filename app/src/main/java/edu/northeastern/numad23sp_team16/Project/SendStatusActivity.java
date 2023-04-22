@@ -51,6 +51,7 @@ import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Message;
+import edu.northeastern.numad23sp_team16.models.PetHealth;
 import edu.northeastern.numad23sp_team16.models.User;
 
 
@@ -71,6 +72,12 @@ public class SendStatusActivity extends AppCompatActivity {
 
     private String currentUser;
     private Timestamp loginTime;
+
+    private ValueEventListener petHealthPostListener;
+    private PetHealth currentUserPetHealth;
+    private int heartCount;
+    private static final int DENOMINATOR = 10;
+    private DatabaseReference petHealthRef;
 
     private User currentUserDetail;
     private RecyclerView friendListRecyclerView;
@@ -144,8 +151,39 @@ public class SendStatusActivity extends AppCompatActivity {
             getFriendNameList();
         }
 
-        // TODO: change the hardcoded heartCount to user's pet heartCount from database
-        int heartCount = 8;
+        // Connect to firebase database
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+
+        // Get user's pet's health node from database and create listener
+        petHealthRef = mDatabase.child("PetHealth")
+                .child("health" + currentUser);
+
+        // Create PetHealth listener to get current user's average health to be used for messages
+        petHealthPostListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Get PetHealth object and use the average health value to update UI
+                currentUserPetHealth = snapshot.getValue(PetHealth.class);
+
+                // Get user's pet's heart count from database
+                if (currentUserPetHealth != null) {
+                    float averageHealth = currentUserPetHealth.getAverageHealth();
+                    heartCount = Math.round(averageHealth / DENOMINATOR);
+
+                    Log.d(TAG, "onDataChange: PET HEALTH = " + heartCount);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Getting PetHealth failed, log a message
+                Log.w(TAG, "Error getting pet's health from database");
+            }
+        };
+        petHealthRef.addValueEventListener(petHealthPostListener);
+
+
+
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

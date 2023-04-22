@@ -27,6 +27,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.northeastern.numad23sp_team16.R;
@@ -142,25 +146,31 @@ public class ProjectSignUpActivity extends AppCompatActivity {
                     // username is not in use, save user to database
                     User user = new User(email, username, password, whichPet, petName);
 
-//<<<<<<< HEAD
-//                    //add a child node with username as a unique key, can't use email as key because of "@"
+//                    add a child node with username as a unique key, can't use email as key because of "@"
 //                    usersRef.child(username).setValue(user);
 
                     // add a child node to use the time as part of the unique user id, format "user16082271023" -- Yutong
                     String time = String.valueOf(System.currentTimeMillis()/1000);
                     userId = "user" + time + userIdCounter++;
                     usersRef.child(userId).setValue(user);
-//=======
-//                    //add a child node with username as a unique key, can't use email as key because of "@"
-//                    usersRef.child(username).setValue(user);
+
+                    // Create unique user id
+//                    String time = String.valueOf(System.currentTimeMillis()/1000);
+//                    userId = "user" + time + userIdCounter++;
 //
-//
-//                    // Create new pet health object in database to keep track of newly created pet's health
-//                    // TODO: RELATED TO PROGRESS -- MACEE
-////                    mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
-////                    PetHealth petHealth = new PetHealth(userId);
-////                    mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
-//>>>>>>> Project
+//                    // Add new user node
+//                    usersRef.child(userId).setValue(user);
+
+                    // Get reference to database
+                    mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+
+                    // Get current date as creation date
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                    String currentDate = dateFormat.format(new Date());
+
+                    // Create new pet health object in database to keep track of newly created pet's health
+                    PetHealth petHealth = new PetHealth(userId, currentDate);
+                    mDatabase.child("PetHealth").child("health" + userId).setValue(petHealth);
 
                     // show success message
                     Toast.makeText(getApplicationContext(), "Sign up successfully!", Toast.LENGTH_SHORT).show();
