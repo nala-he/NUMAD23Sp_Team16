@@ -25,6 +25,10 @@
             android:enabled="true"
             android:exported="false" >
         </receiver>
+        <service
+            android:name=".Project.MyReminder"
+            android:exported="false" >
+        </service>
         <activity
             android:name=".Project.MyReminder"
             android:exported="false" />

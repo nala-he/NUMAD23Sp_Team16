@@ -561,7 +561,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             intent.putExtra("reminder_message", reminderMessage);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
             //wrap the intent
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 2, intent, PendingIntent.FLAG_IMMUTABLE);
             //the PendingIntent will be launched when the alarm goes off
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, reminderHour); // Set the hour at which the reminder should be sent
