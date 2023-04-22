@@ -39,6 +39,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -97,7 +98,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private Map<Integer, Integer> dogHealth;
     private Map<Integer, Integer> catHealth;
     private Date currentDate;
-
+    private Date createdDate;
 
     private static final String CURRENT_USER = "CURRENT_USER";
     private ValueEventListener queryEventListener;
@@ -279,25 +280,83 @@ public class ProjectEntryActivity extends AppCompatActivity {
         calendar.set(Calendar.HOUR, 0);
         currentDate = calendar.getTime();
 
-        // Calculate and assign number of days it has been between current date and creation date
-        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Put the perHealthRef in a new thread (previous line 293-311)
+        HandlerThread petHealthThread = new HandlerThread("PetHealthThread");
+        petHealthThread.start();
+        Handler petHealthHandler = new Handler(petHealthThread.getLooper());
+        petHealthHandler.post(new Runnable() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
-                totalDays = calculateNumberOfDays(creationDate);
+            public void run() {
+                // Calculate and assign number of days it has been between current date and creation date
+                petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
+                        totalDays = calculateNumberOfDays(creationDate);
 
-                Log.d(TAG, "onDataChange: creation date being called");
-                Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//<<<<<<< HEAD
+                        Log.d(TAG, "onDataChange: creation date being called");
+                        Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//=======
+                        // Convert creation date string to Date with time of 0
+                        Date date;
+                        try {
+                            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                            date = dateFormat.parse(creationDate);
+                            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+                            creationDate = format.format(date);
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
 
-                // Create listener for changes to GoalFinishedStatus
-                listenForGoalFinishedStatus();
-            }
+                        Calendar cal = Calendar.getInstance();
+                        int month = Integer.parseInt(creationDate.substring(0, 2));
+                        int day = Integer.parseInt(creationDate.substring(3, 5));
+                        int year = Integer.parseInt(creationDate.substring(6));
+                        cal.set(year, month - 1, day);
+                        cal.set(Calendar.MILLISECOND, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.HOUR, 0);
+                        createdDate = cal.getTime();
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: Database error retrieving creation date");
+                        Log.d(TAG, "onDataChange: creation date being called");
+                        Log.d(TAG, "onDataChange: created date is " + createdDate);
+                        Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//>>>>>>> origin/project-database-progress
+
+                        // Create listener for changes to GoalFinishedStatus
+                        listenForGoalFinishedStatus();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d(TAG, "onCancelled: Database error retrieving creation date");
+                    }
+                });
+                petHealthThread.quit();
             }
         });
+
+//        // Calculate and assign number of days it has been between current date and creation date
+//        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
+//                totalDays = calculateNumberOfDays(creationDate);
+//
+//                Log.d(TAG, "onDataChange: creation date being called");
+//                Log.d(TAG, "onDataChange: total days returned " + totalDays);
+//
+//                // Create listener for changes to GoalFinishedStatus
+//                listenForGoalFinishedStatus();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d(TAG, "onCancelled: Database error retrieving creation date");
+//            }
+//        });
 
         // receive the status notification if happen to be the currently logged in user
         // initialize messagesRef from firebase database
@@ -422,8 +481,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
                     // Check if goal finished status is associated with current user
                     if (Objects.equals(user, currentUser)) {
-                        Log.d(TAG, "onDataChange: user " + user);
-                        Log.d(TAG, "onDataChange: user current " + currentUser);
+//                        Log.d(TAG, "onDataChange: user " + user);
+//                        Log.d(TAG, "onDataChange: user current " + currentUser);
 
                         // Get the date
                         DataSnapshot dateMap = data.child("dateMap");
@@ -443,25 +502,40 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         Log.d(TAG, "onDataChange: current date " + currentDate);
                         Log.d(TAG, "onDataChange: string date " + date);
 
-                        // Only calculate into pet's health if not the current day and before current day
-                        if (!currentDate.equals(date) && date.before(currentDate)) {
+                        if (currentDate.equals(createdDate)) {
+                            // First day is automatically 100
+                            Log.d(TAG, "onDataChange: same day");
+                            petHealthRef.child("averageHealth").setValue(100);
 
-                            // Add to total health
-                            totalHealth += data.child("percentageOfToday").getValue(Float.class);
-                            Log.d(TAG, "onDataChange: total health " + totalHealth);
+                        } else {
+                            // Ensure GoalFinishedStatus node was created after creation date
+                            if (date.equals(createdDate) || date.after(createdDate)) {
+                                // Only calculate into pet's health if not the current day and it's before current day
+                                if (!currentDate.equals(date) && date.before(currentDate)) {
+                                    Log.d(TAG, "onDataChange: ENTERED");
 
-                            // Calculate average health from total health and number of days
-                            float averageHealth = totalHealth / totalDays;
-                            Log.d(TAG, "onDataChange: total days " + totalDays);
+                                    // Only calculate into pet's health if not the current day, it's before current day, and current day is not creation date
+                                    if (!currentDate.equals(date) && date.before(currentDate) && !currentDate.equals(createdDate)) {
 
-                            // Update average health for PetHealth node
-                            petHealthRef.child("averageHealth").setValue(averageHealth);
-                            Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
+                                        // Add to total health
+                                        totalHealth += data.child("percentageOfToday").getValue(Float.class);
+                                        Log.d(TAG, "onDataChange: total health " + totalHealth);
+
+                                        // Calculate average health from total health and number of days
+                                        float averageHealth = totalHealth / totalDays;
+                                        Log.d(TAG, "onDataChange: total days " + totalDays);
+
+                                        // Update average health for PetHealth node
+                                        petHealthRef.child("averageHealth").setValue(averageHealth);
+                                        Log.d(TAG, "onDataChange: averageHealth " + averageHealth);
+                                    }
+                                }
+                            }
+
                         }
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Getting GoalFinishedStatus failed, log a message
@@ -469,7 +543,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             }
         };
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
-    }
+    };
 
     private void assignPetHealthImages() {
         // Map dog's health to appropriate image
@@ -533,14 +607,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
 
+        // remove the event listener before going to the profile page in case that the user will log
+        // out from the profile page
         // remove messages child event listener
         messagesRef.removeEventListener(messagesChildEventListener);
         // remove query event listener -- Yutong
         query.removeEventListener(queryEventListener);
-
-        // remove the event listener before going to the profile page in case that the user will log
-        // out from the profile page
-
 
         startActivity(intent);
     }
