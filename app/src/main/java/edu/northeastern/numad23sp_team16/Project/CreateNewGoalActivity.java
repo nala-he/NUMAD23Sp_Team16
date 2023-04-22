@@ -557,7 +557,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             Log.d(TAG, "sendReminder: ENTERED SEND REMINDER IF MATCH");
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             //an intent to launch  reminder notification
-            Intent intent = new Intent(this, MyReminder.class);
+            Intent intent = new Intent(this, MyReceiver.class);
             intent.putExtra("reminder_message", reminderMessage);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
             //wrap the intent

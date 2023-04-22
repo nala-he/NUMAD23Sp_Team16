@@ -19,7 +19,7 @@ import edu.northeastern.numad23sp_team16.R;
 
 public class MyReminder extends IntentService {
 
-    private static final int NOTIFICATION_ID = 3;
+    private static final int NOTIFICATION_ID = 0;
 
     public MyReminder() {
         super("MyReminder");
@@ -43,35 +43,16 @@ public class MyReminder extends IntentService {
         //to be able to launch your activity from the notification
         builder.setContentIntent(pendingIntent);
         Notification notificationCompat = builder.build();
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        managerCompat.notify(NOTIFICATION_ID, notificationCompat);
-
-
-
-
 
         // Show the notification
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             // Request the permission
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.POST_NOTIFICATIONS }, 0);
+            ActivityCompat.requestPermissions(, new String[] { Manifest.permission.POST_NOTIFICATIONS }, 0);
             return;
         } else {
             // Permission already granted, show the notification
             notificationManager.notify(0, builder.build());
         }
-
-        // Close the activity
-        finish();
     }
 }
