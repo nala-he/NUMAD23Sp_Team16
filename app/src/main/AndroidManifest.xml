@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 
 
     <application
@@ -21,10 +23,16 @@
         android:theme="@style/Theme.NUMAD23Sp_Team16"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+<!--<<<<<<< HEAD-->
 <!--        <activity-->
 <!--            android:name=".Project.MyReminder"-->
 <!--            android:exported="false" />-->
         <receiver android:name=".Project.MyReminder"/>
+<!--=======-->
+<!--        <activity-->
+<!--            android:name=".Project.ReminderAlarmReceiver"-->
+<!--            android:exported="false" />-->
+<!--&gt;>>>>>> origin/send-reminder-->
         <activity
             android:name=".Project.ProjectSignUpActivity"
             android:exported="false" />
