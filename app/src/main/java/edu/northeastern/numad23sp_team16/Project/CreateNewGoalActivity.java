@@ -571,14 +571,13 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             intent.putExtra("reminder_message", reminderMessage);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
             //wrap the intent
-//<<<<<<< HEAD
 //            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-            // Changed getActivity to getBroadcast -- Yutong
+            // Changed getActivity to getBroadcast (Yutong), update flag to allow changes to data retrieved from extras (Macee)
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-                    intent, PendingIntent.FLAG_IMMUTABLE);
-//=======
+                    intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+//                    intent,  PendingIntent.FLAG_IMMUTABLE);
 //            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//>>>>>>> origin/send-reminder
 
             //the PendingIntent will be launched when the alarm goes off
             Calendar calendar = Calendar.getInstance();
@@ -587,14 +586,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             calendar.set(Calendar.SECOND, 0); // Set the second at which the reminder should be sent
             long alarmTime = calendar.getTimeInMillis();
             //TODO:can turn the selected time into a right alarmTime,why doesn't it get triggered at the time? -Yuan
-//<<<<<<< HEAD
 
 //            Log.d(TAG,"alarmTime: " +alarmTime);
-//=======
             Log.d(TAG,"alarmTime: " +alarmTime );
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//>>>>>>> origin/send-reminder
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
 
         }
