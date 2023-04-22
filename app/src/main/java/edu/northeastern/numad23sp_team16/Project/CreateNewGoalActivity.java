@@ -586,7 +586,9 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 //>>>>>>> origin/send-reminder
-           alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+           //alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+            //original way is triggered once only, change it to be triggered daily
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, AlarmManager.INTERVAL_DAY, pendingIntent);
 
 
         }
