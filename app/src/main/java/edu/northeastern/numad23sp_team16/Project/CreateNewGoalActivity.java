@@ -9,7 +9,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,7 +45,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
@@ -559,14 +557,13 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         homeIntent.putExtra(LOGIN_TIME, loginTime);
         startActivity(homeIntent);
     }
-    //TODO: send reminder-Yuan
+    //send reminder-Yuan
     private void sendReminder(String reminderMessage, int reminderHour, int reminderMinute, String startDateStr, String endDateStr) {
         String currentDateStr = getCurrentDateStr();
         Log.d("Time-cur-start-end",currentDateStr + " - " + startDateStr + " - " + endDateStr);
         if(currentDateStr.compareTo(startDateStr) >= 0 && currentDateStr.compareTo(endDateStr) <= 0 ){
 
             //an intent to launch  reminder notification
-//            Intent intent = new Intent(this, ReminderAlarmReceiver.class);
             Intent intent = new Intent(this, MyReminder.class);
             intent.putExtra("reminder_message", reminderMessage);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
@@ -586,16 +583,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             calendar.set(Calendar.MINUTE, reminderMinute); // Set the minute at which the reminder should be sent
             calendar.set(Calendar.SECOND, 0); // Set the second at which the reminder should be sent
             long alarmTime = calendar.getTimeInMillis();
-            //TODO:can turn the selected time into a right alarmTime,why doesn't it get triggered at the time? -Yuan
-//<<<<<<< HEAD
-
-//            Log.d(TAG,"alarmTime: " +alarmTime);
-//=======
-            Log.d(TAG,"alarmTime: " +alarmTime );
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 //>>>>>>> origin/send-reminder
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+           alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+
 
         }
     }
