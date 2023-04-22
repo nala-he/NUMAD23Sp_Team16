@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 import android.app.NotificationManager;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,13 +14,13 @@ import edu.northeastern.numad23sp_team16.R;
 
 public class MyReminder extends BroadcastReceiver {
 
-    private int notificationId = 0;
     private String channelId = "notification_channel_0";
     private String reminderMessage;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         // Get the reminder message from the intent extras
+
 //        String reminderMessage = intent.getStringExtra("reminder_message");
 
         // Retrieve reminder message from extras (Macee)
@@ -40,18 +41,6 @@ public class MyReminder extends BroadcastReceiver {
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, builder.build());
 
-//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-//
-//
-//        // if only want to let the notification panel show the latest one notification, use this below
-//        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
-//
-//        }
-//
-//        notificationManager.notify(notificationId, builder.build());
         Log.i("MyReminder", "receive notification");
 
 

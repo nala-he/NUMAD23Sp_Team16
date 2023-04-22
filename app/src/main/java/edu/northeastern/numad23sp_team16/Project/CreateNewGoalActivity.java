@@ -54,7 +54,6 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String TAG = "CreateNewGoalActivity";
     private String channelId = "notification_channel_0";
 
-
     private Toolbar toolbar;
     private RecyclerView iconRecyclerView;
     private IconAdapter iconAdapter;
@@ -527,7 +526,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     reminderMessage, reminderHour, reminderMinute,
                     dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
                     priority, memo);
-            //TODO:send this reminder at designated time between startDate and endDate-Yuan
+            // send this reminder at designated time between startDate and endDate-Yuan
             sendReminder(reminderMessage, reminderHour, reminderMinute, dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()));
         }
         else {
@@ -563,10 +562,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         Log.d("Time-cur-start-end",currentDateStr + " - " + startDateStr + " - " + endDateStr);
         if(currentDateStr.compareTo(startDateStr) >= 0 && currentDateStr.compareTo(endDateStr) <= 0 ){
 
-            //an intent to launch  reminder notification
+            //an intent to launch reminder notification
             Intent intent = new Intent(this, MyReminder.class);
             intent.putExtra("reminder_message", reminderMessage);
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
+
             //wrap the intent
 //            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
@@ -575,6 +575,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 //            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 
             //the PendingIntent will be launched when the alarm goes off
             Calendar calendar = Calendar.getInstance();
