@@ -83,7 +83,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
     private static final String TAG = "SendStatusActivity";
     private String channelId = "notification_channel_0";
-    private int notificationId = 0;
+//    private int notificationId = 0;
+    private int notificationId = 1;
+
     private final int PERMISSION_REQUEST_CODE = 0;
     private DatabaseReference messagesRef;
     private ChildEventListener messagesChildEventListener;
@@ -112,11 +114,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
     //in the db. The problem is it keeps updating and all data are stored in the db when the recyclerview is being loaded.
     int percentageOfToday = 0;
 
-    //TODO:
     int allGoalsThisUser = 0;
     int allGoalsWeight=0;
     int invalidGoalWeight = 0;
     int checkedCountWithWeight=0;
+
+    private ValueEventListener petHealthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -288,16 +291,14 @@ public class ProjectEntryActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // Calculate and assign number of days it has been between current date and creation date
-                petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                petHealthListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
                         totalDays = calculateNumberOfDays(creationDate);
 
-//<<<<<<< HEAD
                         Log.d(TAG, "onDataChange: creation date being called");
                         Log.d(TAG, "onDataChange: total days returned " + totalDays);
-//=======
                         // Convert creation date string to Date with time of 0
                         Date date;
                         try {
@@ -323,7 +324,6 @@ public class ProjectEntryActivity extends AppCompatActivity {
                         Log.d(TAG, "onDataChange: creation date being called");
                         Log.d(TAG, "onDataChange: created date is " + createdDate);
                         Log.d(TAG, "onDataChange: total days returned " + totalDays);
-//>>>>>>> origin/project-database-progress
 
                         // Create listener for changes to GoalFinishedStatus
                         listenForGoalFinishedStatus();
@@ -333,30 +333,12 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
                         Log.d(TAG, "onCancelled: Database error retrieving creation date");
                     }
-                });
+                };
+
+                petHealthRef.addListenerForSingleValueEvent(petHealthListener);
                 petHealthThread.quit();
             }
         });
-
-//        // Calculate and assign number of days it has been between current date and creation date
-//        petHealthRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                String creationDate = dataSnapshot.child("creationDate").getValue(String.class);
-//                totalDays = calculateNumberOfDays(creationDate);
-//
-//                Log.d(TAG, "onDataChange: creation date being called");
-//                Log.d(TAG, "onDataChange: total days returned " + totalDays);
-//
-//                // Create listener for changes to GoalFinishedStatus
-//                listenForGoalFinishedStatus();
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.d(TAG, "onCancelled: Database error retrieving creation date");
-//            }
-//        });
 
         // receive the status notification if happen to be the currently logged in user
         // initialize messagesRef from firebase database
@@ -543,7 +525,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
             }
         };
         goalFinishedStatusRef.addValueEventListener(goalFinishedStatusPostListener);
-    };
+    }
 
     private void assignPetHealthImages() {
         // Map dog's health to appropriate image
@@ -607,12 +589,17 @@ public class ProjectEntryActivity extends AppCompatActivity {
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
 
+        // close all activities in the call stack and bring it to the top
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         // remove the event listener before going to the profile page in case that the user will log
         // out from the profile page
         // remove messages child event listener
         messagesRef.removeEventListener(messagesChildEventListener);
         // remove query event listener -- Yutong
         query.removeEventListener(queryEventListener);
+        petHealthRef.removeEventListener(petHealthListener);
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
 
         startActivity(intent);
     }
@@ -783,6 +770,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
             Intent intent = new Intent(ProjectEntryActivity.this, ProjectStartActivity.class);
             // close all activities in the call stack and bring it to the top
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            // remove the event listeners
+            messagesRef.removeEventListener(messagesChildEventListener);
+            query.removeEventListener(queryEventListener);
+            petHealthRef.removeEventListener(petHealthListener);
+            goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+
             finish();
             startActivity(intent);
             Toast.makeText(ProjectEntryActivity.this, "You have been logged out. Please log in.",
@@ -801,20 +795,23 @@ public class ProjectEntryActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        // remove messages child event listener if user went back to log in page
+        // remove the event listeners
         messagesRef.removeEventListener(messagesChildEventListener);
-        // remove query event listener -- Yutong
         query.removeEventListener(queryEventListener);
+        petHealthRef.removeEventListener(petHealthListener);
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+
         finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            // remove messages child event listener
+            // remove the event listeners
             messagesRef.removeEventListener(messagesChildEventListener);
-            // remove query event listener -- Yutong
             query.removeEventListener(queryEventListener);
+            petHealthRef.removeEventListener(petHealthListener);
+            goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
             this.finish();
             return true;
         }

@@ -340,6 +340,9 @@ public class ProgressActivity extends AppCompatActivity {
         // pass the current user id and login time
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        // close all activities in the call stack and bring it to the top
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         // remove listeners -- Yutong
         petHealthRef.removeEventListener(petHealthPostListener);
         goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
@@ -463,6 +466,7 @@ public class ProgressActivity extends AppCompatActivity {
                 homeIntent.putExtra(CURRENT_USER, currentUser);
                 homeIntent.putExtra(LOGIN_TIME, loginTime);
                 setResult(Activity.RESULT_OK, homeIntent);
+
                 // remove listeners -- Yutong
                 petHealthRef.removeEventListener(petHealthPostListener);
                 goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);

@@ -2,12 +2,17 @@ package edu.northeastern.numad23sp_team16.Project;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -37,6 +42,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +52,7 @@ import edu.northeastern.numad23sp_team16.models.Icon;
 
 public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String TAG = "CreateNewGoalActivity";
+    private String channelId = "notification_channel_0";
 
     private Toolbar toolbar;
     private RecyclerView iconRecyclerView;
@@ -126,6 +133,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_goal);
+        createNotificationChannel();
 
         // Get currently logged in user and login time
         Bundle extras = getIntent().getExtras();
@@ -170,6 +178,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
+
+
     }
 
     // Show start date picker dialog
@@ -516,6 +526,8 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                     reminderMessage, reminderHour, reminderMinute,
                     dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()),
                     priority, memo);
+            // send this reminder at designated time between startDate and endDate-Yuan
+            sendReminder(reminderMessage, reminderHour, reminderMinute, dateFormat.format(startDate.getTime()), dateFormat.format(endDate.getTime()));
         }
         else {
             // Reminders turned off
@@ -532,7 +544,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Add new goal to database with goal id as unique identifier
         //mDatabase.child("Goals").child(createUniqueGoalId()).setValue(newGoal);
-        //TODO:Yuan-I want to change it to:
+        //Yuan-I want to change it to:
         mDatabase.child("FinalGoals").child(currentUser).child(createUniqueGoalId()).setValue(newGoal);
 
         // Navigate to home screen
@@ -543,6 +555,43 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         homeIntent.putExtra(CURRENT_USER, currentUser);
         homeIntent.putExtra(LOGIN_TIME, loginTime);
         startActivity(homeIntent);
+    }
+    //send reminder-Yuan
+    private void sendReminder(String reminderMessage, int reminderHour, int reminderMinute, String startDateStr, String endDateStr) {
+        String currentDateStr = getCurrentDateStr();
+        Log.d("Time-cur-start-end",currentDateStr + " - " + startDateStr + " - " + endDateStr);
+        if(currentDateStr.compareTo(startDateStr) >= 0 && currentDateStr.compareTo(endDateStr) <= 0 ){
+
+            //an intent to launch reminder notification
+            Intent intent = new Intent(this, MyReminder.class);
+            intent.putExtra("reminder_message", reminderMessage);
+            Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
+
+            //wrap the intent
+//            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+            // Changed getActivity to getBroadcast (Yutong), update flag to allow changes to data from extras (Macee)
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                    intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+            //the PendingIntent will be launched when the alarm goes off
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, reminderHour); // Set the hour at which the reminder should be sent
+            calendar.set(Calendar.MINUTE, reminderMinute); // Set the minute at which the reminder should be sent
+            calendar.set(Calendar.SECOND, 0); // Set the second at which the reminder should be sent
+            long alarmTime = calendar.getTimeInMillis();
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+           alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+
+            //original way is triggered once only, change it to be triggered daily
+//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+
+
+        }
     }
 
     // Pass currently logged in user and log in time back when swipe back
@@ -757,5 +806,28 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Restore memo
         memo = savedInstanceState.getString(GOAL_MEMO);
+    }
+    private String getCurrentDateStr() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        String currentDateStr = dateFormat.format(new Date());
+        return currentDateStr;
+    }
+
+    public void createNotificationChannel() {
+        // This must be called early because it must be called before a notification is sent.
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Notification Name";
+            String description = "Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }
