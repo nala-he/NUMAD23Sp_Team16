@@ -592,11 +592,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         // close all activities in the call stack and bring it to the top
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        // remove the event listener before going to the profile page in case that the user will log
-        // out from the profile page
-        // remove messages child event listener
+        // remove the event listeners
         messagesRef.removeEventListener(messagesChildEventListener);
-        // remove query event listener -- Yutong
         query.removeEventListener(queryEventListener);
         petHealthRef.removeEventListener(petHealthListener);
         goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
@@ -609,6 +606,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Intent intent = new Intent(ProjectEntryActivity.this, ShareActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+
+        // remove the event listeners
+        messagesRef.removeEventListener(messagesChildEventListener);
+        query.removeEventListener(queryEventListener);
+        petHealthRef.removeEventListener(petHealthListener);
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+
         startActivity(intent);
     }
 
@@ -618,6 +622,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 CreateNewGoalActivity.class);
         createGoalIntent.putExtra(CURRENT_USER, currentUser);
         createGoalIntent.putExtra(LOGIN_TIME, loginTime);
+
+        // remove the event listeners
+        messagesRef.removeEventListener(messagesChildEventListener);
+        query.removeEventListener(queryEventListener);
+        petHealthRef.removeEventListener(petHealthListener);
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+
         startActivity(createGoalIntent);
     }
 
@@ -627,6 +638,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 ProgressActivity.class);
         progressIntent.putExtra(CURRENT_USER, currentUser);
         progressIntent.putExtra(LOGIN_TIME, loginTime);
+
+        // remove the event listeners
+        messagesRef.removeEventListener(messagesChildEventListener);
+        query.removeEventListener(queryEventListener);
+        petHealthRef.removeEventListener(petHealthListener);
+        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+
         startActivity(progressIntent);
     }
 

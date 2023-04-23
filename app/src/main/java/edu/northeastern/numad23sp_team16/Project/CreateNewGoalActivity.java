@@ -552,6 +552,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         // Pass currently logged in user and log in time back
         Intent homeIntent = new Intent(CreateNewGoalActivity.this, ProjectEntryActivity.class);
+
         homeIntent.putExtra(CURRENT_USER, currentUser);
         homeIntent.putExtra(LOGIN_TIME, loginTime);
         startActivity(homeIntent);
@@ -585,7 +586,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             long alarmTime = calendar.getTimeInMillis();
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-           alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
 
             //original way is triggered once only, change it to be triggered daily
 //            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, AlarmManager.INTERVAL_DAY, pendingIntent);
