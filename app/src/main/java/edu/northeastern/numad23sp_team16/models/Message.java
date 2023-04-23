@@ -1,25 +1,31 @@
 package edu.northeastern.numad23sp_team16.models;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class Message {
-    public String receiverName;
+    public String receiverId;
+    public String senderId;
     public String senderName;
-    public String stickerId;
+    public int heartCount;
+    public String petType;
+    public String petName;
+
     public String timeStamp;
 
     public Message() {
         // Default constructor required for calls to DataSnapshot.getValue(Message.class)
     }
 
-    public Message(String receiverName, String senderName, String stickerId) {
-        this.receiverName = receiverName;
+    public Message(String receiverId, String senderId, String senderName, int heartCount, String petType, String petName) {
+        this.receiverId = receiverId;
+        this.senderId = senderId;
         this.senderName = senderName;
-        this.stickerId = stickerId;
+        this.heartCount = heartCount;
+        this.petType = petType;
+        this.petName = petName;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         Date date = new Date();
         Timestamp timestamp = new Timestamp(date.getTime());

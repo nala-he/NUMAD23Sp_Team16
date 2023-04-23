@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 
 
     <application
@@ -20,18 +21,67 @@
         android:roundIcon="@mipmap/ic_launcher_team16_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD23Sp_Team16"
-        tools:targetApi="31" >
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+<!--<<<<<<< HEAD-->
+<!--        <activity-->
+<!--            android:name=".Project.MyReminder"-->
+<!--            android:exported="false" />-->
+        <receiver android:name=".Project.MyReminder"/>
+<!--=======-->
+<!--        <activity-->
+<!--            android:name=".Project.ReminderAlarmReceiver"-->
+<!--            android:exported="false" />-->
+<!--&gt;>>>>>> origin/send-reminder-->
         <activity
-            android:name="edu.northeastern.numad23sp_team16.RealtimeDatabaseActivity"
+            android:name=".Project.ProjectSignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Project.ProjectLoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.No_Action_Bar" />
+        <activity
+            android:name=".Project.ProjectStartActivity"
+            android:exported="false"
+            android:theme="@style/Theme.No_Action_Bar" />
+        <activity
+            android:name=".Project.CreateNewGoalActivity"
+            android:exported="false"
+            android:parentActivityName=".Project.ProjectEntryActivity"
+            android:theme="@style/Theme.No_Action_Bar"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Project.ProgressActivity"
+            android:exported="false"
+            android:parentActivityName=".Project.ProjectEntryActivity"
+            android:theme="@style/Theme.No_Action_Bar" />
+        <activity
+            android:name=".Project.SendStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Project.AddFriendsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Project.ShareActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Project.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Project.ProjectEntryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.No_Action_Bar" />
+        <activity
+            android:name="edu.northeastern.numad23sp_team16.A8.RealtimeDatabaseActivity"
             android:exported="false" />
         <activity
             android:name=".AboutActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".A8.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".StickItToEmActivity"
+            android:name=".A8.StickItToEmActivity"
             android:configChanges="orientation"
             android:exported="false" />
         <activity
@@ -39,13 +89,14 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

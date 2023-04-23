@@ -5,17 +5,29 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
+        signingConfigs {
+//        debug {
+//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'groupKey'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
+//        team16Release {
+//            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
+//            storePassword 'GoodluckNEU2023!'
+//            keyAlias 'groupKey'
+//            keyPassword 'GoodluckNEU2023!'
+//        }
+        team16DebugByYutong {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
             storePassword 'GoodluckNEU2023!'
-            keyAlias 'groupKey'
+            keyAlias 'key0'
             keyPassword 'GoodluckNEU2023!'
         }
-        team16Release {
-            storeFile file('/Users/maceeqi/keystore/madteam16keystore')
+        team16ReleaseByYutong {
+            storeFile file('/Users/daisy/Documents/ALIGN/CS5520/project/keyStore/teamWorkKeyStore')
             storePassword 'GoodluckNEU2023!'
-            keyAlias 'groupKey'
+            keyAlias 'key0'
             keyPassword 'GoodluckNEU2023!'
         }
     }
@@ -31,8 +43,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.team16Release
-        // signingConfig signingConfigs.team16Release
+        signingConfig signingConfigs.team16ReleaseByYutong
+//        signingConfig signingConfigs.team16Release
     }
 
     buildTypes {
@@ -42,8 +54,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_16
+        targetCompatibility JavaVersion.VERSION_16
     }
 }
 
@@ -51,6 +63,7 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
+
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -66,7 +79,7 @@ dependencies {
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation 'com.google.firebase:firebase-database:20.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
     implementation 'com.google.firebase:firebase-inappmessaging-display'
     implementation 'com.google.firebase:firebase-inappmessaging'
 
@@ -77,5 +90,14 @@ dependencies {
     //add glide to load images
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    implementation 'androidx.core:core:1.9.0'
+
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+    // FirebaseUI for Firebase Realtime Database
+    implementation 'com.firebaseui:firebase-ui-database:8.0.2'
+
+    implementation 'com.firebaseui:firebase-ui-database:8.0.1'
+
 
 }
