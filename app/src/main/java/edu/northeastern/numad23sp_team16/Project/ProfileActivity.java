@@ -382,9 +382,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void onClickLogOut(View view) {
         Intent intent = new Intent(ProfileActivity.this, ProjectStartActivity.class);
-//        // close all the activities in the call stack above ShareActivity and bring it to
-//        // the top of the call stack
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // close all the activities in the call stack above ShareActivity and bring it to
+        // the top of the call stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         usersRef.removeEventListener(usersListener);
         messagesRef.removeEventListener(messagesChildEventListener);
 

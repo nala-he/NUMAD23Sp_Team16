@@ -596,8 +596,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
         intent.putExtra(LOGIN_TIME, loginTime);
         intent.putExtra("notification_id", notificationId);
 
-//        // close all activities in the call stack and bring it to the top
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // close all activities in the call stack and bring it to the top
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         // remove the event listeners
         messagesRef.removeEventListener(messagesChildEventListener);
