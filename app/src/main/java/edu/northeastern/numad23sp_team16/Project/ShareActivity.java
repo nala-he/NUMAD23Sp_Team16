@@ -60,7 +60,7 @@ public class ShareActivity extends AppCompatActivity {
     private ChildEventListener messagesChildEventListener;
     private Map<Integer, Integer> dogHealth;
     private Map<Integer, Integer> catHealth;
-    private int notificationId = 1;
+    private int notificationId;
 
     private final int PERMISSION_REQUEST_CODE = 0;
 

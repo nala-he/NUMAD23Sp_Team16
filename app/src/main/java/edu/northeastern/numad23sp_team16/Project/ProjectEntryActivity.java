@@ -84,7 +84,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
     private static final String TAG = "SendStatusActivity";
     private String channelId = "notification_channel_0";
 //    private int notificationId = 0;
-    private int notificationId = 1;
+    private int notificationId;
 
     private final int PERMISSION_REQUEST_CODE = 0;
     private DatabaseReference messagesRef;
@@ -135,7 +135,10 @@ public class ProjectEntryActivity extends AppCompatActivity {
             userId = extras.getString(CURRENT_USER);
             loginTime = extras.getString(LOGIN_TIME);
             notificationId = extras.getInt("notification_id");
+        } else {
+            notificationId = 1;
         }
+
         Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
         Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
         Log.i("SProjectEntry", "notification_id from bundle: " + notificationId);
@@ -666,6 +669,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
                 currentUser = data.getStringExtra(CURRENT_USER);
                 loginTime = data.getStringExtra(LOGIN_TIME);
+                notificationId = data.getIntExtra("notification_id", 1);
             }
         }
     }

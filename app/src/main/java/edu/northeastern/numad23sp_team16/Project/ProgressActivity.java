@@ -88,7 +88,7 @@ public class ProgressActivity extends AppCompatActivity {
     private DatabaseReference messagesRef;
     private ChildEventListener messagesChildEventListener;
 
-    private int notificationId = 1;
+    private int notificationId;
 
     private final int PERMISSION_REQUEST_CODE = 0;
     private String channelId = "notification_channel_0";
