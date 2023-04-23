@@ -41,7 +41,7 @@ public class MyReminder extends BroadcastReceiver {
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, builder.build());
 
-        Log.i("MyReminder", "receive notification");
+        Log.i("MyReminder", "receive notification " + 0);
 
 
     }

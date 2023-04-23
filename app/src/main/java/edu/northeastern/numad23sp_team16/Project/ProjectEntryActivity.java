@@ -125,6 +125,8 @@ public class ProjectEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_entry);
+        Date date = new Date();
+        Timestamp currentTime = new Timestamp(date.getTime());
 
         // Retrieve currently logged in user's id from the database and the logged in time -- Yutong
         Bundle extras = getIntent().getExtras();
@@ -132,9 +134,11 @@ public class ProjectEntryActivity extends AppCompatActivity {
             currentUser = extras.getString(CURRENT_USER);
             userId = extras.getString(CURRENT_USER);
             loginTime = extras.getString(LOGIN_TIME);
+            notificationId = extras.getInt("notification_id");
         }
         Log.i("ProjectEntry", "currentUser from bundle: " + currentUser);
         Log.i("ProjectEntry", "loginTime from bundle: " + loginTime);
+        Log.i("SProjectEntry", "notification_id from bundle: " + notificationId);
 
         recyclerView = findViewById(R.id.goal_recycler_view);
         progressIndicator = findViewById(R.id.goal_finish_text_view);
@@ -356,7 +360,9 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
                     Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
                           " message time: " + messageTime + " login time: " + loginTime);
-                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
+//                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
+
+                    if (message.receiverId.equals(currentUser) && messageTime.after(currentTime)) {
                         // send and receive status message
                         Log.i("ProjectEntryActivity",
                                 "receiverId: " + message.receiverId
@@ -588,15 +594,16 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Intent intent = new Intent(ProjectEntryActivity.this, ProfileActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        intent.putExtra("notification_id", notificationId);
 
-        // close all activities in the call stack and bring it to the top
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        // close all activities in the call stack and bring it to the top
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         // remove the event listeners
         messagesRef.removeEventListener(messagesChildEventListener);
-        query.removeEventListener(queryEventListener);
-        petHealthRef.removeEventListener(petHealthListener);
-        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+//        query.removeEventListener(queryEventListener);
+//        petHealthRef.removeEventListener(petHealthListener);
+//        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
 
         startActivity(intent);
     }
@@ -606,12 +613,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
         Intent intent = new Intent(ProjectEntryActivity.this, ShareActivity.class);
         intent.putExtra(CURRENT_USER, currentUser);
         intent.putExtra(LOGIN_TIME, loginTime);
+        intent.putExtra("notification_id", notificationId);
 
         // remove the event listeners
         messagesRef.removeEventListener(messagesChildEventListener);
-        query.removeEventListener(queryEventListener);
-        petHealthRef.removeEventListener(petHealthListener);
-        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+//        query.removeEventListener(queryEventListener);
+//        petHealthRef.removeEventListener(petHealthListener);
+//        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
 
         startActivity(intent);
     }
@@ -622,12 +630,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 CreateNewGoalActivity.class);
         createGoalIntent.putExtra(CURRENT_USER, currentUser);
         createGoalIntent.putExtra(LOGIN_TIME, loginTime);
+        createGoalIntent.putExtra("notification_id", notificationId);
 
         // remove the event listeners
         messagesRef.removeEventListener(messagesChildEventListener);
-        query.removeEventListener(queryEventListener);
-        petHealthRef.removeEventListener(petHealthListener);
-        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+//        query.removeEventListener(queryEventListener);
+//        petHealthRef.removeEventListener(petHealthListener);
+//        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
 
         startActivity(createGoalIntent);
     }
@@ -638,12 +647,13 @@ public class ProjectEntryActivity extends AppCompatActivity {
                 ProgressActivity.class);
         progressIntent.putExtra(CURRENT_USER, currentUser);
         progressIntent.putExtra(LOGIN_TIME, loginTime);
+        progressIntent.putExtra("notification_id", notificationId);
 
         // remove the event listeners
         messagesRef.removeEventListener(messagesChildEventListener);
-        query.removeEventListener(queryEventListener);
-        petHealthRef.removeEventListener(petHealthListener);
-        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
+//        query.removeEventListener(queryEventListener);
+//        petHealthRef.removeEventListener(petHealthListener);
+//        goalFinishedStatusRef.removeEventListener(goalFinishedStatusPostListener);
 
         startActivity(progressIntent);
     }
@@ -727,7 +737,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
 
         // if only want to let the notification panel show the latest one notification, use this below
 //        notificationManager.notify(notificationId, notifyBuild.build());
-        Log.i("SendStatusActivity", "receive notification");
+        Log.i("ProjectEntryActivity", "receive notification " + notificationId);
 
 
     }

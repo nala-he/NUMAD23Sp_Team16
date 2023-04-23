@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team16.Project;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -12,6 +13,9 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -28,27 +32,38 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import edu.northeastern.numad23sp_team16.R;
 import edu.northeastern.numad23sp_team16.models.Goal;
 import edu.northeastern.numad23sp_team16.models.Icon;
+import edu.northeastern.numad23sp_team16.models.Message;
 
 public class CreateNewGoalActivity extends AppCompatActivity {
     private static final String TAG = "CreateNewGoalActivity";
@@ -128,19 +143,30 @@ public class CreateNewGoalActivity extends AppCompatActivity {
     private Calendar endDate = Calendar.getInstance();
     private int priority = 1; // default priority is low (1)
     private String memo;
+    private DatabaseReference messagesRef;
+    private ChildEventListener messagesChildEventListener;
+    private Map<Integer, Integer> dogHealth;
+    private Map<Integer, Integer> catHealth;
+    private int notificationId = 1;
+
+    private final int PERMISSION_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_goal);
         createNotificationChannel();
+        Date date = new Date();
+        Timestamp currentTime = new Timestamp(date.getTime());
 
         // Get currently logged in user and login time
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentUser = extras.getString(CURRENT_USER);
             loginTime = extras.getString(LOGIN_TIME);
+            notificationId = extras.getInt("notification_id");
         }
+        Log.i("CreateNewGoalActivity onCreate", "notification_id: " + notificationId);
 
         editGoalName = findViewById(R.id.text_goal_name);
         editMemo = findViewById(R.id.text_memo);
@@ -176,10 +202,165 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Pick goal end date
         selectEndDate();
 
+        // Map pet health images to health status
+        assignPetHealthImages();
+
         // Connect to firebase database
         mDatabase = FirebaseDatabase.getInstance().getReference("FinalProject");
 
+        // receive the status notification if happen to be the currently logged in user
+        // initialize messagesRef from firebase database
+        messagesRef = mDatabase.child("FinalProjectMessages");
 
+        // Create new child event listener for messages
+        messagesChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                Log.i("ProjectEntry", "currentUser in listener: " + currentUser);
+                Log.i("ProjectEntry", "loginTime in listener: " + loginTime);
+
+                Message message = snapshot.getValue(Message.class);
+                if (message != null) {
+                    Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
+                    Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
+                            " message time: " + messageTime + " login time: " + loginTime);
+//                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
+
+                    if (message.receiverId.equals(currentUser) && messageTime.after(currentTime)) {
+                        // send and receive status message
+                        Log.i("ProjectEntryActivity",
+                                "receiverId: " + message.receiverId
+                                        + " currentUser: " + currentUser
+                                        + " sender: " + message.senderName);
+                        sendStatusMessage(message.senderName, message.petType,
+                                message.petName, message.heartCount);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors here
+                Log.e("ProjectEntryActivity", "Error retrieving goals: " + databaseError.getMessage());
+            }
+        };
+
+        messagesRef.addChildEventListener(messagesChildEventListener);
+
+
+    }
+
+    public void sendStatusMessage(String senderName, String petType, String petName, int heartCount) {
+
+        // Build notification
+        // Need to define a channel ID after Android Oreo
+        // Get pet image depending on pet type and heart count
+        int id = petType.equals("dog") ? petHealthImage(dogHealth, heartCount) : petHealthImage(catHealth, heartCount);
+
+//        int id = Integer.parseInt(petIconId);
+        Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+        NotificationCompat.Builder notifyBuild = new NotificationCompat.Builder(this, channelId)
+                //"Notification icons must be entirely white."
+                .setSmallIcon(R.drawable.heart)
+                .setContentTitle("You received a GoalForIt pet status from " + senderName)
+                .setContentText(senderName + "'s " + petType + " " + petName + " has " + heartCount
+                        + "/10 hearts.")
+                .setLargeIcon(myBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(myBitmap)
+                        .bigLargeIcon(null))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // hide the notification after its selected
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+
+        }
+
+        notificationManager.notify(notificationId++, notifyBuild.build());
+
+        // if only want to let the notification panel show the latest one notification, use this below
+//        notificationManager.notify(notificationId, notifyBuild.build());
+        Log.i("CreateGoalActivity", "receive notification " + notificationId);
+
+
+    }
+
+    private void assignPetHealthImages() {
+        // Map dog's health to appropriate image
+        dogHealth = new HashMap<>();
+        dogHealth.put(10, R.drawable.dog_10);
+        dogHealth.put(9, R.drawable.dog_5_9);
+        dogHealth.put(8, R.drawable.dog_5_9);
+        dogHealth.put(7, R.drawable.dog_5_9);
+        dogHealth.put(6, R.drawable.dog_5_9);
+        dogHealth.put(5, R.drawable.dog_5_9);
+        dogHealth.put(4, R.drawable.dog_2_4);
+        dogHealth.put(3, R.drawable.dog_2_4);
+        dogHealth.put(2, R.drawable.dog_2_4);
+        dogHealth.put(1, R.drawable.dog_1);
+        dogHealth.put(0, R.drawable.dog_0);
+
+        // Map cat's health to appropriate image
+        catHealth = new HashMap<>();
+        catHealth.put(10, R.drawable.cat_10);
+        catHealth.put(9, R.drawable.cat_5_9);
+        catHealth.put(8, R.drawable.cat_5_9);
+        catHealth.put(7, R.drawable.cat_5_9);
+        catHealth.put(6, R.drawable.cat_5_9);
+        catHealth.put(5, R.drawable.cat_5_9);
+        catHealth.put(4, R.drawable.cat_2_4);
+        catHealth.put(3, R.drawable.cat_2_4);
+        catHealth.put(2, R.drawable.cat_2_4);
+        catHealth.put(1, R.drawable.cat_1);
+        catHealth.put(0, R.drawable.cat_0);
+    }
+
+    private Integer petHealthImage(Map<Integer, Integer> mappedPetImages, int petHealth) {
+        // Return appropriate pet health image depending on pet's health condition and type of pet chosen
+        if (petHealth == 10) {
+            // 10 hearts
+            return mappedPetImages.get(10);
+
+        } else if (petHealth >= 5 && petHealth < 10) {
+            // 5-9 hearts
+            return mappedPetImages.get(5);
+
+        } else if (petHealth >= 2 && petHealth < 5) {
+            // 2-4 hearts
+            return mappedPetImages.get(2);
+
+        } else if (petHealth == 1) {
+            // 1 heart
+            return mappedPetImages.get(1);
+
+        } else if (petHealth == 0) {
+            // 0 hearts
+            return mappedPetImages.get(0);
+
+        }
+        return mappedPetImages.get(10);
     }
 
     // Show start date picker dialog
@@ -555,6 +736,10 @@ public class CreateNewGoalActivity extends AppCompatActivity {
 
         homeIntent.putExtra(CURRENT_USER, currentUser);
         homeIntent.putExtra(LOGIN_TIME, loginTime);
+        homeIntent.putExtra("notification_id", notificationId);
+
+        messagesRef.removeEventListener(messagesChildEventListener);
+
         startActivity(homeIntent);
     }
     //send reminder-Yuan
@@ -566,6 +751,7 @@ public class CreateNewGoalActivity extends AppCompatActivity {
             //an intent to launch reminder notification
             Intent intent = new Intent(this, MyReminder.class);
             intent.putExtra("reminder_message", reminderMessage);
+
             Log.d(TAG,"reminder_message/reminderHour/reminderMinute: " +reminderMessage +"reminderHour:"+ reminderHour + "reminderMinute:"+ reminderMinute );
 
             //wrap the intent
@@ -602,7 +788,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
         // Add currently logged in user and log in time to intent
         homeIntent.putExtra(CURRENT_USER, currentUser);
         homeIntent.putExtra(LOGIN_TIME, loginTime);
+        homeIntent.putExtra("notification_id", notificationId);
+
         setResult(Activity.RESULT_OK, homeIntent);
+        messagesRef.removeEventListener(messagesChildEventListener);
+
         super.onBackPressed();
     }
 
@@ -616,7 +806,11 @@ public class CreateNewGoalActivity extends AppCompatActivity {
                 // Add currently logged in user and log in time to intent
                 homeIntent.putExtra(CURRENT_USER, currentUser);
                 homeIntent.putExtra(LOGIN_TIME, loginTime);
+                homeIntent.putExtra("notification_id", notificationId);
+
                 setResult(Activity.RESULT_OK, homeIntent);
+                messagesRef.removeEventListener(messagesChildEventListener);
+
                 finish();
                 return true;
         }
