@@ -360,9 +360,7 @@ public class ProjectEntryActivity extends AppCompatActivity {
                     Timestamp messageTime = Timestamp.valueOf(message.timeStamp);
                     Log.i("ProjectEntryActivity", " currentUser: " + currentUser +
                           " message time: " + messageTime + " login time: " + loginTime);
-//                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
-
-                    if (message.receiverId.equals(currentUser) && messageTime.after(currentTime)) {
+                    if (message.receiverId.equals(currentUser) && messageTime.after(Timestamp.valueOf(loginTime))) {
                         // send and receive status message
                         Log.i("ProjectEntryActivity",
                                 "receiverId: " + message.receiverId

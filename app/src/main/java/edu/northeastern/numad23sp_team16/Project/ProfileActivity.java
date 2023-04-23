@@ -10,6 +10,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -312,6 +313,14 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            Intent homeIntent = new Intent(ProfileActivity.this, ProjectEntryActivity.class);
+
+            // Add currently logged in user and log in time to intent
+            homeIntent.putExtra(CURRENT_USER, currentUser);
+            homeIntent.putExtra(LOGIN_TIME, loginTime);
+            homeIntent.putExtra("notification_id", notificationId);
+
+            setResult(Activity.RESULT_OK, homeIntent);
             usersRef.removeEventListener(usersListener);
             messagesRef.removeEventListener(messagesChildEventListener);
 
@@ -320,6 +329,22 @@ public class ProfileActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent homeIntent = new Intent(ProfileActivity.this, ProjectEntryActivity.class);
+        // Add currently logged in user and log in time to intent
+        homeIntent.putExtra(CURRENT_USER, currentUser);
+        homeIntent.putExtra(LOGIN_TIME, loginTime);
+        homeIntent.putExtra("notification_id", notificationId);
+
+        setResult(Activity.RESULT_OK, homeIntent);
+        usersRef.removeEventListener(usersListener);
+        messagesRef.removeEventListener(messagesChildEventListener);
+
+        super.onBackPressed();
+    }
+
 
     public void onClickSaveUpdates(View view) {
 
